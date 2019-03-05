@@ -99,9 +99,9 @@ go get 安装的包在GOPATH中，govendor 安装的在当前项目的vendor中�
 
 
 # 学习文档
-gin : https://github.com/gin-gonic/gin
-gorm : http://gorm.book.jasperxu.com
-govendor : https://studygolang.com/articles/9785
+- gin : https://github.com/gin-gonic/gin
+- gorm : http://gorm.book.jasperxu.com
+- govendor : https://studygolang.com/articles/9785
 
 如有疑问本人联系方式: qq 1214059465
 
