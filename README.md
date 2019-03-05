@@ -12,7 +12,8 @@
 
 
 # 需要具备的基础
-安装了go，设置了GOPATH，会写hello world
+
+安装了go，设置了GOPATH，知道GOPATH里必须有src,bin,pkg目录，src目录用来放你的应用, 会写hello world
 
 # 环境准备
 
@@ -52,21 +53,21 @@ cd /src/yourproject && fresh
 
 # 项目结构
 
-apis        api接口包，路由解析到此，处理各种业务
-commands    命令执行，比如创建数据库等
-components  组件，一些完整功能的包方便复用
-config      项目的配置包，读取配置文件处理
-database    数据库驱动
-helper      一些助手方法，为方便开发简单的封装的功能
-middlewares 路由中间件，处理接口调用前的验证
-models      数据表的模型
-routes      路由定义
-vendor      依赖包
+- apis        api接口包，路由解析到此，处理各种业务
+- commands    命令执行，比如创建数据库等
+- components  组件，一些完整功能的包方便复用
+- config      项目的配置包，读取配置文件处理
+- database    数据库驱动
+- helper      一些助手方法，为方便开发简单的封装的功能
+- middlewares 路由中间件，处理接口调用前的验证
+- models      数据表的模型
+- routes      路由定义
+- vendor      依赖包
 
 # 快速入门
 
 ### 准备
-1, 在根目录conf 文件里配置你的数据库连接，和http运行端口
+1, 在根目录／conf 文件里配置你的数据库连接，和http运行端口
 2, 执行commands包里的创建表的方法，包含了user表，token表
 
 ### 练手
