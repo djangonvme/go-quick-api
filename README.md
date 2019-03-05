@@ -1,3 +1,6 @@
+
+## go新手1小时学会web开发入门利器
+
 # 简介
 这是gin和gorm结合的一个go web的以api接口开发的通用框架模板，仅供新手学习参考。
 特别适合go初学者或从其他语言转go的，能对go web开发一个快速入门的完整了解，预计1小时即可上手开发项目，因为这是一个完整轻应用流程，包含
@@ -21,8 +24,10 @@ go get -u github.com/kardianos/govendor
 
 2，拉代码
 
+进入到你项目目$GOPATH/src/ 只有这里才能建你的项目, 我一般放在$GOPATH/src/github.com/myGo
+
 ```sh
-git clone git@github.com:jangozw/gin-api-common.git
+cd $GOPATH/src/ && git clone git@github.com:jangozw/gin-api-common.git
 ```
 
 3，拉依赖包
@@ -79,6 +84,7 @@ vendor      依赖包
 到此一个完整api接口请求流程完成，不懂的对着代码各个环节再细看
 
 
+
 # 备注
 go import 的包在1.6 版本后会从三个路径导入，先到显得, 顺序是:
 
@@ -87,20 +93,21 @@ go import 的包在1.6 版本后会从三个路径导入，先到显得, 顺序�
 * 在GOPATH下面查找依赖包。
 * 在GOROOT目录下查找
 
-go get 安装的包在GOPATH中，govendor 安装的在当前项目的vendor中，建议后者
+go get 安装的包在GOPATH中，govendor 安装的在当前项目的vendor中，建议后者, 如果遇到不能从vendor导入包的问题，请重启终端
 
 
 
+# 学习文档
+gin : https://github.com/gin-gonic/gin
+gorm : http://gorm.book.jasperxu.com
+govendor : https://studygolang.com/articles/9785
+
+如有疑问本人联系方式: qq 1214059465
 
 
+# 后记
 
-
-
-
-
-
-
-
+本项目是根据是按照web开发套路轻度封装的，主要目的在于供新手学习快速入门，让新手能体验到完整项目流程。如将此框架正式用于开发，则自己看实际情况去修改
 
 
 
