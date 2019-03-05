@@ -13,7 +13,7 @@
 
 # 需要具备的基础
 
-安装了go，设置了GOPATH，知道GOPATH里必须有src,bin,pkg目录，src目录用来放你的应用, 会写hello world
+安装了go，1.6版本以上，我的是1.10，设置了GOPATH，知道GOPATH里要有src,bin,pkg目录，src目录用来放你的应用, 会写hello world
 
 # 环境准备
 
@@ -25,7 +25,7 @@ go get -u github.com/kardianos/govendor
 
 2，拉代码
 
-进入到你项目目$GOPATH/src/ 只有这里才能建你的项目, 我一般放在$GOPATH/src/github.com/myGo
+进入到你项目目$GOPATH/src/ 只有这里才能建你的项目, 我一般放在$GOPATH/src/github.com/
 
 ```sh
 cd $GOPATH/src/ && git clone git@github.com:jangozw/gin-api-common.git
