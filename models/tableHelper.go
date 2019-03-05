@@ -3,6 +3,7 @@ package models
 import (
 	. "github.com/jangozw/gintest/database"
 	"fmt"
+	"github.com/jangozw/gintest/helper"
 )
 
 //model 就是models 包的每一个表的定义struct
@@ -31,6 +32,14 @@ func CreateAllTable()  {
 	CreateTable(Email{})
 	CreateTable(CreditCard{})
 	CreateTable(Language{})
+	//test
+	User{}.AddUser()
+	u := User{}
+	Db.First(&u)
+	if u.ID != 0 {
+		Token{}.Add(1, 86400*100)
+	}
+
 
 }
 

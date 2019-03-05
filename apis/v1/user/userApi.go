@@ -16,13 +16,9 @@ type user struct {
 	Birthday time.Time
 }
 
+
+
 //用户列表接口
-
-
-
-
-
-
 func List(c *gin.Context) {
 	page,_ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	pageSize,_ := strconv.Atoi(c.DefaultQuery("pagesize", "3"))
