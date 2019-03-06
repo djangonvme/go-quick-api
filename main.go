@@ -15,5 +15,7 @@ func main() {
 	routes.InitAdminRouter(r)
 	routes.InitNoTokenRouter(r)
 	listen := config.GetValue("env", "listen")
-	r.Run(":"+listen)
+
+	p := ":"+listen
+	r.Run(p)
 }
