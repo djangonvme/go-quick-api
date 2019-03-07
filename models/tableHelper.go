@@ -1,7 +1,7 @@
 package models
 
 import (
-	. "github.com/jangozw/gintest/database"
+	. "gin-api-common/database"
 	"fmt"
 )
 

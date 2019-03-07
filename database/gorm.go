@@ -4,7 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"log"
-	"github.com/jangozw/gintest/config"
+	"gin-api-common/config"
 )
 var Db  *gorm.DB
 //自动执行

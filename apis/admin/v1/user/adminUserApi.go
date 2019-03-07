@@ -3,7 +3,7 @@ package adminUserApi
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	//"github.com/jangozw/gintest/models"
+	//"gin-api-common/models"
 )
 func List(c *gin.Context)  {
 	//models.CreateToken()

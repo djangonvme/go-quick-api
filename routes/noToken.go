@@ -1,9 +1,8 @@
 package routes
 
 import (
+	"gin-api-common/apis/v1/user"
 	"github.com/gin-gonic/gin"
-	"github.com/jangozw/gintest/apis/v1/user"
-	// 前面加. 表示直接可以用包里的函数名，不用package.IndexAPi()这么写
 )
 
 func InitNoTokenRouter(router *gin.Engine) *gin.Engine {

@@ -3,8 +3,8 @@ package middlewares
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"github.com/jangozw/gintest/apis"
-	"github.com/jangozw/gintest/models"
+	"gin-api-common/apis"
+	"gin-api-common/models"
 )
 
 func ApiMiddleware(c *gin.Context)  {

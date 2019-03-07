@@ -2,7 +2,7 @@ package models
 
 import (
 	"database/sql"
-	. "github.com/jangozw/gintest/database"
+	. "gin-api-common/database"
 )
 
 type Address struct {

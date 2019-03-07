@@ -2,10 +2,10 @@ package userApi
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jangozw/gintest/models"
+	"gin-api-common/models"
 	"strconv"
 	"net/http"
-	"github.com/jangozw/gintest/apis"
+	"gin-api-common/apis"
 	"time"
 )
 

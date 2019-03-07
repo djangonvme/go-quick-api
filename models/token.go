@@ -1,9 +1,10 @@
 package models
 
 import (
+	. "gin-api-common/database"
+	"gin-api-common/helper"
 	"time"
-	"github.com/jangozw/gintest/helper"
-	. "github.com/jangozw/gintest/database"
+
 	//"fmt"
 )
 

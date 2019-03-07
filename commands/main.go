@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/jangozw/gintest/database"
-	"github.com/jangozw/gintest/models"
+	"gin-api-common/database"
+	"gin-api-common/models"
 )
 
 func main()  {

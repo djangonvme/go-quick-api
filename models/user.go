@@ -2,9 +2,9 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
-	"time"
 	"database/sql"
-	. "github.com/jangozw/gintest/database"
+	. "gin-api-common/database"
+	"time"
 )
 
 

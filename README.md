@@ -13,43 +13,27 @@
 
 # 需要具备的基础
 
-安装了go，1.6版本以上，我的是1.10，设置了GOPATH，知道GOPATH里要有src,bin,pkg目录，src目录用来放你的应用, 会写hello world
+- 安装了go环境版本1.11以上
+- 会写hello word
 
-# 环境准备
+# 拉代码
 
-1，安装govendor
-```sh
-go get -u github.com/kardianos/govendor
+1, 克隆到本地
 
+```sh 
+git@github.com:jangozw/gin-api-common.git
 ```
 
-2，拉代码
+2, 依赖包拉取
 
-进入到你项目目$GOPATH/src/ 只有这里才能建你的项目, 我一般放在$GOPATH/src/github.com/
-
-```sh
-cd $GOPATH/src/ && git clone git@github.com:jangozw/gin-api-common.git
-```
-
-3，拉依赖包
+进入项目根目录
 
 ```sh
-govendor sync
+go mod tidy
 ```
+3, 如果你使用了goland编辑器，要配置go module模式
+参考：https://jangozw.github.io/2019/03/07/%E6%96%B0%E7%89%88goland%E4%BD%BF%E7%94%A8go-module-%E5%88%9B%E5%BB%BA%E5%92%8C%E6%89%93%E5%BC%80%E9%A1%B9%E7%9B%AE/
 
-4，安装fresh
-
-由于go的每次改动代码都要build才能生效，因此调试时候手动build太繁琐，fresh是一个代码监视器，自动监测代码变动并立即build。
-
-```sh
-go get github.com/pilu/fresh
-
-```
-用法
-
-```sh
-cd /src/yourproject && fresh
-```
 
 # 项目结构
 
@@ -87,15 +71,9 @@ cd /src/yourproject && fresh
 
 
 # 备注
-go import 的包在1.6 版本后会从三个路径导入，先到显得, 顺序是:
 
-* 当前包下的vendor目录。
-* 向上级目录查找，直到找到src下的vendor目录。
-* 在GOPATH下面查找依赖包。
-* 在GOROOT目录下查找
-
-go get 安装的包在GOPATH中，govendor 安装的在当前项目的vendor中，建议后者, 如果遇到不能从vendor导入包的问题，请重启终端
-
+每次改了代码都要去根目录执行,go run main.go 然后预览结果。
+如果嫌麻烦可以使用fresh监视,使用非常简单： https://github.com/gravityblast/fresh
 
 
 # 学习文档

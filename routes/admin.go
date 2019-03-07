@@ -1,9 +1,9 @@
 package routes
 
 import (
+	"gin-api-common/apis/admin/v1/user"
+	"gin-api-common/middlewares"
 	"github.com/gin-gonic/gin"
-	"github.com/jangozw/gintest/apis/admin/v1/user"
-	"github.com/jangozw/gintest/middlewares"
 )
 
 func InitAdminRouter(router *gin.Engine) *gin.Engine {
