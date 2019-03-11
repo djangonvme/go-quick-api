@@ -3,3 +3,4 @@
 /tmp*
 /go.sum
 /.idea
+/nohup.out
