@@ -45,13 +45,11 @@ go mod tidy
 - middlewares 路由中间件，处理接口调用前的验证
 - models      数据表的模型
 - routes      路由定义
-- vendor      依赖包
 
 # 快速入门
 
 ### 准备
-1, 在根目录／conf 文件里配置你的数据库连接，和http运行端口
-2, 执行commands包里的创建表的方法，包含了user表，token表
+在根目录／conf 文件里配置你的数据库连接，和http运行端口
 
 ### 练手
 

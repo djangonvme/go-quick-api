@@ -1,0 +1,49 @@
+.
+├── README.md
+├── apis
+│   ├── exampleLoginApi.go
+│   └── exampleUserApi.go
+├── app.ini
+├── cmd
+│   └── main.go
+├── config.yml
+├── configs
+│   └── config.go
+├── consts
+│   ├── api.go
+│   └── redis.go
+├── databases
+│   ├── dbinit.go
+│   └── redis.go
+├── docs
+│   └── sql.sql
+├── go.mod
+├── go.sum
+├── gormt
+├── main.go
+├── middlewares
+│   └── api.go
+├── models
+│   ├── model.go
+│   ├── user.go
+│   └── userToken.go
+├── nohup.out
+├── params
+│   └── userApi.go
+├── routes
+│   └── api.go
+├── services
+│   ├── login.go
+│   └── user.go
+├── tmp
+│   └── runner-build
+├── tree.txt
+└── utils
+    ├── apiResponse.go
+    ├── enycrpt.go
+    ├── jwt.go
+    ├── jwt_test.go
+    ├── time.go
+    └── var.go
+
+13 directories, 33 files

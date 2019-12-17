@@ -1,21 +1,25 @@
 package main
 
 import (
-	"gin-api-common/config"
-	"gin-api-common/database"
+	"fmt"
+	"gin-api-common/configs"
 	"gin-api-common/routes"
 	"github.com/gin-gonic/gin"
+	"log"
 )
 
-
 func main() {
-
-
-	defer database.CloseDb()
 	r := gin.New()
-	routes.InitApiRouter(r)
-	routes.InitAdminRouter(r)
-	routes.InitNoTokenRouter(r)
-	listen := config.GetValue("env", "listen")
-	r.Run(":"+listen)
+	routes.InitApiRouters(r)
+	listen, err := configs.Get("server", "listen")
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	fmt.Println("gin try running on http://127.0.0.1:" + listen)
+
+	if err := r.Run(":" + listen); err != nil {
+		log.Println("gin running error:", err.Error())
+	}
+
 }

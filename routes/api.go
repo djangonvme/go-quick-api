@@ -1,18 +1,16 @@
 package routes
 
 import (
-	"gin-api-common/apis/v1/user"
+	"gin-api-common/apis"
 	"gin-api-common/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
-func InitApiRouter(router *gin.Engine) *gin.Engine {
-	//router := gin.Default()
-	v1 := router.Group("/api/v1")
+func InitApiRouters(router *gin.Engine) *gin.Engine {
+	router.POST("/v1/login", apis.Login)
+	v1 := router.Group("/v1")
 	v1.Use(middlewares.ApiMiddleware)
-	v1.GET("/user/list", userApi.List)
-	v1.GET("/user/detail", userApi.Detail)
+	v1.POST("/logout", apis.Logout)
+	v1.GET("/user/list", apis.UserList)
 	return router
 }
-
-
