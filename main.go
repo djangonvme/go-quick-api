@@ -5,21 +5,15 @@ import (
 	"gin-api-common/configs"
 	"gin-api-common/routes"
 	"github.com/gin-gonic/gin"
-	"log"
 )
 
 func main() {
-	r := gin.New()
-	routes.InitApiRouters(r)
-	listen, err := configs.Get("server", "listen")
-	if err != nil {
-		log.Fatal(err.Error())
+	engine := gin.New()
+	routes.RegisterRouters(engine)
+	if port, err := configs.GetHttpPort(); err != nil {
+		panic(err)
+	} else if err := engine.Run(fmt.Sprintf(":%d", port)); err != nil {
+		panic(err)
 	}
-
-	fmt.Println("gin try running on http://127.0.0.1:" + listen)
-
-	if err := r.Run(":" + listen); err != nil {
-		log.Println("gin running error:", err.Error())
-	}
-
+	// Listening and serving HTTP on 127.0.0.1:{port}
 }

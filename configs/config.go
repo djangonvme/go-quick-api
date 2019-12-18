@@ -1,7 +1,6 @@
 package configs
 
 import (
-	"fmt"
 	"github.com/Unknwon/goconfig"
 	"strconv"
 )
@@ -27,18 +26,24 @@ func Get(section string, key string) (string, error) {
 	return conf.GetValue(section, key)
 }
 
-func GetInt(section string, key string) int {
-	i, _ := Get(section, key)
-	n, _ := strconv.Atoi(i)
-	return n
+//
+func GetInt(section string, key string) (int, error) {
+	if v, err := Get(section, key); err != nil {
+		return 0, err
+	} else {
+		return strconv.Atoi(v)
+	}
 }
 
 //过期时长
 func GetTokenExpireSeconds() int64 {
-	sec := GetInt("encrypt", "token_expire_seconds")
-	fmt.Println("asdfasdf=", sec)
+	sec, _ := GetInt("encrypt", "token_expire_seconds")
 	if sec > 86400*30 || sec <= 0 {
 		sec = 600
 	}
 	return int64(sec)
+}
+
+func GetHttpPort() (port int, err error) {
+	return GetInt("server", "listen")
 }

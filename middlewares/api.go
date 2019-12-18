@@ -9,17 +9,18 @@ import (
 )
 
 func ApiMiddleware(c *gin.Context) {
-	token := c.GetHeader("Authorization")
+	token := c.GetHeader(consts.HeaderKeyToken)
 	if token == "" {
-		c.AbortWithStatusJSON(http.StatusOK, utils.FailResponseWithCode(consts.ApiCodeTokenValid, "token is required"))
+		c.AbortWithStatusJSON(http.StatusOK, utils.ResponseFailWithCode(consts.ApiCodeTokenValid, "token is required"))
 		return
 	}
 	//check login user
 	if jwt, err := services.VerifyAppToken(token); err != nil {
-		c.AbortWithStatusJSON(http.StatusOK, utils.FailResponseWithCode(consts.ApiCodeTokenValid, err.Error()))
+		c.AbortWithStatusJSON(http.StatusOK, utils.ResponseFailWithCode(consts.ApiCodeTokenValid, err))
 		return
 	} else {
-		c.Set("login_user", jwt.UserId)
+		//verify token success, then set the login user for context
+		c.Set(consts.CtxKeyLoginUser, jwt.UserId)
 		//继续下一步
 		c.Next()
 	}

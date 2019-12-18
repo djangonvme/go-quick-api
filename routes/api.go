@@ -6,11 +6,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitApiRouters(router *gin.Engine) *gin.Engine {
-	router.POST("/v1/login", apis.Login)
+func RegisterRouters(router *gin.Engine) *gin.Engine {
+	registerNoLogin(router)
 	v1 := router.Group("/v1")
 	v1.Use(middlewares.ApiMiddleware)
+	registerV1(v1)
+	return router
+}
+
+func registerV1(v1 *gin.RouterGroup) {
 	v1.POST("/logout", apis.Logout)
 	v1.GET("/user/list", apis.UserList)
-	return router
+	v1.GET("/user/detail", apis.UserDetail)
+}
+
+func registerNoLogin(router *gin.Engine) {
+	router.POST("/login", apis.Login)
 }

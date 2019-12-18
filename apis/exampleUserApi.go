@@ -5,7 +5,6 @@ import (
 	"gin-api-common/services"
 	"gin-api-common/utils"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func UserList(c *gin.Context) {
@@ -17,9 +16,14 @@ func UserList(c *gin.Context) {
 	}
 	data, err := services.GetUserList(search)
 	if err != nil {
-		c.JSON(http.StatusOK, utils.FailResponse(err.Error()))
+		utils.Response(c).Fail(err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, utils.SuccessResponse(data))
+	utils.Response(c).Success(data)
+	return
+}
+
+func UserDetail(c *gin.Context) {
+	utils.Response(c).SuccessSimple()
 	return
 }
