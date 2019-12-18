@@ -22,9 +22,9 @@ type GinCtx struct {
 
 //output data need use *gin.Context
 // usage:
-// utils.Response(c).Success("Ok")
+// utils.Ctx(c).Success("Ok")
 
-func Response(c *gin.Context) *GinCtx {
+func Ctx(c *gin.Context) *GinCtx {
 	return &GinCtx{c}
 }
 
@@ -42,6 +42,11 @@ func (c *GinCtx) Fail(errMsg interface{}) {
 
 func (c *GinCtx) FailWithCode(code int, errMsg interface{}) {
 	c.JSON(http.StatusOK, ResponseFailWithCode(code, errMsg))
+}
+
+//当前登陆的用户id
+func (c *GinCtx) GetLoginUid() int64 {
+	return c.GetInt64(consts.CtxKeyLoginUser)
 }
 
 func ResponseSuccess(data interface{}) ApiResponse {
@@ -68,7 +73,7 @@ func ResponseFailWithCode(code int, err interface{}) ApiResponse {
 	msg, _ := consts.GetApiMsgByCode(code)
 	return ApiResponse{
 		code,
-		msg + parseErrToMsg(err),
+		msg + ": " + parseErrToMsg(err),
 		time.Now().Unix(),
 		struct{}{},
 	}

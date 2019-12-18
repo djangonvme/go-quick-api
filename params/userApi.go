@@ -1,9 +1,16 @@
 package params
 
-type UserListSearch struct {
-	Mobile string `json:"mobile"`
-	Page   int64  `json:"page"`
+type Login struct {
+	Mobile string `form:"mobile" binding:"required"`
+	Pwd string `form:"pwd" binding:"required"`
 }
+// form, binding 是gin的验证规则
+// more validate rules refer: https://godoc.org/gopkg.in/go-playground/validator.v8
+type SearchUserList struct {
+	Mobile string `form:"mobile" binding:""`
+	Page   int64  `form:"page" binding:"required,gt=0"`
+}
+
 type UserItem struct {
 	Id     int64  `json:"id"`
 	Mobile string `json:"mobile"`
@@ -14,3 +21,4 @@ type UserList struct {
 	PageSize int64      `json:"page_size"`
 	List     []UserItem `json:"list"`
 }
+

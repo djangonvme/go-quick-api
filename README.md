@@ -9,6 +9,7 @@
 * gin框架为基础。文档： https://github.com/gin-gonic/gin
 * 数据库操作orm 用 gorm。 文档： http://gorm.book.jasperxu.com 
 * 使用 JWT 生成token, 结合redis双重验证。 文档 http://jwt.io
+* gin 使用的验证器文档: https://godoc.org/gopkg.in/go-playground/validator.v8
 
 
 # 版本要求

@@ -6,7 +6,7 @@ import (
 	"gin-api-common/params"
 )
 
-func GetUserList(search params.UserListSearch) (data params.UserList, err error) {
+func GetUserList(search params.SearchUserList) (data params.UserList, err error) {
 	var users []models.User
 	var total int64
 	var pageSize int64 = 20
