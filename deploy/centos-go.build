@@ -1,0 +1,16 @@
+FROM centos:8
+MAINTAINER zw <zhangwu918@foxmail.com>
+
+# Dependencies
+RUN yum install -y wget
+RUN yum install -y gcc
+
+# Go
+WORKDIR /usr/local
+RUN wget https://dl.google.com/go/go1.13.5.linux-amd64.tar.gz
+RUN tar -zxvf go1.13.5.linux-amd64.tar.gz
+RUN rm -rf go1.13.5.linux-amd64.tar.gz
+ENV PATH=$PATH:/usr/local/go/bin
+ENV GOPROXY=https://goproxy.io
+
+

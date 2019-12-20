@@ -13,7 +13,7 @@ func RegisterRouters(router *gin.Engine) *gin.Engine {
 }
 
 func registerV1(router *gin.Engine) {
-	router.Group("/v1", middlewares.ApiMiddleware).
+	router.Group("/v1", middlewares.LoggerToFile(), middlewares.ApiMiddleware).
 		POST("/logout", v1.Logout).
 		GET("/user/list", v1.UserList).
 		GET("/user/detail", v1.UserDetail)

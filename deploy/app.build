@@ -1,0 +1,9 @@
+FROM centos-go:v1
+MAINTAINER xxx
+RUN mkdir -p /data/app
+RUN mkdir -p /logs/app
+COPY ./* /data/app
+WORDDIR /data/app/gin-api-common
+RUN go build -o main ./main.go
+WORKDIR ./deploy
+RUN chmod u+x ./run.sh

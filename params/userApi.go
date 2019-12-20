@@ -2,8 +2,9 @@ package params
 
 type Login struct {
 	Mobile string `form:"mobile" binding:"required"`
-	Pwd string `form:"pwd" binding:"required"`
+	Pwd    string `form:"pwd" binding:"required"`
 }
+
 // form, binding 是gin的验证规则
 // more validate rules refer: https://godoc.org/gopkg.in/go-playground/validator.v8
 type SearchUserList struct {
@@ -21,4 +22,3 @@ type UserList struct {
 	PageSize int64      `json:"page_size"`
 	List     []UserItem `json:"list"`
 }
-

@@ -29,7 +29,10 @@ func Ctx(c *gin.Context) *GinCtx {
 }
 
 func (c *GinCtx) Success(data interface{}) {
-	c.JSON(http.StatusOK, ResponseSuccess(data))
+	result := ResponseSuccess(data)
+	//logs.Logger().Infof("%s", ToJson(result))
+	c.JSON(http.StatusOK, result)
+
 }
 
 func (c *GinCtx) SuccessSimple() {
@@ -73,7 +76,7 @@ func ResponseFailWithCode(code int, err interface{}) ApiResponse {
 	msg, _ := consts.GetApiMsgByCode(code)
 	return ApiResponse{
 		code,
-		msg + ": " + parseErrToMsg(err),
+		msg + "! " + parseErrToMsg(err),
 		time.Now().Unix(),
 		struct{}{},
 	}

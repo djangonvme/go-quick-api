@@ -17,9 +17,13 @@ require (
 	github.com/jinzhu/gorm v0.0.0-20190210073940-906799fef2f8
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/jinzhu/now v1.0.0 // indirect
+	github.com/lestrrat-go/file-rotatelogs v2.2.0+incompatible
+	github.com/lestrrat-go/strftime v1.0.0 // indirect
 	github.com/lib/pq v1.0.0 // indirect
 	github.com/mattn/go-isatty v0.0.5 // indirect
 	github.com/mattn/go-sqlite3 v1.10.0 // indirect
+	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
+	github.com/sirupsen/logrus v1.4.2
 	github.com/smartystreets/goconvey v0.0.0-20190222223459-a17d461953aa // indirect
 	golang.org/x/crypto v0.0.0-20190227175134-215aa809caaf // indirect
 	google.golang.org/appengine v1.4.0 // indirect
