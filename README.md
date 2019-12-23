@@ -3,14 +3,14 @@
 * 基于go web框架gin的简单封装, 因为gin没有项目目录等传统框架定义的东西, 封装的目的是扩展一些现代接口开发的必备功能, 提高开发效率, 你可以拿来即用。
 
 * 1小时入门go web开发， 为go初学者展示如何使用gin框架快速web开发，这个项目有完整示范: 
-启动server->路由定义->中间件过滤->控制器处理->数据库操作->redis缓存->返回给客户端, 这是web接口开发基本流程
+启动server->路由定义->中间件过滤->用户身份验证->控制器处理->数据库操作->redis缓存->返回给客户端, 这是web接口开发基本流程
 
 # 功能特色
 * gin框架为基础。文档： https://github.com/gin-gonic/gin
 * 数据库操作orm 用 gorm。 文档： http://gorm.book.jasperxu.com 
 * 使用 JWT 生成token, 结合redis双重验证。 文档 http://jwt.io
 * gin 使用的验证器文档: https://godoc.org/gopkg.in/go-playground/validator.v8
-
+* 日志用logrus  文档: https://github.com/sirupsen/logrus
 
 # 版本要求
 
@@ -76,6 +76,10 @@
 <br/>
 在项目根目录运行 ```go run main.go```
 
+* docker 部署 
+<br/>
+deploy/README.md
+
 # 请求示例
 
 * 登陆api
@@ -135,6 +139,8 @@
 
 见```/middleewares/api.go```
  
+
+
 
 # 扩展
 

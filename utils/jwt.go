@@ -2,8 +2,8 @@ package utils
 
 import (
 	"errors"
-	"gin-api-common/configs"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/jangozw/gin-api-common/configs"
 	"time"
 )
 

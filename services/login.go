@@ -3,11 +3,11 @@ package services
 import (
 	"errors"
 	"fmt"
-	"gin-api-common/configs"
-	"gin-api-common/consts"
-	"gin-api-common/databases"
-	"gin-api-common/models"
-	"gin-api-common/utils"
+	"github.com/jangozw/gin-api-common/configs"
+	"github.com/jangozw/gin-api-common/consts"
+	"github.com/jangozw/gin-api-common/databases"
+	"github.com/jangozw/gin-api-common/models"
+	"github.com/jangozw/gin-api-common/utils"
 	"github.com/jinzhu/gorm"
 	"time"
 )
@@ -18,7 +18,7 @@ func AppLogin(account string, pwd string) (jwtToken string, err error) {
 	if err = databases.Db.Model(&user).Where("mobile=?", account).First(&user).Error; err != nil {
 		return
 	}
-	if utils.Sha256(pwd) != user.Password {
+	if user.CheckPwd(pwd) != true {
 		return "", errors.New("invalid account or pwd")
 	}
 	var token string
@@ -44,7 +44,7 @@ func VerifyAppToken(jwtToken string) (jwt *utils.JwtCustomClaims, err error) {
 	//2,verify redis token
 	var redisToken string
 	if redisToken, err = redisGetLoginUser(jwt.UserId); err != nil {
-		return
+		return nil, errors.New("redis get user failed: " + err.Error())
 	}
 	//ok
 	if len(redisToken) > 0 && redisToken == jwt.UserToken {

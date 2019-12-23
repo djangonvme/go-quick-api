@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"gin-api-common/configs"
-	"gin-api-common/routes"
 	"github.com/gin-gonic/gin"
+	"github.com/jangozw/gin-api-common/configs"
+	"github.com/jangozw/gin-api-common/routes"
 )
 
 func main() {

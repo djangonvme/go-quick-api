@@ -1,8 +1,8 @@
 package databases
 
 import (
-	"gin-api-common/configs"
 	"github.com/gomodule/redigo/redis"
+	"github.com/jangozw/gin-api-common/configs"
 	"log"
 	"os"
 	"os/signal"

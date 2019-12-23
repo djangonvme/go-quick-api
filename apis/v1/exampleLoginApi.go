@@ -1,17 +1,17 @@
 package v1
 
 import (
-	"gin-api-common/params"
-	"gin-api-common/services"
-	"gin-api-common/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/jangozw/gin-api-common/params"
+	"github.com/jangozw/gin-api-common/services"
+	"github.com/jangozw/gin-api-common/utils"
 )
 
 //login api
 
 func Login(c *gin.Context) {
 	p := params.Login{}
-	if err := c.ShouldBind(p); err != nil {
+	if err := c.ShouldBind(&p); err != nil {
 		utils.Ctx(c).Fail(err)
 		return
 	}
@@ -27,7 +27,7 @@ func Login(c *gin.Context) {
 //logout api
 func Logout(c *gin.Context) {
 	userId := utils.Ctx(c).GetLoginUid()
-	if err := services.AppLogout(userId);err != nil {
+	if err := services.AppLogout(userId); err != nil {
 		utils.Ctx(c).Fail(err)
 		return
 	}

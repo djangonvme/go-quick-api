@@ -2,8 +2,10 @@ package models
 
 import (
 	"errors"
-	"gin-api-common/databases"
-	"gin-api-common/utils"
+	"fmt"
+	"github.com/jangozw/gin-api-common/configs"
+	"github.com/jangozw/gin-api-common/databases"
+	"github.com/jangozw/gin-api-common/utils"
 )
 
 // User 用户表
@@ -27,7 +29,24 @@ func AddUser(name, mobile, pwd string) error {
 	user := User{
 		Name:     name,
 		Mobile:   mobile,
-		Password: utils.Sha256(pwd),
+		Password: MakeUserPwd(pwd),
 	}
+	fmt.Println("insert User:", user.Password)
 	return databases.Db.Create(&user).Error
+}
+
+func FindUserByMobile(mobile string) (user User, err error) {
+	if err = databases.Db.Where("mobile=?", mobile).First(&user).Error; err != nil {
+		return
+	}
+	return user, nil
+}
+
+func MakeUserPwd(input string) string {
+	aesSecret, _ := configs.Get("encrypt", "aes_secret")
+	return utils.Sha256(input + aesSecret)
+}
+func (m *User) CheckPwd(input string) bool {
+	aesSecret, _ := configs.Get("encrypt", "aes_secret")
+	return m.Password == utils.Sha256(input+aesSecret)
 }

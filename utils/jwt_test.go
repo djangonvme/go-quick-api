@@ -29,3 +29,7 @@ func TestRandNum(t *testing.T) {
 	//fmt.Println(string(RandNum(12)))
 	fmt.Println(RandToken(), len(RandToken()))
 }
+
+func TestSha256(t *testing.T) {
+	fmt.Println(Sha256("123456" + "intimidating$"))
+}

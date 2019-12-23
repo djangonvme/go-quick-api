@@ -1,9 +1,9 @@
 package services
 
 import (
-	"gin-api-common/databases"
-	"gin-api-common/models"
-	"gin-api-common/params"
+	"github.com/jangozw/gin-api-common/databases"
+	"github.com/jangozw/gin-api-common/models"
+	"github.com/jangozw/gin-api-common/params"
 )
 
 func GetUserList(search params.SearchUserList) (data params.UserList, err error) {
