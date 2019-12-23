@@ -14,6 +14,7 @@ var confRequiredFields = map[string][]string{
 	"server":   {"listen"},
 	"database": {"user", "dbname"},
 	"redis":    {"redis_host"},
+	//"secret":   {"aes_secret"},
 }
 
 var conf *goconfig.ConfigFile

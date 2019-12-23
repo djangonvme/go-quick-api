@@ -3,7 +3,7 @@ package main
 // 一些命令行工具
 import (
 	"fmt"
-	"gin-api-common/models"
+	"github.com/jangozw/gin-api-common/models"
 )
 
 func main() {

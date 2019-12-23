@@ -2,8 +2,8 @@ package databases
 
 import (
 	"fmt"
-	"gin-api-common/configs"
 	_ "github.com/go-sql-driver/mysql" //这个不能删
+	"github.com/jangozw/gin-api-common/configs"
 	"github.com/jinzhu/gorm"
 	"log"
 	"time"
@@ -33,7 +33,7 @@ func initDatabase(confSection string) *gorm.DB {
 	c := getConnectConf(confSection)
 	db, err := gorm.Open(c.driver, c.args)
 	if err != nil {
-		log.Fatal("couldn't connect to database:", c.driver, c.args, err.Error())
+		log.Fatal("couldn't connect to database:", c.driver, ":", c.args, err.Error())
 	}
 	//config gorm db
 	db.SingularTable(true) // 全局设置表名不可以为复数形式。

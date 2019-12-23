@@ -1,10 +1,10 @@
 package v1
 
 import (
-	"gin-api-common/params"
-	"gin-api-common/services"
-	"gin-api-common/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/jangozw/gin-api-common/params"
+	"github.com/jangozw/gin-api-common/services"
+	"github.com/jangozw/gin-api-common/utils"
 )
 
 //login api

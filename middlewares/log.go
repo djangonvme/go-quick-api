@@ -1,8 +1,8 @@
 package middlewares
 
 import (
-	"gin-api-common/logs"
 	"github.com/gin-gonic/gin"
+	"github.com/jangozw/gin-api-common/logs"
 	"time"
 )
 

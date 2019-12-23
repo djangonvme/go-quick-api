@@ -76,6 +76,10 @@
 <br/>
 在项目根目录运行 ```go run main.go```
 
+* docker 部署 
+<br/>
+deploy/README.md
+
 # 请求示例
 
 * 登陆api
@@ -135,6 +139,8 @@
 
 见```/middleewares/api.go```
  
+
+
 
 # 扩展
 

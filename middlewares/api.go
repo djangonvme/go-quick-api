@@ -1,10 +1,10 @@
 package middlewares
 
 import (
-	"gin-api-common/consts"
-	"gin-api-common/services"
-	"gin-api-common/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/jangozw/gin-api-common/consts"
+	"github.com/jangozw/gin-api-common/services"
+	"github.com/jangozw/gin-api-common/utils"
 	"net/http"
 )
 

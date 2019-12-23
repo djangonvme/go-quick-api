@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"gin-api-common/consts"
 	"github.com/gin-gonic/gin"
+	"github.com/jangozw/gin-api-common/consts"
 	"net/http"
 	"time"
 )

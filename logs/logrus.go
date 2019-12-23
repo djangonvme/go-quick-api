@@ -2,8 +2,8 @@ package logs
 
 import (
 	"fmt"
-	"gin-api-common/configs"
-	"gin-api-common/consts"
+	"github.com/jangozw/gin-api-common/configs"
+	"github.com/jangozw/gin-api-common/consts"
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
@@ -31,7 +31,7 @@ func initLogrus() (*logrus.Logger, error) {
 		return nil, err
 	}
 
-	filePrefix := logDir + "api"
+	filePrefix := logDir + "/api"
 	//view latest log info via api.log, history info in api.xxx.log
 	latestLogFile := filePrefix + ".log"
 
