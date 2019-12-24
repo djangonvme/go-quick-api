@@ -75,8 +75,6 @@
     ├── response.go
     ├── time.go
     └── var.go
-
-
 ```
 
 # 安装运行
@@ -176,8 +174,6 @@ POST ```/user/add```
 
 * go 是编译型的， 每次改动代码都要重新 go build, 实时监视代码改动可用 fresh 工具: https://github.com/gravityblast/fresh
 * 将数据库中的表生成go struct 可用gormt 工具: https://github.com/xxjwxc/gormt
-
-
 
 
 
