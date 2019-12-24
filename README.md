@@ -82,8 +82,22 @@ deploy/README.md
 
 # 请求示例
 
-* 登陆api
-路由在/routes/api.go 中可以看到 ```/v1/login``` 
+* 添加用户
+路由在/routes/api.go 中可以看到 
+<br/>
+POST ```/user/add```
+```json
+{
+    "mobile": "15000000000",
+    "pwd": "123456",
+    "name": "test"
+    }
+```
+ 
+* 登陆
+路由在/routes/api.go 中可以看到 ```/login``` 
+
+
 
 <br/>
 

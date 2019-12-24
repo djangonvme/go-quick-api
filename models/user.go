@@ -31,7 +31,6 @@ func AddUser(name, mobile, pwd string) error {
 		Mobile:   mobile,
 		Password: MakeUserPwd(pwd),
 	}
-	fmt.Println("insert User:", user.Password)
 	return databases.Db.Create(&user).Error
 }
 
