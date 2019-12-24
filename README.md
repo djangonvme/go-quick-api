@@ -20,46 +20,62 @@
 # 项目结构
 
 ```cassandraql
-├── README.md
-├── apis                    //接口api相当于控制器
-│   ├── exampleLoginApi.go
-│   └── exampleUserApi.go
-├── app.ini                 //应用配置 如数据账号等
-├── cmd
+
+── README.md
+├── apis                        //api 控制器
+│   └── v1
+│       ├── exampleLoginApi.go
+│       └── exampleUserApi.go
+├── app.ini                     //配置如数据库等
+├── cmds  
 │   └── main.go
-├── configs                 //配置，读取/app.ini
+├── configs
 │   └── config.go
-├── consts                  //一些常量或redis的key
+├── consts
 │   ├── api.go
+│   ├── common.go
 │   └── redis.go
-├── databases               //初始化mysql,redis
+├── databases
 │   ├── dbinit.go
 │   └── redis.go
-├── docs                    //示例中用的sql
+├── deploy                       //docker 部署方法
+│   ├── app.build
+│   ├── centos-go.build
+│   └── readme.md
+├── docs                        //示例sql
 │   └── sql.sql
 ├── go.mod
 ├── go.sum
-├── main.go                 //主入口,启动http服务,初始化路由
-├── middlewares             // 中间件如验证token
-│   └── api.go
-├── models                  //数据表
+├── logs
+│   └── logrus.go
+├── main.go                     // 入口
+├── middlewares                 //ROUTE中间价
+│   ├── api.go
+│   └── log.go
+├── models                      // MODEL
 │   ├── model.go
 │   ├── user.go
 │   └── userToken.go
-├── params                  //接口参数结构定义
+├── params
 │   └── userApi.go
-├── routes                  //定义路由
+├── routes                      // 定义route
 │   └── api.go
-├── services                //具体业务处理
+├── services
 │   ├── login.go
 │   └── user.go
-└── utils                   //常用功能
-    ├── apiResponse.go      //接口返回的数据格式
+├── start.sh                    // docker exec start...
+├── tmp
+│   ├── runner-build
+│   └── runner-build-errors.log
+└── utils
     ├── encrypt.go
-    ├── jwt.go              //json web token 生成
+    ├── http.go
+    ├── jwt.go
     ├── jwt_test.go
+    ├── response.go
     ├── time.go
     └── var.go
+
 
 ```
 
