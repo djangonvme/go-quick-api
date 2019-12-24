@@ -40,6 +40,7 @@ func initDatabase(confSection string) *gorm.DB {
 	db.DB().SetMaxIdleConns(20)
 	db.DB().SetMaxOpenConns(100)
 	db.DB().SetConnMaxLifetime(3600 * time.Second)
+	//log all sql in console
 	db.LogMode(true)
 	db.Callback().Create().Replace("gorm:update_time_stamp", func(scope *gorm.Scope) {
 		scope.SetColumn("CreatedAt", time.Now().Unix())

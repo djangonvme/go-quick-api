@@ -1,12 +1,10 @@
 FROM centos-go:v1
 # Projects
 RUN mkdir -p /data/projects/ginapi
-RUN mkdir /logs && chmod 777 /logs
+RUN mkdir /logs
 EXPOSE 8080
 COPY . /data/projects/ginapi
-RUN mkdir /data/projects/ginapi/bin && chmod 777 /data/projects/ginapi/bin
+RUN mkdir /data/projects/ginapi/bin
 WORKDIR /data/projects/ginapi
 RUN go build -o bin/gin-api-common ./main.go
 RUN chmod u+x ./start.sh
-
-
