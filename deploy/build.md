@@ -1,3 +1,5 @@
+# ! This dir are discard files
+
 Deploy with Docker
 
 > At project root dir, do the operations below by steps:

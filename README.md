@@ -87,12 +87,23 @@
 * 执行 /docs/sql.sql 创建示范的表
 
 * 启动
-<br/>
+
 在项目根目录运行 ```go run main.go```
 
+
+```text
+[GIN-debug] GET    /test                     --> github.com/jangozw/gin-api-common/routes.registerNoLogin.func1 (1 handlers)
+[GIN-debug] POST   /user/add                 --> github.com/jangozw/gin-api-common/apis/v1.AddUser (1 handlers)
+[GIN-debug] POST   /login                    --> github.com/jangozw/gin-api-common/apis/v1.Login (1 handlers)
+[GIN-debug] POST   /v1/logout                --> github.com/jangozw/gin-api-common/apis/v1.Logout (3 handlers)
+[GIN-debug] GET    /v1/user/list             --> github.com/jangozw/gin-api-common/apis/v1.UserList (3 handlers)
+[GIN-debug] GET    /v1/user/detail           --> github.com/jangozw/gin-api-common/apis/v1.UserDetail (3 handlers)
+```
+
+
 * docker 部署 
-<br/>
-deploy/README.md
+
+见 docker-build.md
 
 # 请求示例
 
@@ -172,7 +183,7 @@ POST ```/user/add```
 
 # 扩展
 
-* go 是编译型的， 每次改动代码都要重新 go build, 实时监视代码改动可用 fresh 工具: https://github.com/gravityblast/fresh
+* go 是编译型的， 开发期间每次改动代码都要重新 go build, 实时监视代码改动可用 fresh 工具: https://github.com/gravityblast/fresh
 * 将数据库中的表生成go struct 可用gormt 工具: https://github.com/xxjwxc/gormt
 
 
