@@ -38,10 +38,6 @@
 ├── databases
 │   ├── dbinit.go
 │   └── redis.go
-├── deploy                       //docker 部署方法
-│   ├── app.build
-│   ├── centos-go.build
-│   └── readme.md
 ├── docs                        //示例sql
 │   └── sql.sql
 ├── go.mod
