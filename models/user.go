@@ -2,7 +2,6 @@ package models
 
 import (
 	"errors"
-	"fmt"
 	"github.com/jangozw/gin-api-common/configs"
 	"github.com/jangozw/gin-api-common/databases"
 	"github.com/jangozw/gin-api-common/utils"
