@@ -60,6 +60,6 @@ func getConnectConf(section string) *connectConf {
 	}
 	return &connectConf{
 		driver: c["schema"],
-		args:   fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=%s", c["user"], c["pwd"], c["host"], c["port"], c["dbname"], c["timezone"]),
+		args:   fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=%s", c["user"], c["pwd"], c["host"], c["dbname"], c["timezone"]),
 	}
 }

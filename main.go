@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jangozw/gin-api-common/configs"
+	"github.com/jangozw/gin-api-common/logs"
 	"github.com/jangozw/gin-api-common/routes"
 )
 
 func main() {
+	logs.Logger().Info("------------ starting server! --------------")
 	engine := gin.New()
 	routes.RegisterRouters(engine)
 	if port, err := configs.GetHttpPort(); err != nil {
