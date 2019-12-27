@@ -105,8 +105,11 @@
 
 * 添加用户
 路由在/routes/api.go 中可以看到 
-<br/>
-POST ```/user/add```
+
+
+POST  ```/user/add```
+
+
 ```json
 {
     "mobile": "15000000000",
@@ -116,11 +119,12 @@ POST ```/user/add```
 ```
  
 * 登陆
+
+
 路由在/routes/api.go 中可以看到 ```/login``` 
 
 
 
-<br/>
 
 参数:
 ```json
@@ -139,11 +143,13 @@ POST ```/user/add```
 ```
 
 * 用户列表
-<br/>
+
+
 路由: ```/v1/user/list```
-<br/>
+
+
 参数: 无 
-<br/>
+
 
 响应:
 ```json
