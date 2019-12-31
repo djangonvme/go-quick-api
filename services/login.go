@@ -3,9 +3,8 @@ package services
 import (
 	"errors"
 	"fmt"
-	"github.com/jangozw/gin-api-common/configs"
 	"github.com/jangozw/gin-api-common/consts"
-	"github.com/jangozw/gin-api-common/databases"
+	"github.com/jangozw/gin-api-common/libs"
 	"github.com/jangozw/gin-api-common/models"
 	"github.com/jangozw/gin-api-common/utils"
 	"github.com/jinzhu/gorm"
@@ -15,7 +14,7 @@ import (
 //try login a user and return the token to client, client need to store the receive token and put it in http header before api request
 func AppLogin(account string, pwd string) (jwtToken string, err error) {
 	var user models.User
-	if err = databases.Db.Model(&user).Where("mobile=?", account).First(&user).Error; err != nil {
+	if err = libs.Db.Model(&user).Where("mobile=?", account).First(&user).Error; err != nil {
 		return
 	}
 	if user.CheckPwd(pwd) != true {
@@ -30,7 +29,7 @@ func AppLogin(account string, pwd string) (jwtToken string, err error) {
 }
 
 func AppLogout(userId int64) error {
-	return databases.DelKey(loginUserRedisKey(userId))
+	return libs.Redis.DelKey(loginUserRedisKey(userId))
 }
 
 //Verify token from request headers every time
@@ -58,19 +57,19 @@ func VerifyAppToken(jwtToken string) (jwt *utils.JwtCustomClaims, err error) {
 func refreshUserToken(user models.User) (token string, err error) {
 	token = utils.RandToken()
 	var userToken models.UserToken
-	if err = databases.Db.Model(&models.UserToken{}).Where("user_id=?", user.ID).First(&userToken).Error; err != nil && err != gorm.ErrRecordNotFound {
+	if err = libs.Db.Model(&models.UserToken{}).Where("user_id=?", user.ID).First(&userToken).Error; err != nil && err != gorm.ErrRecordNotFound {
 		return
 	}
-	expSeconds := configs.GetTokenExpireSeconds()
+	expSeconds := libs.Config.GetTokenExpireSeconds()
 	if userToken.ID == 0 {
 		t := models.UserToken{
 			UserID:    user.ID,
 			Token:     token,
 			ExpiredAt: time.Now().Unix() + expSeconds,
 		}
-		err = databases.Db.Create(&t).Error
+		err = libs.Db.Create(&t).Error
 	} else {
-		err = databases.Db.Model(&models.UserToken{}).Where("id=?", userToken.ID).Update(map[string]interface{}{
+		err = libs.Db.Model(&models.UserToken{}).Where("id=?", userToken.ID).Update(map[string]interface{}{
 			"expired_at": time.Now().Unix() + expSeconds,
 			"token":      token,
 		}).Error
@@ -83,7 +82,7 @@ func refreshUserToken(user models.User) (token string, err error) {
 
 //set user's token in expires
 func redisSetLoginUser(userId int64, token string, exp int64) error {
-	if err := databases.SetKey(loginUserRedisKey(userId), token, exp); err != nil {
+	if err := libs.Redis.SetKey(loginUserRedisKey(userId), token, exp); err != nil {
 		return errors.New(fmt.Sprintf("redis set login user failed:%d, %s", userId, err.Error()))
 	}
 	return nil
@@ -91,7 +90,7 @@ func redisSetLoginUser(userId int64, token string, exp int64) error {
 
 //
 func redisGetLoginUser(userId int64) (string, error) {
-	return databases.GetKey(loginUserRedisKey(userId))
+	return libs.Redis.GetKey(loginUserRedisKey(userId))
 }
 func loginUserRedisKey(userId int64) string {
 	return fmt.Sprintf("%s_%d", consts.RedisKeyLoginUser, userId)

@@ -3,13 +3,13 @@ package utils
 import (
 	"errors"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/jangozw/gin-api-common/configs"
+	"github.com/jangozw/gin-api-common/libs"
 	"time"
 )
 
 //签发token的签名秘钥
 func getJwtSecret() (b []byte, err error) {
-	if s, err := configs.Get("encrypt", "jwt_secret"); err != nil {
+	if s, err := libs.Config.Get("encrypt", "jwt_secret"); err != nil {
 		return b, errors.New("couldn't get the config key : jwt_secret")
 	} else {
 		if len(s) == 0 {
@@ -39,7 +39,7 @@ func GenerateJwtToken(p AppPayload) (jwtToken string, err error) {
 	c := JwtCustomClaims{
 		AppPayload: p,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Unix() + configs.GetTokenExpireSeconds(),
+			ExpiresAt: time.Now().Unix() + libs.Config.GetTokenExpireSeconds(),
 			Issuer:    "test", //签发者
 		},
 	}

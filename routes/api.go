@@ -8,13 +8,14 @@ import (
 )
 
 func RegisterRouters(router *gin.Engine) *gin.Engine {
+	router.Use(middlewares.CommonMiddleware, middlewares.LoggerToFile())
 	registerNoLogin(router)
 	registerV1(router)
 	return router
 }
 
 func registerV1(router *gin.Engine) {
-	router.Group("/v1", middlewares.LoggerToFile(), middlewares.ApiMiddleware).
+	router.Group("/v1", middlewares.ApiMiddleware).
 		POST("/logout", v1.Logout).
 		GET("/user/list", v1.UserList).
 		GET("/user/detail", v1.UserDetail)

@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jangozw/gin-api-common/logs"
+	"github.com/jangozw/gin-api-common/libs"
 	"time"
 )
 
@@ -26,7 +26,7 @@ func LoggerToFile() gin.HandlerFunc {
 		logDone := make(chan bool)
 		go func() {
 
-			logs.Logger().Infof("| %3d | %3v | %5s | %s  %s |",
+			libs.Logger.Infof("| %3d | %3v | %5s | %s  %s |",
 				status,
 				latency,
 				ip,

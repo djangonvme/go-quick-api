@@ -1,7 +1,7 @@
 package services
 
 import (
-	"github.com/jangozw/gin-api-common/databases"
+	"github.com/jangozw/gin-api-common/libs"
 	"github.com/jangozw/gin-api-common/models"
 	"github.com/jangozw/gin-api-common/params"
 )
@@ -10,7 +10,7 @@ func GetUserList(search params.SearchUserList) (data params.UserList, err error)
 	var users []models.User
 	var total int64
 	var pageSize int64 = 20
-	query := databases.Db.Model(&models.User{})
+	query := libs.Db.Model(&models.User{})
 	if search.Mobile != "" {
 		query = query.Where("mobile = ?", search.Mobile)
 	}

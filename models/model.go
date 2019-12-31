@@ -8,6 +8,7 @@ type Model struct {
 	UpdatedAt int64
 	DeletedAt *time.Time
 }
+
 /*
 create table `user` (
 	`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
