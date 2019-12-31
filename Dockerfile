@@ -9,8 +9,9 @@ WORKDIR /data/gin-demo
 COPY . /data/gin-demo
 RUN go build -v -o gin-demo /data/gin-demo
 
-#alpine-base is a alpine image with Asia/Shanghai timezone
-FROM alpine-base:latest
+# alpine-base is a alpine image with Asia/Shanghai timezone
+FROM alpine:latest
+# FROM alpine-base:latest
 RUN mkdir /logs
 COPY --from=build-env /data/gin-demo/app.ini /data/gindemo.ini
 COPY --from=build-env /data/gin-demo/gin-demo /data/gin-demo
