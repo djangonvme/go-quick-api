@@ -20,49 +20,48 @@
 # 项目结构
 
 ```cassandraql
-
-── README.md
-├── apis                        //api 控制器
+├── Dockerfile
+├── README.md
+├── apis
 │   └── v1
 │       ├── exampleLoginApi.go
 │       └── exampleUserApi.go
-├── app.ini                     //配置如数据库等
-├── cmds  
+├── app.ini
+├── cmds
 │   └── main.go
-├── configs
-│   └── config.go
 ├── consts
 │   ├── api.go
 │   ├── common.go
 │   └── redis.go
-├── databases
-│   ├── dbinit.go
-│   └── redis.go
-├── docs                        //示例sql
+├── docker-build.md
+├── docs
 │   └── sql.sql
 ├── go.mod
 ├── go.sum
-├── logs
-│   └── logrus.go
-├── main.go                     // 入口
-├── middlewares                 //ROUTE中间价
+├── libs
+│   ├── config.go
+│   ├── db.go
+│   ├── logger.go
+│   └── redis.go
+├── main
+├── main.go
+├── middlewares
 │   ├── api.go
+│   ├── common.go
 │   └── log.go
-├── models                      // MODEL
+├── models
 │   ├── model.go
 │   ├── user.go
 │   └── userToken.go
 ├── params
 │   └── userApi.go
-├── routes                      // 定义route
+├── routes
 │   └── api.go
 ├── services
 │   ├── login.go
 │   └── user.go
-├── start.sh                    // docker exec start...
 ├── tmp
-│   ├── runner-build
-│   └── runner-build-errors.log
+│   └── runner-build
 └── utils
     ├── encrypt.go
     ├── http.go
@@ -71,6 +70,7 @@
     ├── response.go
     ├── time.go
     └── var.go
+
 ```
 
 # 安装运行
