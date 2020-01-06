@@ -11,7 +11,8 @@ import (
 var Config *config
 
 // it's soft link to this project's root app.ini
-const configFile = "/data/gindemo.ini"
+
+const configFile = "/data/GinApiCommon_config.ini"
 
 type config struct {
 	*goconfig.ConfigFile
@@ -29,7 +30,7 @@ var confRequiredFields = map[string][]string{
 
 func init() {
 	if c, err := goconfig.LoadConfigFile(configFile); err != nil {
-		panic("Couldn't load config file " + configFile )
+		panic("Couldn't load config file " + configFile)
 	} else {
 		Config = &config{c}
 	}

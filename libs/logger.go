@@ -50,12 +50,12 @@ func initLogrus() (*logrus.Logger, error) {
 		logrus.FatalLevel: logWriter,
 	}
 
-		formatter := &logrus.JSONFormatter{
-			//设置日志格式
-			TimestampFormat: consts.TimeLayoutYmdHis,
-			//PrettyPrint: true,
+	formatter := &logrus.JSONFormatter{
+		//设置日志格式
+		TimestampFormat: consts.TimeLayoutYmdHis,
+		//PrettyPrint: true,
 
-		}
+	}
 	//formatter := &logrus.TextFormatter{
 	//	TimestampFormat: consts.TimeLayoutYmdHis,
 	//}

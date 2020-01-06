@@ -7,9 +7,14 @@ import (
 	"github.com/jangozw/gin-api-common/routes"
 )
 
-func main() {
+// build info
+var (
+	Version string
+	Build   string
+)
 
-	libs.Logger.Info("------------ starting server! --------------")
+func main() {
+	libs.Logger.Info("Starting server...", "version=", Version, "build=", Build)
 	engine := gin.New()
 	routes.RegisterRouters(engine)
 	if port, err := libs.Config.GetHttpPort(); err != nil {

@@ -5,7 +5,7 @@ Deploy with Docker
 # 1, build image
 
 ```shell script
-docker build -t gindemo:v1 -f ./Dockerfile . 
+docker build -t gin-api-common:latest -f ./Dockerfile . 
 ```
 
 # 2, mysql
@@ -28,9 +28,9 @@ docker run -itd --name redis -p 6378:6379 redis
 # for example: connectMysql("mysql-ci:3306", "root", "123456"), the port 3306 has no business with mysql container exposed ports
 # Actually the alias mysql-ci means a ip in docker container, every container has a ip
 # tip: alias mysql-ci mustn't be added to /etc/host as domain redirect to any ip in your original computer!
-docker run -itd --name gindemo  --link mysql:mysql-ci --link redis:redis-ci -p 8081:8080 gindemo:v1
+docker run -itd --name gin-api-common  --link mysql:mysql-ci --link redis:redis-ci -p 8081:8080 gin-api-common:latest
 # logs
-docker logs gindemo
+docker logs gin-api-common
 
 ```
 
@@ -39,10 +39,15 @@ docker logs gindemo
 ```shell script
 
 # remove and rebuild
-docker stop gindemo && docker rm gindemo && docker rmi gindemo:v1 && docker build -t gindemo:v1 -f ./Dockerfile .
+docker stop gin-api-common && docker rm gin-api-common && docker rmi gin-api-common:latest && docker build -t gin-api-common:latest -f ./Dockerfile .
 
-docker run -itd --name gindemo  --link mysql:mysql-ci --link redis:redis-ci -p 8081:8080 gindemo:v1
+docker run -itd --name gin-api-common  --link mysql:mysql-ci --link redis:redis-ci -p 8081:8080 gin-api-common:latest 
 # see start logs
-docker logs gindemo
+docker logs gin-api-common
+# entry try one way
+docker exec -it gin-api-common sh 
+docker exec -it gin-api-common /bin/bash
+docker exec -it gin-api-common bash
+#--------
 
 ```

@@ -26,7 +26,7 @@ func initDatabase(confSection string) *gorm.DB {
 	c := getConnectConf(confSection)
 	db, err := gorm.Open(c.driver, c.args)
 	if err != nil {
-		panic(fmt.Sprintf("couldn't connect to database [%s], connectArgs: %s, errorMsg: %s", c.driver,  c.args, err.Error()))
+		panic(fmt.Sprintf("couldn't connect to database [%s], connectArgs: %s, errorMsg: %s", c.driver, c.args, err.Error()))
 	}
 	//config gorm db
 	db.SingularTable(true) // 全局设置表名不可以为复数形式。
