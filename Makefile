@@ -9,8 +9,17 @@ LDFLAGS=-ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD}"
 build:
 	go build ${LDFLAGS} -o ${BINARY}
 # build windows
-build_win:
+build-win:
 	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build  ${LDFLAGS} -o ${BINARY}.exe
+#build linux
+build-linux:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o ${BINARY}
+# docker build (see docker-build.md)
+docker-build:
+	docker stop gin-api-common && docker rm gin-api-common && docker rmi gin-api-common:latest && docker build -t gin-api-common:latest -f ./Dockerfile .
+	docker run -itd --name gin-api-common  --link mysql:mysql-ci --link redis:redis-ci -p 8080:8080 gin-api-common:latest
+	docker logs gin-api-common
+
 # Installs our project: copies binaries
 install:
 	go install ${LDFLAGS}

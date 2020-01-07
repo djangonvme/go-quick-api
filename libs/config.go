@@ -1,6 +1,7 @@
 package libs
 
 import (
+	"flag"
 	"fmt"
 	"github.com/Unknwon/goconfig"
 	"os"
@@ -10,9 +11,7 @@ import (
 //use config
 var Config *config
 
-// it's soft link to this project's root app.ini
-
-const configFile = "/data/GinApiCommon_config.ini"
+var configFile string
 
 type config struct {
 	*goconfig.ConfigFile
@@ -27,10 +26,19 @@ var confRequiredFields = map[string][]string{
 	"redis":    {"redis_host"},
 	//"secret":   {"aes_secret"},
 }
-
+// read config file from console args
 func init() {
+	cmdArgsConfig := flag.String("config", "config.ini", "config file path")
+	flag.Parse()
+	configFile = *cmdArgsConfig
+	if ok, err:= isPathExists(*cmdArgsConfig);err != nil {
+		panic(fmt.Sprintf("init config err: %s", err.Error()))
+	} else if ! ok  {
+		panic(fmt.Sprintf("config file %s is not exists, you can start with arg -config={path}", *cmdArgsConfig))
+	}
+	fmt.Println("Init config, configFile is", configFile)
 	if c, err := goconfig.LoadConfigFile(configFile); err != nil {
-		panic("Couldn't load config file " + configFile)
+		panic(fmt.Sprintf("Couldn't load config file %s, %s", configFile, err.Error()))
 	} else {
 		Config = &config{c}
 	}
@@ -57,7 +65,7 @@ func checkRequired() {
 
 	logDir := Config.GetLogDir()
 
-	if err := mkDirIfNotExists(logDir); err != nil {
+	if err := mkPathIfNotExists(logDir); err != nil {
 		fmt.Println("Error: mkdir " + logDir + " failed, " + err.Error())
 		os.Exit(0)
 	}
@@ -101,7 +109,7 @@ func (c *config) GetLogDir() string {
 }
 
 // 判断文件夹是否存在
-func isDirExists(dirPath string) (bool, error) {
+func isPathExists(dirPath string) (bool, error) {
 	_, err := os.Stat(dirPath)
 	if err == nil {
 		return true, nil
@@ -112,8 +120,8 @@ func isDirExists(dirPath string) (bool, error) {
 	return false, err
 }
 
-func mkDirIfNotExists(dirPath string) error {
-	exist, err := isDirExists(dirPath)
+func mkPathIfNotExists(dirPath string) error {
+	exist, err := isPathExists(dirPath)
 	if err != nil {
 		return err
 	}

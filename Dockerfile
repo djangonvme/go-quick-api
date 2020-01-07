@@ -15,4 +15,4 @@ RUN mkdir /logs
 COPY --from=build-env /data/gin-api-common/config.ini /data/GinApiCommon_config.ini
 COPY --from=build-env /data/gin-api-common/GinApiCommon /data/GinApiCommon
 EXPOSE 8080
-ENTRYPOINT [ "/data/GinApiCommon" ]
+ENTRYPOINT [ "/data/GinApiCommon", "-config=/data/GinApiCommon_config.ini"]
