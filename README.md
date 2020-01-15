@@ -34,8 +34,6 @@
 │   ├── common.go
 │   └── redis.go
 ├── docker-build.md
-├── docs
-│   └── sql.sql
 ├── go.mod
 ├── go.sum
 ├── libs
@@ -80,7 +78,6 @@
 
 * 配置/app.ini 的配置项,主要数据库和redis账号
 
-* 执行 /docs/sql.sql 创建示范的表
 
 * 启动
 

@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Unknwon/goconfig"
+	"log"
 	"os"
 	"strconv"
 )
@@ -26,19 +27,23 @@ var confRequiredFields = map[string][]string{
 	"redis":    {"redis_host"},
 	//"secret":   {"aes_secret"},
 }
+
 // read config file from console args
 func init() {
 	cmdArgsConfig := flag.String("config", "config.ini", "config file path")
 	flag.Parse()
 	configFile = *cmdArgsConfig
-	if ok, err:= isPathExists(*cmdArgsConfig);err != nil {
-		panic(fmt.Sprintf("init config err: %s", err.Error()))
-	} else if ! ok  {
-		panic(fmt.Sprintf("config file %s is not exists, you can start with arg -config={path}", *cmdArgsConfig))
+	if ok, err := isPathExists(*cmdArgsConfig); err != nil {
+		log.Println(fmt.Sprintf("init config err: %s", err.Error()))
+		os.Exit(0)
+	} else if !ok {
+		log.Println(fmt.Sprintf("config file %s is not exists, you can start with arg -config={path}", *cmdArgsConfig))
+		os.Exit(0)
 	}
 	fmt.Println("Init config, configFile is", configFile)
 	if c, err := goconfig.LoadConfigFile(configFile); err != nil {
-		panic(fmt.Sprintf("Couldn't load config file %s, %s", configFile, err.Error()))
+		fmt.Println(fmt.Sprintf("Couldn't load config file %s, %s", configFile, err.Error()))
+		os.Exit(0)
 	} else {
 		Config = &config{c}
 	}

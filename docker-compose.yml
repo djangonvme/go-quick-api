@@ -1,0 +1,33 @@
+version: '3'
+services:
+  ginapicommon:
+    container_name: ginapicommon
+    build:
+      context: .
+      dockerfile: Dockerfile
+    links:
+      - redis:redis_ginapicommon
+      - mysql:mysql_ginapicommon
+    ports:
+      - 8080:8080
+    depends_on:
+      - redis
+      - mysql
+  redis:
+    image: "redis:latest"
+    container_name: ginapicommon_redis
+    ports:
+    - 6381:6379
+  mysql:
+    container_name: ginapicommon_mysql        # 指定容器的名称
+    build:
+      context: ./deploy
+      dockerfile: mysql.build
+    ports:
+      - "3309:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_HOST: ${MYSQL_ROOT_HOST}
+    volumes:
+      - "${MYSQL_DOCKER_DIR}/conf:/etc/mysql/conf.d/"      # 挂载配置文件目录
+      #- "${MYSQL_DOCKER_DIR}/data:/var/lib/mysql"  # 挂载数据目录,便于备份,重新构建时候数据目录先删掉，启动会自动创建

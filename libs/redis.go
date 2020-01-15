@@ -2,6 +2,7 @@ package libs
 
 import (
 	redigo "github.com/gomodule/redigo/redis"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -20,9 +21,10 @@ func init() {
 }
 
 func newRedisPool() *redisPool {
-	conf, err := Config.GetSection("redis")
+	conf, err := Config.Section("redis")
 	if err != nil {
-		panic("Start redis failed! couldn't get config")
+		log.Println("Start redis failed! couldn't get config")
+		os.Exit(0)
 	}
 	pool := &redigo.Pool{
 		MaxIdle:     5,                 // idle的列表长度, 空闲的线程数

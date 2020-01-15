@@ -5,6 +5,7 @@ import (
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
+	"log"
 	"os"
 	"time"
 )
@@ -14,7 +15,8 @@ var Logger *logrus.Logger
 
 func init() {
 	if l, err := initLogrus(); err != nil {
-		panic("init libs.logrus failed " + err.Error())
+		log.Println("init libs.logrus failed " + err.Error())
+		os.Exit(0)
 	} else {
 		Logger = l
 	}
@@ -38,9 +40,9 @@ func initLogrus() (*logrus.Logger, error) {
 
 	logWriter, err := rotatelogs.New(
 		filePrefix+".%Y%m%d%H.log",
-		rotatelogs.WithLinkName(latestLogFile),   // 生成软链，指向最新日志文件
-		rotatelogs.WithMaxAge(1*24*time.Hour),    // 文件最大保存时间
-		rotatelogs.WithRotationTime(1*time.Hour), // 日志切割时间间隔
+		rotatelogs.WithLinkName(latestLogFile),    // 生成软链，指向最新日志文件
+		rotatelogs.WithMaxAge(30*24*time.Hour),    // 文件最大保存时间
+		rotatelogs.WithRotationTime(24*time.Hour), // 日志切割时间间隔
 	)
 	if err != nil {
 		return nil, err
