@@ -1,8 +1,8 @@
 package libs
 
 import (
+	"fmt"
 	redigo "github.com/gomodule/redigo/redis"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -23,7 +23,7 @@ func init() {
 func newRedisPool() *redisPool {
 	conf, err := Config.Section("redis")
 	if err != nil {
-		log.Println("Start redis failed! couldn't get config")
+		fmt.Println("Start redis failed! couldn't get config")
 		os.Exit(0)
 	}
 	pool := &redigo.Pool{

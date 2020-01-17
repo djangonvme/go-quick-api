@@ -7,15 +7,14 @@ import (
 	"github.com/jangozw/gin-api-common/routes"
 	"log"
 )
-
-// build info
+// makefile 中构建时候赋值
 var (
 	Version string
 	Build   string
 )
 
 func main() {
-	libs.Logger.Info("Starting server...", "version=", Version, "build=", Build)
+	libs.Logger.Info("app is starting", "version=", Version, "build=", Build)
 	engine := gin.New()
 	routes.RegisterRouters(engine)
 	if port, err := libs.Config.GetHttpPort(); err != nil {

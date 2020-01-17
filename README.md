@@ -11,6 +11,7 @@
 * 使用 JWT 生成token, 结合redis双重验证。 文档 http://jwt.io
 * gin 使用的验证器文档: https://godoc.org/gopkg.in/go-playground/validator.v8
 * 日志用logrus  文档: https://github.com/sirupsen/logrus
+* docker 部署, docker-compose 编排容器一键启动
 
 # 版本要求
 
@@ -21,19 +22,17 @@
 
 ```cassandraql
 ├── Dockerfile
+├── Makefile
 ├── README.md
 ├── apis
 │   └── v1
 │       ├── exampleLoginApi.go
 │       └── exampleUserApi.go
-├── app.ini
-├── cmds
-│   └── main.go
+├── config.ini
 ├── consts
 │   ├── api.go
 │   ├── common.go
 │   └── redis.go
-├── docker-build.md
 ├── go.mod
 ├── go.sum
 ├── libs
@@ -41,7 +40,6 @@
 │   ├── db.go
 │   ├── logger.go
 │   └── redis.go
-├── main
 ├── main.go
 ├── middlewares
 │   ├── api.go
@@ -58,8 +56,6 @@
 ├── services
 │   ├── login.go
 │   └── user.go
-├── tmp
-│   └── runner-build
 └── utils
     ├── encrypt.go
     ├── http.go
@@ -69,51 +65,39 @@
     ├── time.go
     └── var.go
 
+
 ```
 
-# 安装运行
+# 一键启动
+根目录执行： 
 
-* 下载依赖
-在项目根目录运行 ```go mod download```
-
-* 配置/app.ini 的配置项,主要数据库和redis账号
-
-
-* 启动
-
-在项目根目录运行 ```go run main.go```
+```
+docker-compose up
+```
+启动完成后：
 
 
-```text
-[GIN-debug] GET    /test                     --> github.com/jangozw/gin-api-common/routes.registerNoLogin.func1 (1 handlers)
-[GIN-debug] POST   /user/add                 --> github.com/jangozw/gin-api-common/apis/v1.AddUser (1 handlers)
-[GIN-debug] POST   /login                    --> github.com/jangozw/gin-api-common/apis/v1.Login (1 handlers)
-[GIN-debug] POST   /v1/logout                --> github.com/jangozw/gin-api-common/apis/v1.Logout (3 handlers)
-[GIN-debug] GET    /v1/user/list             --> github.com/jangozw/gin-api-common/apis/v1.UserList (3 handlers)
-[GIN-debug] GET    /v1/user/detail           --> github.com/jangozw/gin-api-common/apis/v1.UserDetail (3 handlers)
+打开浏览器访问： http://127.0.0.1:8080 看效果
+```cassandraql
+⇒  curl http://127.0.0.1:8080/
+{"code":200,"msg":"请求成功","timestamp":1559253308,"data":"Welcome!"}%
 ```
 
+# 重新全部构建并启动：
 
-* docker 部署 
+```cassandraql
+docker stop ginapicommon_main ginapicommon_redis  ginapicommon_mysql
+docker rm ginapicommon_main ginapicommon_redis  ginapicommon_mysql
+docker-compose build --no-cache
+docker-compose up
+```
 
-见 docker-build.md
 
 # 请求示例
 
 * 添加用户
 路由在/routes/api.go 中可以看到 
 
-
-POST  ```/user/add```
-
-
-```json
-{
-    "mobile": "15000000000",
-    "pwd": "123456",
-    "name": "test"
-    }
-```
  
 * 登陆
 
@@ -138,6 +122,32 @@ POST  ```/user/add```
     }
 }
 ```
+
+客户端要将 token 保存， 然后下次请求的HEADER 中 Authorization的值设为token
+
+
+* 添加用户
+
+请求：
+
+
+POST  ```/user/add```
+header 中Authorization的值设为token
+
+```json
+{
+    "mobile": "15000000000",
+    "pwd": "123456",
+    "name": "test"
+    }
+```
+返回：
+
+
+成功
+
+
+
 
 * 用户列表
 

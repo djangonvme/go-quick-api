@@ -9,3 +9,5 @@
 /gin-api-common
 /GinApiCommon
 /*.exe
+/deploy/mysql/dbdata
+/start.sh

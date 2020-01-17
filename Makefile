@@ -1,5 +1,5 @@
 # This how we want to name the binary output
-BINARY=GinApiCommon
+BINARY=ginapicommon
 # These are the values we want to pass for VERSION  and BUILD
 VERSION=1.0.0
 BUILD=`date +%Y-%m-%d^%H:%M:%S`
@@ -15,16 +15,8 @@ build-win:
 build-linux:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o ${BINARY}
 # docker build (see docker-build.md)
-docker-rebuild:
-	docker stop gin-api-common && docker rm gin-api-common && docker rmi gin-api-common:latest && docker build -t gin-api-common:latest -f ./Dockerfile .
-	docker run -itd --name gin-api-common  --link mysql:mysql-ci --link redis:redis-ci -p 8080:8080 gin-api-common:latest
-	docker logs gin-api-common
-#
-docker-build:
-	docker build -t gin-api-common:latest -f ./Dockerfile .
-	docker run -itd --name gin-api-common  --link mysql:mysql-ci --link redis:redis-ci -p 8080:8080 gin-api-common:latest
-	docker logs gin-api-common
-
+docker:
+	docker-compose up
 # Installs our project: copies binaries
 install:
 	go install ${LDFLAGS}
