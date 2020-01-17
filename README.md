@@ -11,7 +11,7 @@
 * 使用 JWT 生成token, 结合redis双重验证。 文档 http://jwt.io
 * gin 使用的验证器文档: https://godoc.org/gopkg.in/go-playground/validator.v8
 * 日志用logrus  文档: https://github.com/sirupsen/logrus
-* docker 部署, docker-compose 编排容器一键启动
+* docker 部署, docker-compose 编排容器一键启动整套服务
 
 # 版本要求
 
@@ -74,7 +74,16 @@
 ```
 docker-compose up
 ```
-启动完成后：
+启动完成后 docker ps 查看已经启动了3个容器：
+```cassandraql
+$ docker ps
+
+CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS              PORTS                               NAMES
+7c6e7d32b784        ginapicommon_web     "dockerize -wait tcp…"   24 minutes ago      Up 24 minutes       0.0.0.0:8080->8080/tcp              ginapicommon_main
+f32c1cf52315        redis:latest         "docker-entrypoint.s…"   24 minutes ago      Up 24 minutes       0.0.0.0:6380->6379/tcp              ginapicommon_redis
+76382ed6fde1        ginapicommon_mysql   "docker-entrypoint.s…"   24 minutes ago      Up 24 minutes       33060/tcp, 0.0.0.0:3309->3306/tcp   ginapicommon_mysql
+```
+
 
 
 打开浏览器访问： http://127.0.0.1:8080 看效果
