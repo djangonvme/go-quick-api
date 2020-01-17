@@ -18,4 +18,4 @@ COPY --from=build-env /gin-api-common/ginapicommon /usr/local/bin/
 RUN mkdir /logs
 EXPOSE 8080
 # ENTRYPOINT changed to docker-compose.yml `command`
-#ENTRYPOINT [ "GinApiCommon", "-config=/GinApiCommon_config.ini"]
+#ENTRYPOINT [ "ginapicommon", "-config=/ginApicommon_config.ini"]

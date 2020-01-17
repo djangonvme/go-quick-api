@@ -1,4 +1,5 @@
 # gin-api-common 
+github: https://github.com/jangozw/gin-api-common
 
 * 基于go web框架gin的简单封装, 因为gin没有项目目录等传统框架定义的东西, 封装的目的是扩展一些现代接口开发的必备功能, 提高开发效率, 你可以拿来即用。
 
