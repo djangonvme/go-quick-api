@@ -19,65 +19,15 @@ github: https://github.com/jangozw/gin-api-common
  * go1.11+
  * 使用 go modules 包管理
 
-# 项目结构
-
-```cassandraql
-├── Dockerfile
-├── Makefile
-├── README.md
-├── apis
-│   └── v1
-│       ├── exampleLoginApi.go
-│       └── exampleUserApi.go
-├── config.ini
-├── consts
-│   ├── api.go
-│   ├── common.go
-│   └── redis.go
-├── go.mod
-├── go.sum
-├── libs
-│   ├── config.go
-│   ├── db.go
-│   ├── logger.go
-│   └── redis.go
-├── main.go
-├── middlewares
-│   ├── api.go
-│   ├── common.go
-│   └── log.go
-├── models
-│   ├── model.go
-│   ├── user.go
-│   └── userToken.go
-├── params
-│   └── userApi.go
-├── routes
-│   └── api.go
-├── services
-│   ├── login.go
-│   └── user.go
-└── utils
-    ├── encrypt.go
-    ├── http.go
-    ├── jwt.go
-    ├── jwt_test.go
-    ├── response.go
-    ├── time.go
-    └── var.go
-
-
-```
-
 # 一键启动
 根目录执行： 
 
 ```
 docker-compose up
 ```
-启动完成后 docker ps 查看已经启动了3个容器：
+启动完成后 docker-compose ps 查看已经启动了3个容器：
 ```cassandraql
-$ docker ps
+$ docker-compose ps
 
 CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS              PORTS                               NAMES
 7c6e7d32b784        ginapicommon_web     "dockerize -wait tcp…"   24 minutes ago      Up 24 minutes       0.0.0.0:8080->8080/tcp              ginapicommon_main
@@ -204,7 +154,3 @@ header 中Authorization的值设为token
 
 * go 是编译型的， 开发期间每次改动代码都要重新 go build, 实时监视代码改动可用 fresh 工具: https://github.com/gravityblast/fresh
 * 将数据库中的表生成go struct 可用gormt 工具: https://github.com/xxjwxc/gormt
-
-
-
-
