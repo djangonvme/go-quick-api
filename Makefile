@@ -1,10 +1,10 @@
 # This how we want to name the binary output
 BINARY=ginapicommon
 # These are the values we want to pass for VERSION  and BUILD
-VERSION=1.0.0
+VERSION=1.0.1
 BUILD=`date +%Y-%m-%d^%H:%M:%S`
 # Setup the -Idflags options for go build here,interpolate the variable values
-LDFLAGS=-ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD}"
+LDFLAGS=-ldflags "-X main.BuildVersion=${VERSION} -X main.BuildAt=${BUILD}"
 # Builds the project
 build:
 	go build ${LDFLAGS} -o ${BINARY}

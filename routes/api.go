@@ -23,7 +23,9 @@ func registerV1(router *gin.Engine) {
 
 func registerNoLogin(router *gin.Engine) {
 	router.GET("/", func(c *gin.Context) {
-		utils.Ctx(c).Success("Welcome! " + time.Now().Format(utils.YMDHIS))
+		utils.Ctx(c).Success(map[string]string{
+			"a": "Welcome! " + time.Now().Format(utils.YMDHIS),
+		})
 	})
 	router.POST("/user/add", v1.AddUser)
 	router.POST("/login", v1.Login)

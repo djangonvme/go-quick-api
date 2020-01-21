@@ -7,14 +7,14 @@ import (
 	"github.com/jangozw/gin-api-common/routes"
 	"log"
 )
-// makefile 中构建时候赋值
+
 var (
-	Version string
-	Build   string
+	BuildVersion string //编译的app版本(makefile中自定义)
+	BuildAt      string //编译时间
 )
 
 func main() {
-	libs.Logger.Info("app is starting", "version=", Version, "build=", Build)
+	buildInfo()
 	engine := gin.New()
 	routes.RegisterRouters(engine)
 	if port, err := libs.Config.GetHttpPort(); err != nil {
@@ -23,4 +23,8 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 	// Listening and serving HTTP on 127.0.0.1:{port}
+}
+
+func buildInfo() {
+	libs.Logger.Info("app is starting", "BuildVersion=", BuildVersion, "BuildAt=", BuildAt)
 }
