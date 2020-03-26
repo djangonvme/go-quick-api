@@ -4,7 +4,6 @@
 /gormt
 /config.yml
 /tree.txt
-/deploy
 /main
 /gin-api-common
 /GinApiCommon

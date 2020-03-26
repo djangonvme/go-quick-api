@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jangozw/gin-api-common/libs"
 	"github.com/jangozw/gin-api-common/routes"
-	"log"
 )
 
 var (
