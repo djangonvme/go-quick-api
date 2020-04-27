@@ -9,5 +9,5 @@
 /GinApiCommon
 /*.exe
 /start.sh
-/deploy/log
+/deploy/logs
 .vscode
