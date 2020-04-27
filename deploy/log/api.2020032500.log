@@ -1,3 +1,0 @@
-{"level":"info","msg":"app is startingBuildVersion=1.0.1BuildAt=2020-03-25^07:41:45","time":"2020-03-25 07:42:56"}
-{"level":"info","msg":"| 200 | 449.5µs | 172.20.0.1 | GET  /v1/user/list |","time":"2020-03-25 07:51:31"}
-{"level":"info","msg":"| 200 | 75µs | 172.20.0.1 | GET  / |","time":"2020-03-25 07:51:59"}

@@ -76,7 +76,7 @@ func ResponseFailWithCode(code int, err interface{}) ApiResponse {
 	msg, _ := consts.GetApiMsgByCode(code)
 	return ApiResponse{
 		code,
-		msg + "! " + parseErrToMsg(err),
+		msg + " " + parseErrToMsg(err),
 		time.Now().Unix(),
 		struct{}{},
 	}

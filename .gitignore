@@ -11,3 +11,4 @@
 /deploy/mysql/dbdata
 /start.sh
 /deploy/log
+.vscode

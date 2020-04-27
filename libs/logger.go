@@ -5,7 +5,6 @@ import (
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
-	"log"
 	"os"
 	"time"
 )
@@ -15,8 +14,7 @@ var Logger *logrus.Logger
 
 func init() {
 	if l, err := initLogrus(); err != nil {
-		log.Println("init libs.logrus failed " + err.Error())
-		os.Exit(0)
+		panic("init libs.logrus failed " + err.Error())
 	} else {
 		Logger = l
 	}

@@ -12,7 +12,7 @@ const ApiCodeTokenValid = 401
 var ApiCodeMaps = map[int]string{
 	ApiCodeError:      "请求失败",
 	ApiCodeSuccess:    "请求成功",
-	ApiCodeTokenValid: "请求失败:TOKEN失效",
+	ApiCodeTokenValid: "请求失败,TOKEN失效请先登陆",
 }
 
 func GetApiMsgByCode(code int) (msg string, err error) {

@@ -11,7 +11,7 @@ import (
 func ApiMiddleware(c *gin.Context) {
 	token := c.GetHeader(consts.HeaderKeyToken)
 	if token == "" {
-		c.AbortWithStatusJSON(http.StatusOK, utils.ResponseFailWithCode(consts.ApiCodeTokenValid, "token is required"))
+		c.AbortWithStatusJSON(http.StatusOK, utils.ResponseFailWithCode(consts.ApiCodeTokenValid, ""))
 		return
 	}
 	//check login user

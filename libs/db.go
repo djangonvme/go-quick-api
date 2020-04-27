@@ -4,8 +4,6 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql" //这个不能删
 	"github.com/jinzhu/gorm"
-	"log"
-	"os"
 	"time"
 )
 
@@ -27,8 +25,7 @@ func initDatabase(confSection string) *gorm.DB {
 	c := getConnectConf(confSection)
 	db, err := gorm.Open(c.driver, c.args)
 	if err != nil {
-		log.Println(fmt.Sprintf("couldn't connect to database [%s], connectArgs: %s, errorMsg: %s", c.driver, c.args, err.Error()))
-		os.Exit(0)
+		panic(fmt.Sprintf("couldn't connect to database [%s], connectArgs: %s, errorMsg: %s", c.driver, c.args, err.Error()))
 	}
 	//config gorm db
 	db.SingularTable(true) // 全局设置表名不可以为复数形式。
@@ -51,8 +48,7 @@ func initDatabase(confSection string) *gorm.DB {
 func getConnectConf(section string) *connectConf {
 	c, err := Config.Section(section)
 	if err != nil {
-		log.Println("couldn't get config info by section:" + section)
-		os.Exit(0)
+		panic("couldn't get config info by section:" + section)
 	}
 	return &connectConf{
 		driver: c["schema"],

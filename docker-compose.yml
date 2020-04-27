@@ -1,44 +1,42 @@
-# 服务依赖, depends_on 指定了依赖的service容器先启动，但不是完全等到其他容器启动完成再启动当前service，
-# 比如：web 指定depends_on:mysql, 但可能在mysql正在启动的过程中，web启动了，这导致连不上mysql,最终web容器启动失败
-# 解决
-# 1： command配置使用docker官方的wait-for-it.sh
-# 2: 服务添加restart:always, 当启动失败会不断重启,比如web会一直重试到mysql启动完成才启动成功
-# 3: 使用dokcerize, see https://github.com/jwilder/dockerize
 #
+# dockerize 用来做服务先后启动顺序的, 这里main程序要等到redis, mysql 起来后才能启动
 # ${xx}定义在.env 中
 #
-
 version: '3'
 services:
-  web:
+  main:
     container_name: ${PROJECT_NAME}_main
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: deploy/docker-compose/ginapicommon.build
     ports:
       - 8080:8080
     depends_on:
       - mysql
       - redis
     volumes:
-    - ./deploy/log:/logs
+      - ./tmp/:/logs
     # 使用dockerize 检测到redis， mysql 成功启动后再启动web服务,超时时间180秒
-    command: ["dockerize", "-wait", "tcp://${PROJECT_NAME}_mysql:3306", "-wait", "tcp://${PROJECT_NAME}_redis:6379", "-timeout", "180s", "/usr/local/bin/${PROJECT_NAME}", "-config=/${PROJECT_NAME}_config.ini"]
+    command: ["dockerize", "-wait", "tcp://${PROJECT_NAME}_mysql:3306", "-wait", "tcp://${PROJECT_NAME}_redis:6379", "-timeout", "180s", "/usr/local/bin/${PROJECT_NAME}", "-config=/etc/${PROJECT_NAME}_config.ini"]
   redis:
-    image: "redis:latest"
+    image: "redis:5.0"
     container_name: ${PROJECT_NAME}_redis
     ports:
       - 6380:6379
   mysql:
     container_name: ${PROJECT_NAME}_mysql        # 指定容器的名称
     build:
-      context: ./deploy
-      dockerfile: mysql.build
+      context: .
+      dockerfile: deploy/docker-compose/mysql.build
     ports:
       - "3309:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_ROOT_HOST: ${MYSQL_ROOT_HOST}
     volumes:
-      - "${MYSQL_DOCKER_DIR}/dbdata:/var/lib/mysql"  # 挂载数据目录,便于备份,重新构建时候数据目录先删掉，启动会自动创建
-      - "${MYSQL_DOCKER_DIR}/conf:/etc/mysql/conf.d/"      # 挂载配置文件目录
+      - mysql:/var/lib/mysql
+      - ${MYSQL_DOCKER_DIR}/conf:/etc/mysql/conf.d/      # 挂载配置文件目录
+volumes:
+  main:
+  mysql:
+

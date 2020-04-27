@@ -22,9 +22,25 @@ github: https://github.com/jangozw/gin-api-common
 # 一键启动
 根目录执行： 
 
+```bash
+./start.sh up 
 ```
-docker-compose up
+
+修改代码后重新构建启动:
+
+```bash
+./start.sh retart 
 ```
+
+停止服务:
+
+
+```bash
+./start.sh down 
+```
+
+
+
 启动完成后 docker-compose ps 查看已经启动了3个容器：
 ```cassandraql
 $ docker-compose ps
@@ -41,15 +57,6 @@ f32c1cf52315        redis:latest         "docker-entrypoint.s…"   24 minutes a
 ```cassandraql
 ⇒  curl http://127.0.0.1:8080/
 {"code":200,"msg":"请求成功","timestamp":1559253308,"data":"Welcome!"}%
-```
-
-# 重新全部构建并启动：
-
-```cassandraql
-docker stop ginapicommon_main ginapicommon_redis  ginapicommon_mysql
-docker rm ginapicommon_main ginapicommon_redis  ginapicommon_mysql
-docker-compose build --no-cache
-docker-compose up
 ```
 
 
@@ -154,3 +161,4 @@ header 中Authorization的值设为token
 
 * go 是编译型的， 开发期间每次改动代码都要重新 go build, 实时监视代码改动可用 fresh 工具: https://github.com/gravityblast/fresh
 * 将数据库中的表生成go struct 可用gormt 工具: https://github.com/xxjwxc/gormt
+* 开发期间为提高效率，不用docker部署，直接本地开发，修改config.ini 数据库账号即可

@@ -4,15 +4,15 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Unknwon/goconfig"
-	"log"
 	"os"
 	"strconv"
 )
 
-//use config
+// Config use config
 var Config *config
 
-var configFile string
+// 构建镜像时候用的路径,也可以自定义路径
+var configFile = "./config.ini"
 
 type config struct {
 	*goconfig.ConfigFile
@@ -28,22 +28,20 @@ var confRequiredFields = map[string][]string{
 	//"secret":   {"aes_secret"},
 }
 
-// read config file from console args
 func init() {
-	cmdArgsConfig := flag.String("config", "config.ini", "config file path")
+	cmdArgsConfig := flag.String("config", configFile, "config file path, default is: "+configFile)
 	flag.Parse()
-	configFile = *cmdArgsConfig
-	if ok, err := isPathExists(*cmdArgsConfig); err != nil {
-		log.Println(fmt.Sprintf("init config err: %s", err.Error()))
-		os.Exit(0)
+	if cmdArgsConfig != nil {
+		configFile = *cmdArgsConfig
+	}
+	if ok, err := isPathExists(configFile); err != nil {
+		panic(fmt.Sprintf("init config err: %s", err.Error()))
 	} else if !ok {
-		log.Println(fmt.Sprintf("config file %s is not exists, you can start with arg -config={path}", *cmdArgsConfig))
-		os.Exit(0)
+		panic(fmt.Sprintf("config file %s is not exists, you can start with arg -config={path}", configFile))
 	}
 	fmt.Println("Init config, configFile is", configFile)
 	if c, err := goconfig.LoadConfigFile(configFile); err != nil {
-		fmt.Println(fmt.Sprintf("Couldn't load config file %s, %s", configFile, err.Error()))
-		os.Exit(0)
+		panic(fmt.Sprintf("Couldn't load config file %s, %s", configFile, err.Error()))
 	} else {
 		Config = &config{c}
 	}
@@ -60,18 +58,16 @@ func checkRequired() {
 			}
 		}
 	}
+	logPath := Config.GetLogDir()
+	if ok, err := isPathExists(logPath); err != nil {
+		msg = append(msg, fmt.Sprintf("log path err: %s", err.Error()))
+	} else if !ok {
+		msg = append(msg, fmt.Sprintf("log path not exists: %s", logPath))
+	}
 	if len(msg) > 0 {
 		for _, v := range msg {
 			fmt.Println(v)
 		}
-		fmt.Println("Exit!")
-		os.Exit(0)
-	}
-
-	logDir := Config.GetLogDir()
-
-	if err := mkPathIfNotExists(logDir); err != nil {
-		fmt.Println("Error: mkdir " + logDir + " failed, " + err.Error())
 		os.Exit(0)
 	}
 }
