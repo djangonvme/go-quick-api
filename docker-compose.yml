@@ -15,7 +15,7 @@ services:
       - mysql
       - redis
     volumes:
-      - ./tmp/:/logs
+      - deploy/logs:/logs
     # 使用dockerize 检测到redis， mysql 成功启动后再启动web服务,超时时间180秒
     command: ["dockerize", "-wait", "tcp://${PROJECT_NAME}_mysql:3306", "-wait", "tcp://${PROJECT_NAME}_redis:6379", "-timeout", "180s", "/usr/local/bin/${PROJECT_NAME}", "-config=/etc/${PROJECT_NAME}_config.ini"]
   redis:

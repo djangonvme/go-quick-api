@@ -8,7 +8,6 @@
 /gin-api-common
 /GinApiCommon
 /*.exe
-/deploy/mysql/dbdata
 /start.sh
 /deploy/log
 .vscode
