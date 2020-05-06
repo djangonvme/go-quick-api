@@ -42,13 +42,6 @@ github: https://github.com/jangozw/gin-api-common
 ./start.sh down 
 ```
 
-## 本地启动
-
-本地启动，实时检测代码变动并重新编译启动, 适合开发期间频繁修改代码
-
-```sh 
-./start.sh fresh
-```
 
 
 
@@ -63,8 +56,17 @@ f32c1cf52315        redis:latest         "docker-entrypoint.s…"   24 minutes a
 ```
 
 
+## 本地启动
 
-打开浏览器访问： http://127.0.0.1:8080 看效果
+本地启动，实时检测代码变动并重新编译启动, 适合开发期间频繁修改代码
+
+```sh 
+./start.sh fresh
+```
+
+
+
+选择一种方式启动, 打开浏览器访问： http://127.0.0.1:8080 看效果
 ```cassandraql
 ⇒  curl http://127.0.0.1:8080/
 {"code":200,"msg":"请求成功","timestamp":1559253308,"data":"Welcome!"}%
