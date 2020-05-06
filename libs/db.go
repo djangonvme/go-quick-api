@@ -25,7 +25,7 @@ func initDatabase(confSection string) *gorm.DB {
 	c := getConnectConf(confSection)
 	db, err := gorm.Open(c.driver, c.args)
 	if err != nil {
-		panic(fmt.Sprintf("couldn't connect to database [%s], connectArgs: %s, errorMsg: %s", c.driver, c.args, err.Error()))
+		panic(fmt.Sprintf("couldn't connect to database, check your connect args in config.ini, errMsg: %s", err.Error()))
 	}
 	//config gorm db
 	db.SingularTable(true) // 全局设置表名不可以为复数形式。
@@ -33,7 +33,14 @@ func initDatabase(confSection string) *gorm.DB {
 	db.DB().SetMaxOpenConns(100)
 	db.DB().SetConnMaxLifetime(3600 * time.Second)
 	//log all sql in console
-	db.LogMode(true)
+
+	logMode, _ := Config.GetValue("gorm", "logMode")
+	if logMode == "true" {
+		db.LogMode(true)
+	} else {
+		db.LogMode(false)
+	}
+
 	db.Callback().Create().Replace("gorm:update_time_stamp", func(scope *gorm.Scope) {
 		scope.SetColumn("CreatedAt", time.Now().Unix())
 		scope.SetColumn("UpdatedAt", time.Now().Unix())
@@ -52,6 +59,6 @@ func getConnectConf(section string) *connectConf {
 	}
 	return &connectConf{
 		driver: c["schema"],
-		args:   fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=%s", c["user"], c["pwd"], c["host"], c["dbname"], c["timezone"]),
+		args:   fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=%s", c["user"], c["password"], c["host"], c["dbName"], c["timezone"]),
 	}
 }

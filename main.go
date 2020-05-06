@@ -1,28 +1,38 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jangozw/gin-api-common/libs"
 	"github.com/jangozw/gin-api-common/routes"
+	"github.com/jangozw/gin-api-common/utils"
 )
 
+// 程序启动后会赋值
 var (
-	BuildVersion string //编译的app版本(makefile中自定义)
+	BuildVersion string //编译的app版本
 	BuildAt      string //编译时间
 )
 
+func init() {
+	// 配置文件路径，取命令行config参数作为路径
+	cmdArgsConfig := flag.String("config", libs.ConfigFile, "config file path, default: "+libs.ConfigFile)
+	flag.Parse()
+	if cmdArgsConfig != nil {
+		libs.ConfigFile = *cmdArgsConfig
+	}
+	// 构建信息
+	utils.SetBuildInfo(BuildVersion, BuildAt)
+}
+
 func main() {
-	buildInfo()
+	// http serve
 	engine := gin.New()
 	routes.RegisterRouters(engine)
 	if port, err := libs.Config.GetHttpPort(); err != nil {
-		panic(err.Error())
+		panic(err)
 	} else if err := engine.Run(fmt.Sprintf(":%d", port)); err != nil {
-		panic(err.Error())
+		panic(err)
 	}
-	// Listening and serving HTTP on 127.0.0.1:{port}
-}
-func buildInfo() {
-	libs.Logger.Info("app is starting", "BuildVersion=", BuildVersion, "BuildAt=", BuildAt)
 }

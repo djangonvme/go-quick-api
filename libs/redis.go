@@ -30,17 +30,17 @@ func newRedisPool() *redisPool {
 		Wait:        true,              // 当连接数已满，是否要阻塞等待获取连接。false表示不等待，直接返回错误。
 		IdleTimeout: 200 * time.Second, //最大的空闲连接等待时间，超过此时间后，空闲连接将被关闭
 		Dial: func() (redigo.Conn, error) { // 创建链接
-			c, err := redigo.Dial("tcp", conf["redis_host"])
+			c, err := redigo.Dial("tcp", conf["host"])
 			if err != nil {
 				return nil, err
 			}
-			if conf["redis_password"] != "" {
-				if _, err := c.Do("AUTH", conf["redis_password"]); err != nil {
+			if conf["password"] != "" {
+				if _, err := c.Do("AUTH", conf["password"]); err != nil {
 					c.Close()
 					return nil, err
 				}
 			}
-			if _, err := c.Do("SELECT", conf["redis_dbNum"]); err != nil {
+			if _, err := c.Do("SELECT", conf["dbNum"]); err != nil {
 				c.Close()
 				return nil, err
 			}
@@ -176,10 +176,10 @@ func (pool *redisPool) Decr(key string) (int64, error) {
 }
 
 // mset 批量写入 rds.Do("MSET", "ket1", "value1", "key2","value2")
-func (pool *redisPool) MsetKey(key_value ...interface{}) error {
+func (pool *redisPool) MsetKey(keyValue ...interface{}) error {
 	rds := pool.Get()
 	defer rds.Close()
-	_, err := rds.Do("MSET", key_value...)
+	_, err := rds.Do("MSET", keyValue...)
 	return err
 }
 

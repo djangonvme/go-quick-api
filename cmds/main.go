@@ -7,7 +7,6 @@ import (
 )
 
 func main() {
-
 	//创建用户表一条记录
 	err := models.AddUser("test", "1500000001", "123456")
 	if err != nil {

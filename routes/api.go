@@ -24,7 +24,10 @@ func registerV1(router *gin.Engine) {
 func registerNoLogin(router *gin.Engine) {
 	router.GET("/", func(c *gin.Context) {
 		utils.Ctx(c).Success(map[string]string{
-			"a": "Welcome! " + time.Now().Format(utils.YMDHIS),
+			"title":   "Welcome! ",
+			"time":    time.Now().Format(utils.YMDHIS),
+			"buildVersion": utils.Build.Version,
+			"buildAt": utils.Build.Time,
 		})
 	})
 	router.POST("/user/add", v1.AddUser)

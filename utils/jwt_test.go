@@ -2,22 +2,37 @@ package utils
 
 import (
 	"fmt"
+	"github.com/jangozw/gin-api-common/libs"
 	"testing"
 )
 
+func init() {
+	//flag.String("config", "", "config file path, default: ")
+
+}
+
 func TestGenerateJwtToken(t *testing.T) {
 	p := AppPayload{UserId: 122}
-	jwtToken, err := GenerateJwtToken(p)
+	secret, err := libs.GetJwtSecret()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	jwtToken, err := GenerateJwtToken(p, secret)
 	if err != nil {
 		t.Error("jwtToken generate failed!", err.Error())
 	}
 	fmt.Println(jwtToken)
-
 }
 
 func TestParseJwtToken(t *testing.T) {
-	jwtToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEyMiwiZXhwIjoxNTc2NDYzMzExLCJpc3MiOiJ0ZXN0In0.-nMJZKAWJXOfnXgStJ5bj6Qvll2tv3GY1Ea96avogUE"
-	c, err := ParseJwtToken(jwtToken)
+	secret, err := libs.GetJwtSecret()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	jwtToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEyMiwidWVuIjoiIiwiZXhwIjoxNTg4NzUxNjY4LCJpc3MiOiJ0ZXN0In0.ameQ3G2f-8X19sDHZL7wZOIy5EMS-NINKx33bBP5E4A"
+	c, err := ParseJwtToken(jwtToken, secret)
 	if err != nil {
 		fmt.Println("err:", err.Error())
 	} else {

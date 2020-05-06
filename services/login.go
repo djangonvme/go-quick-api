@@ -25,7 +25,13 @@ func AppLogin(account string, pwd string) (jwtToken string, err error) {
 		return
 	}
 	//generate a jwt token for client
-	return utils.GenerateJwtToken(utils.AppPayload{UserId: user.ID, UserToken: token})
+
+	if secret, err := libs.GetJwtSecret(); err != nil {
+		return "", err
+	} else {
+		return utils.GenerateJwtToken(utils.AppPayload{UserId: user.ID, UserToken: token}, secret)
+	}
+
 }
 
 func AppLogout(userId int64) error {
@@ -36,8 +42,12 @@ func AppLogout(userId int64) error {
 //1, jwtToken is valid (not expired and the sign hash is right)
 //2, get user's token from jwtToken and check the user's token not expired and equal to the token in redis
 func VerifyAppToken(jwtToken string) (jwt *utils.JwtCustomClaims, err error) {
+	var secret string
+	if secret, err = libs.GetJwtSecret(); err != nil {
+		return
+	}
 	//1, verify jwt sign and expires
-	if jwt, err = utils.ParseJwtToken(jwtToken); err != nil {
+	if jwt, err = utils.ParseJwtToken(jwtToken, secret); err != nil {
 		return
 	}
 	//2,verify redis token

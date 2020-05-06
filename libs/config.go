@@ -1,7 +1,7 @@
 package libs
 
 import (
-	"flag"
+	"errors"
 	"fmt"
 	"github.com/Unknwon/goconfig"
 	"os"
@@ -11,37 +11,32 @@ import (
 // Config use config
 var Config *config
 
-// 构建镜像时候用的路径,也可以自定义路径
-var configFile = "./config.ini"
+// 配置文件路径可根据自己环境自由修改, 不影响其他环境部署, 部署时是按照命令行参数传递进来的配置文件路径
+// 创建项目的配置文件的软连接 sudo ln -s $(pwd)/config.ini /etc/ginapicommon_config.ini
+var ConfigFile = "/etc/ginapicommon_config.ini"
 
 type config struct {
 	*goconfig.ConfigFile
 }
 
-// config file path set
-//var configFile string
+// required config items
 var confRequiredFields = map[string][]string{
 	"log":      {"log_dir"},
 	"server":   {"listen"},
-	"database": {"user", "dbname"},
-	"redis":    {"redis_host"},
-	//"secret":   {"aes_secret"},
+	"database": {"user", "dbName"},
+	"redis":    {"host"},
 }
 
 func init() {
-	cmdArgsConfig := flag.String("config", configFile, "config file path, default is: "+configFile)
-	flag.Parse()
-	if cmdArgsConfig != nil {
-		configFile = *cmdArgsConfig
-	}
-	if ok, err := isPathExists(configFile); err != nil {
+
+	if ok, err := isPathExists(ConfigFile); err != nil {
 		panic(fmt.Sprintf("init config err: %s", err.Error()))
 	} else if !ok {
-		panic(fmt.Sprintf("config file %s is not exists, you can start with arg -config={path}", configFile))
+		panic(fmt.Sprintf("config file %s is not exists, you can start with arg -config={path} ", ConfigFile))
 	}
-	fmt.Println("Init config, configFile is", configFile)
-	if c, err := goconfig.LoadConfigFile(configFile); err != nil {
-		panic(fmt.Sprintf("Couldn't load config file %s, %s", configFile, err.Error()))
+	fmt.Println("init config, configFile is", ConfigFile)
+	if c, err := goconfig.LoadConfigFile(ConfigFile); err != nil {
+		panic(fmt.Sprintf("Couldn't load config file %s, %s", ConfigFile, err.Error()))
 	} else {
 		Config = &config{c}
 	}
@@ -54,7 +49,7 @@ func checkRequired() {
 	for section, val := range confRequiredFields {
 		for _, field := range val {
 			if _, err := Config.GetValue(section, field); err != nil {
-				msg = append(msg, fmt.Sprintf("Error: check config fail, %s in [%s] is required in config file "+configFile, field, section))
+				msg = append(msg, fmt.Sprintf("Error: check config fail, %s in [%s] is required in config file "+ConfigFile, field, section))
 			}
 		}
 	}
@@ -131,4 +126,16 @@ func mkPathIfNotExists(dirPath string) error {
 		return os.Mkdir(dirPath, 0766)
 	}
 	return nil
+}
+
+//签发token的签名秘钥
+func GetJwtSecret() (s string, err error) {
+	if s, err := Config.Get("encrypt", "jwt_secret"); err != nil {
+		return s, errors.New("couldn't get the config key : jwt_secret")
+	} else {
+		if len(s) == 0 {
+			return s, errors.New("jwt_secret len too short")
+		}
+		return s, nil
+	}
 }
