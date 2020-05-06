@@ -20,6 +20,9 @@ github: https://github.com/jangozw/gin-api-common
  * 使用 go modules 包管理
 
 # 一键启动
+
+## docker-compose 启动
+
 根目录执行： 
 
 ```bash
@@ -29,7 +32,7 @@ github: https://github.com/jangozw/gin-api-common
 修改代码后重新构建启动:
 
 ```bash
-./start.sh retart 
+./start.sh build-up
 ```
 
 停止服务:
@@ -37,6 +40,14 @@ github: https://github.com/jangozw/gin-api-common
 
 ```bash
 ./start.sh down 
+```
+
+## 本地启动
+
+本地启动，实时检测代码变动并重新编译启动, 适合开发期间频繁修改代码
+
+```sh 
+./start.sh fresh
 ```
 
 
