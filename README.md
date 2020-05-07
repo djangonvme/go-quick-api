@@ -36,8 +36,8 @@ docker build -t ginapicommon_mysql:latest -f deploy/docker-compose/mysql.build .
 3, 启动
 
 ```shell script
-docker compose up 
-```
+docker compose up
+ ```
 或
 ```shell script
 docker-compose up -d
@@ -88,20 +88,20 @@ sudo ln -s $(pwd)/config.ini /etc/ginapicommon_config.ini
 
 
 
-2, 导入数据库demo数据
+3, 导入数据库demo数据
 
 > 手动插入里面的数据即可: deploy/mysql/scripts/init.sql
 
 
 
-2， 本地启动
+4， 本地直接启动
 
 ```shell script
 go run main.go
 ```
 
 
-2，使用fresh实时检测代码变动并重新编译启动, 适合开发期间频繁修改代码
+5，使用fresh实时检测代码变动并重新编译启动, 适合开发期间频繁修改代码
 
 
 
@@ -125,10 +125,13 @@ fresh
 * 登陆
 
 
-路由在/routes/api.go 中可以看到 ```/v0/login``` 
+POST: http://127.0.0.1:8080/v0/login
 
 
 请求:
+
+
+使用默认账户登陆测试
 ```shell script
 curl -X POST -H "Content-Type: application/json"  -d '{"mobile": "18000000000", "pwd": "123456"}' http://127.0.0.1:8080/v0/login
 ```
@@ -153,8 +156,11 @@ POST: http://127.0.0.1:8080/v0/user/add
 
 请求:
 ```shell script
-curl -X POST -H "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVlbiI6IjE5NGQ0MTcwNDg3ZjFiNDFmODRmYWM4MTBmNzg1NTRlZDNkYjQzODUxYjBmMzE4ZDkxODQzZDUwNjc1ZWJmZDAiLCJleHAiOjE1OTc0Njk0MTMsImlzcyI6InRlc3QifQ.X-oWelnFjFjABxjwOPl1AMU9aBmTA9ML94aw4i-9pa4" \
--d '{"mobile": "15000000000","pwd": "123456","name": "test-user"}' http://127.0.0.1:8080/v0/user/add
+curl -X POST \
+-H "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVlbiI6IjE5NGQ0MTcwNDg3ZjFiNDFmODRmYWM4MTBmNzg1NTRlZDNkYjQzODUxYjBmMzE4ZDkxODQzZDUwNjc1ZWJmZDAiLCJleHAiOjE1OTc0Njk0MTMsImlzcyI6InRlc3QifQ.X-oWelnFjFjABxjwOPl1AMU9aBmTA9ML94aw4i-9pa4" \
+-d '{"mobile": "15000000000","pwd": "123456","name": "test-user"}' \
+http://127.0.0.1:8080/v0/user/add
+
 ```
 响应：
 ```text
@@ -173,7 +179,9 @@ GET: /v0/user/list
 请求:
 ```shell script
 
-curl -X GET -H "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVlbiI6IjE5NGQ0MTcwNDg3ZjFiNDFmODRmYWM4MTBmNzg1NTRlZDNkYjQzODUxYjBmMzE4ZDkxODQzZDUwNjc1ZWJmZDAiLCJleHAiOjE1OTc0Njk0MTMsImlzcyI6InRlc3QifQ.X-oWelnFjFjABxjwOPl1AMU9aBmTA9ML94aw4i-9pa4" \
+curl -X GET \
+-H "Content-Type: application/json" \
+-H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVlbiI6IjE5NGQ0MTcwNDg3ZjFiNDFmODRmYWM4MTBmNzg1NTRlZDNkYjQzODUxYjBmMzE4ZDkxODQzZDUwNjc1ZWJmZDAiLCJleHAiOjE1OTc0Njk0MTMsImlzcyI6InRlc3QifQ.X-oWelnFjFjABxjwOPl1AMU9aBmTA9ML94aw4i-9pa4" \
 http://127.0.0.1:8080/v0/user/list
 
 ```
