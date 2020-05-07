@@ -10,19 +10,21 @@ import (
 
 func RegisterRouters(router *gin.Engine) *gin.Engine {
 	router.Use(middlewares.CommonMiddleware, middlewares.LoggerToFile())
-	registerNoLogin(router)
+	registerUnLogin(router)
 	registerV0(router)
 	return router
 }
+// 需要登陆
 func registerV0(router *gin.Engine) {
-	router.Group("/v0", middlewares.ApiMiddleware).
+	router.Group("/v0", middlewares.CheckJwtLogin).
 		POST("/logout", v0.Logout).
 		GET("/user/list", v0.UserList).
 		GET("/user/detail", v0.UserDetail).
 		POST("/user/add", v0.AddUser)
 }
 
-func registerNoLogin(router *gin.Engine) {
+// 无需登陆
+func registerUnLogin(router *gin.Engine) {
 	router.GET("/", func(c *gin.Context) {
 		utils.Ctx(c).Success(map[string]string{
 			"title":   "Welcome! ",
@@ -31,5 +33,6 @@ func registerNoLogin(router *gin.Engine) {
 			"buildAt": utils.Build.Time,
 		})
 	})
+
 	router.Group("/v0").	POST("/login", v0.Login)
 }

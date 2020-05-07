@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func ApiMiddleware(c *gin.Context) {
+func CheckJwtLogin(c *gin.Context) {
 	token := c.GetHeader(consts.HeaderKeyToken)
 	if token == "" {
 		c.AbortWithStatusJSON(http.StatusOK, utils.ResponseFailWithCode(consts.ApiCodeTokenValid, ""))
