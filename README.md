@@ -72,7 +72,7 @@ docker-compose down
 docker-compose down
 docker rmi ginapicommon_main:latest
 docker build -t ginapicommon_main:latest -f deploy/docker-compose/project.build .
-docker compose up 
+docker-compose up 
 ```
 
 
@@ -83,6 +83,16 @@ docker compose up
 ```shell script
 sudo ln -s $(pwd)/config.ini /etc/ginapicommon_config.ini
 ````
+
+2, 在config.ini 配置本地数据库redis连接信息
+
+
+
+2, 导入数据库demo数据
+
+> 手动插入里面的数据即可: deploy/mysql/scripts/init.sql
+
+
 
 2， 本地启动
 
@@ -95,7 +105,7 @@ go run main.go
 
 
 
-在项目根目录
+> 在项目根目录
 ```sh 
 fresh
 ```
@@ -111,9 +121,6 @@ fresh
 
 # 请求示例
 
-* 添加用户
-路由在/routes/api.go 中可以看到 
-
  
 * 登陆
 
@@ -121,11 +128,9 @@ fresh
 路由在/routes/api.go 中可以看到 ```/v0/login``` 
 
 
-
-
-参数:
-```json
-{"mobile": "1500000000", "pwd": "1234546"}
+请求:
+```shell script
+curl -X POST -H "Content-Type: application/json"  -d '{"mobile": "18000000000", "pwd": "123456"}' http://127.0.0.1:8080/v0/login
 ```
 响应:
 ```json
@@ -143,36 +148,35 @@ fresh
 
 
 * 添加用户
+POST: http://127.0.0.1:8080/v0/user/add
 
-请求：
 
-
-POST  ```/v0/user/add```
-header 中Authorization的值设为token
-
-```json
-{
-    "mobile": "15000000000",
-    "pwd": "123456",
-    "name": "test"
-    }
+请求:
+```shell script
+curl -X POST -H "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVlbiI6IjE5NGQ0MTcwNDg3ZjFiNDFmODRmYWM4MTBmNzg1NTRlZDNkYjQzODUxYjBmMzE4ZDkxODQzZDUwNjc1ZWJmZDAiLCJleHAiOjE1OTc0Njk0MTMsImlzcyI6InRlc3QifQ.X-oWelnFjFjABxjwOPl1AMU9aBmTA9ML94aw4i-9pa4" \
+-d '{"mobile": "15000000000","pwd": "123456","name": "test-user"}' http://127.0.0.1:8080/v0/user/add
 ```
-返回：
-
-
-成功
-
+响应：
+```text
+{"code":200,"msg":"请求成功","timestamp":1588829740,"data":{"ID":2,"CreatedAt":1588829740,"UpdatedAt":1588829740,"DeletedAt":null,"Name":"test-user","Mobile":"15000000000","Password":"c2cb76e4f39bd2d5c78395c7df7f94b1fa84a78097e7ec3fa905bcdfff699029","Status":0}}
+```
 
 
 
 * 用户列表
 
 
-路由: ```/v0/user/list```
+GET: /v0/user/list
 
 
-参数: 无 
 
+请求:
+```shell script
+
+curl -X GET -H "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVlbiI6IjE5NGQ0MTcwNDg3ZjFiNDFmODRmYWM4MTBmNzg1NTRlZDNkYjQzODUxYjBmMzE4ZDkxODQzZDUwNjc1ZWJmZDAiLCJleHAiOjE1OTc0Njk0MTMsImlzcyI6InRlc3QifQ.X-oWelnFjFjABxjwOPl1AMU9aBmTA9ML94aw4i-9pa4" \
+http://127.0.0.1:8080/v0/user/list
+
+```
 
 响应:
 ```json
