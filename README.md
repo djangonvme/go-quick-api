@@ -13,61 +13,97 @@ github: https://github.com/jangozw/gin-api-common
 * gin 使用的验证器文档: https://godoc.org/gopkg.in/go-playground/validator.v8
 * 日志用logrus  文档: https://github.com/sirupsen/logrus
 * docker 部署, docker-compose 编排容器一键启动整套服务
+* fresh 本地监测编译工具:https://github.com/gravityblast/fresh
 
 # 版本要求
 
  * go1.11+
  * 使用 go modules 包管理
 
-# 一键启动
+# 启动运行
 
-## docker-compose 启动
+### docker 方式
 
-根目录执行： 
+1, 构建项目代码镜像
 
-```bash
-./start.sh up 
+```shell script
+docker build -t ginapicommon_main:latest -f deploy/docker-compose/project.build .
 ```
-
-修改代码后重新构建启动:
-
-```bash
-./start.sh build-up
+2, 构建mysql镜像(含初始化数据)
+```shell script
+docker build -t ginapicommon_mysql:latest -f deploy/docker-compose/mysql.build . 
 ```
+3, 启动
 
-停止服务:
-
-
-```bash
-./start.sh down 
+```shell script
+docker compose up 
 ```
-
-
-
-
-启动完成后 docker-compose ps 查看已经启动了3个容器：
-```cassandraql
-$ docker-compose ps
-
-CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS              PORTS                               NAMES
-7c6e7d32b784        ginapicommon_web     "dockerize -wait tcp…"   24 minutes ago      Up 24 minutes       0.0.0.0:8080->8080/tcp              ginapicommon_main
-f32c1cf52315        redis:latest         "docker-entrypoint.s…"   24 minutes ago      Up 24 minutes       0.0.0.0:6380->6379/tcp              ginapicommon_redis
-76382ed6fde1        ginapicommon_mysql   "docker-entrypoint.s…"   24 minutes ago      Up 24 minutes       33060/tcp, 0.0.0.0:3309->3306/tcp   ginapicommon_mysql
+或
+```shell script
+docker-compose up -d
 ```
 
 
-## 本地启动
+成功后如图：
 
-本地启动，实时检测代码变动并重新编译启动, 适合开发期间频繁修改代码
+```text
+ginapicommon_main |
+ginapicommon_main | [GIN-debug] GET    /                         --> github.com/jangozw/gin-api-common/routes.registerNoLogin.func1 (3 handlers)
+ginapicommon_main | [GIN-debug] POST   /v0/login                 --> github.com/jangozw/gin-api-common/apis/v0.Login (3 handlers)
+ginapicommon_main | [GIN-debug] POST   /v0/logout                --> github.com/jangozw/gin-api-common/apis/v0.Logout (4 handlers)
+ginapicommon_main | [GIN-debug] GET    /v0/user/list             --> github.com/jangozw/gin-api-common/apis/v0.UserList (4 handlers)
+ginapicommon_main | [GIN-debug] GET    /v0/user/detail           --> github.com/jangozw/gin-api-common/apis/v0.UserDetail (4 handlers)
+ginapicommon_main | [GIN-debug] POST   /v0/user/add              --> github.com/jangozw/gin-api-common/apis/v0.AddUser (4 handlers)
+ginapicommon_main | [GIN-debug] Listening and serving HTTP on :8080
+```
 
+
+#### 停止和编译代码重启
+
+
+1, 停止服务
+```shell script
+docker-compose down
+```
+
+2, 修改代码后重新编译启动
+
+```shell script
+docker-compose down
+docker rmi ginapicommon_main:latest
+docker build -t ginapicommon_main:latest -f deploy/docker-compose/project.build .
+docker compose up 
+```
+
+
+
+### 本地启动
+
+1, 创建配置文件的软连接
+```shell script
+sudo ln -s $(pwd)/config.ini /etc/ginapicommon_config.ini
+````
+
+2， 本地启动
+
+```shell script
+go run main.go
+```
+
+
+2，使用fresh实时检测代码变动并重新编译启动, 适合开发期间频繁修改代码
+
+
+
+在项目根目录
 ```sh 
-./start.sh fresh
+fresh
 ```
 
 
 
-选择一种方式启动, 打开浏览器访问： http://127.0.0.1:8080 看效果
-```cassandraql
+选择一种方式启动后, 打开浏览器访问： http://127.0.0.1:8080 看效果
+```
 ⇒  curl http://127.0.0.1:8080/
 {"code":200,"msg":"请求成功","timestamp":1559253308,"data":"Welcome!"}%
 ```
@@ -82,7 +118,7 @@ f32c1cf52315        redis:latest         "docker-entrypoint.s…"   24 minutes a
 * 登陆
 
 
-路由在/routes/api.go 中可以看到 ```/login``` 
+路由在/routes/api.go 中可以看到 ```/v0/login``` 
 
 
 
@@ -111,7 +147,7 @@ f32c1cf52315        redis:latest         "docker-entrypoint.s…"   24 minutes a
 请求：
 
 
-POST  ```/user/add```
+POST  ```/v0/user/add```
 header 中Authorization的值设为token
 
 ```json
@@ -132,7 +168,7 @@ header 中Authorization的值设为token
 * 用户列表
 
 
-路由: ```/v1/user/list```
+路由: ```/v0/user/list```
 
 
 参数: 无 

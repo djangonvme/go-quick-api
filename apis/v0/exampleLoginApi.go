@@ -1,6 +1,7 @@
-package v1
+package v0
 
 import (
+	//"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jangozw/gin-api-common/params"
 	"github.com/jangozw/gin-api-common/services"

@@ -2,7 +2,6 @@
 /.idea
 /nohup.out
 /gormt
-/config.yml
 /tree.txt
 /main
 /gin-api-common
@@ -10,4 +9,4 @@
 /*.exe
 /start.sh
 .vscode
-.log
+*.log

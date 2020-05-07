@@ -6,9 +6,7 @@ version: '3'
 services:
   main:
     container_name: ${PROJECT_NAME}_main
-    build:
-      context: .
-      dockerfile: deploy/docker-compose/ginapicommon.build
+    image: ${PROJECT_NAME}_main
     ports:
       - 8080:8080
     depends_on:
@@ -25,9 +23,7 @@ services:
       - 6380:6379
   mysql:
     container_name: ${PROJECT_NAME}_mysql        # 指定容器的名称
-    build:
-      context: .
-      dockerfile: deploy/docker-compose/mysql.build
+    image: ${PROJECT_NAME}_mysql:latest
     ports:
       - "3309:3306"
     environment:
@@ -36,6 +32,7 @@ services:
     volumes:
       - mysql:/var/lib/mysql
       - ${MYSQL_CONF_DIR}:/etc/mysql/conf.d/      # 挂载配置文件目录
+# # 创建volume, 等于 docker volume create gin-api-common_main
 volumes:
   main:
   mysql:

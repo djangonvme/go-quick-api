@@ -1,6 +1,7 @@
-package v1
+package v0
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jangozw/gin-api-common/models"
 	"github.com/jangozw/gin-api-common/params"
@@ -30,6 +31,8 @@ func UserList(c *gin.Context) {
 		utils.Ctx(c).Fail(err)
 		return
 	}
+	fmt.Println("-----------search", search.Mobile, search.Page)
+
 	//校验参数成功后自动赋值给结构体
 	if data, err := services.GetUserList(search); err != nil {
 		utils.Ctx(c).Fail(err)

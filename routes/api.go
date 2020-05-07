@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jangozw/gin-api-common/apis/v1"
+	v0 "github.com/jangozw/gin-api-common/apis/v0"
 	"github.com/jangozw/gin-api-common/middlewares"
 	"github.com/jangozw/gin-api-common/utils"
 	"time"
@@ -11,14 +11,15 @@ import (
 func RegisterRouters(router *gin.Engine) *gin.Engine {
 	router.Use(middlewares.CommonMiddleware, middlewares.LoggerToFile())
 	registerNoLogin(router)
-	registerV1(router)
+	registerV0(router)
 	return router
 }
-func registerV1(router *gin.Engine) {
-	router.Group("/v1", middlewares.ApiMiddleware).
-		POST("/logout", v1.Logout).
-		GET("/user/list", v1.UserList).
-		GET("/user/detail", v1.UserDetail)
+func registerV0(router *gin.Engine) {
+	router.Group("/v0", middlewares.ApiMiddleware).
+		POST("/logout", v0.Logout).
+		GET("/user/list", v0.UserList).
+		GET("/user/detail", v0.UserDetail).
+		POST("/user/add", v0.AddUser)
 }
 
 func registerNoLogin(router *gin.Engine) {
@@ -30,6 +31,5 @@ func registerNoLogin(router *gin.Engine) {
 			"buildAt": utils.Build.Time,
 		})
 	})
-	router.POST("/user/add", v1.AddUser)
-	router.POST("/login", v1.Login)
+	router.Group("/v0").	POST("/login", v0.Login)
 }
