@@ -9,7 +9,6 @@ import (
 	"github.com/jangozw/gin-api-common/utils"
 )
 
-// 程序启动后会赋值
 var (
 	BuildVersion string //编译的app版本
 	BuildAt      string //编译时间
