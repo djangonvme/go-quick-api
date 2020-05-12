@@ -24,6 +24,10 @@ github: https://github.com/jangozw/gin-api-common
 
 ### docker 方式
 
+
+mysql, reids 等有状态的服务自己修改配置是否容器运行即可，这里举例以容器方式运行
+
+
 1, 构建项目代码镜像
 
 ```shell script
@@ -103,6 +107,9 @@ go run main.go
 
 5，使用fresh实时检测代码变动并重新编译启动, 适合开发期间频繁修改代码
 
+
+
+fresh 安装使用细节见文末尾： DEBUG 运行模式
 
 
 > 在项目根目录
@@ -218,8 +225,36 @@ http://127.0.0.1:8080/v0/user/list
 
 
 
-# 扩展
 
-* go 是编译型的， 开发期间每次改动代码都要重新 go build, 实时监视代码改动可用 fresh 工具: https://github.com/gravityblast/fresh
+# DEBUG 运行模式
+
+go 是编译型语言， 开发期间每次改动代码都要重新 go build, 实时监视代码改动可用 fresh 工具https://github.com/gravityblast/fresh 操作步骤:
+
+
+1, 全局安装fresh
+```shell script
+go get -u -v github.com/gravityblast/fresh    
+```
+
+检查是否安装成功:
+```text
+⇒  which fresh
+/Users/xxxx/GOPATH/bin/fresh
+```
+说明安装成功
+
+
+
+2, 进入你的项目根目录执行：
+
+```shell script
+fresh
+```
+此时相当于执行了 ```go run main.go``` 并且自动监测代码变动后刷新
+
+
+
+# 其他
+
 * 将数据库中的表生成go struct 可用gormt 工具: https://github.com/xxjwxc/gormt
 * 开发期间为提高效率，不用docker部署，直接本地开发，修改config.ini 数据库账号即可
