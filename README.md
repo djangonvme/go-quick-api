@@ -7,13 +7,14 @@ github: https://github.com/jangozw/gin-api-common
 启动server->路由定义->中间件过滤->用户身份验证->控制器处理->数据库操作->redis缓存->返回给客户端, 这是web接口开发基本流程
 
 # 功能特色
-* gin框架为基础。文档： https://github.com/gin-gonic/gin
-* 数据库操作orm 用 gorm。 文档： http://gorm.book.jasperxu.com 
-* 使用 JWT 生成token, 结合redis双重验证。 文档 http://jwt.io
-* gin 使用的验证器文档: https://godoc.org/gopkg.in/go-playground/validator.v8
-* 日志用logrus  文档: https://github.com/sirupsen/logrus
-* docker 部署, docker-compose 编排容器一键启动整套服务
-* fresh 本地监测编译工具:https://github.com/gravityblast/fresh
+* 使用gin框架, 文档： https://github.com/gin-gonic/gin
+* 使用gorm数据操作, 文档： http://gorm.book.jasperxu.com 
+* 使用JWT生成token, 结合redis双重验证。 文档 http://jwt.io
+* 使用validator.v8验证器, 文档: https://godoc.org/gopkg.in/go-playground/validator.v8
+* 使用logrus日志, 文档: https://github.com/sirupsen/logrus
+* 提供docker-compose 部署, 可以不用
+* 使用fresh开启debug运行模式, 文档: https://github.com/gravityblast/fresh
+
 
 # 版本要求
 
@@ -25,7 +26,7 @@ github: https://github.com/jangozw/gin-api-common
 ### docker 方式
 
 
-mysql, reids 等有状态的服务自己修改配置是否容器运行即可，这里举例以容器方式运行
+mysql, redis 等有状态的服务自己修改配置是否容器运行即可，这里举例以容器方式运行
 
 
 1, 构建项目代码镜像
