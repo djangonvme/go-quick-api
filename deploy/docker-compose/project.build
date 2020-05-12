@@ -16,7 +16,7 @@ COPY --from=build-env /gin-api-common/deploy/docker-compose/dockerize-alpine-lin
 RUN tar -C /usr/local/bin -xzvf /dockerize-alpine-linux-amd64-v0.6.1.tar.gz && rm /dockerize-alpine-linux-amd64-v0.6.1.tar.gz
 # copy application
 COPY --from=build-env /gin-api-common/ginapicommon /usr/local/bin/
-COPY --from=build-env /gin-api-common/deploy/config.ini /etc/ginapicommon_config.ini
+COPY --from=build-env /gin-api-common/deploy/deploy_config.ini /etc/ginapicommon_config.ini
 
 #app file log path
 RUN mkdir /logs
