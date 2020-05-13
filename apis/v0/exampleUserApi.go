@@ -11,7 +11,7 @@ import (
 
 func AddUser(c *utils.ApiContext) {
 	p := params.AddUser{}
-	if err := c.GinCtx.ShouldBind(&p); err != nil {
+	if err := c.ShouldBind(&p); err != nil {
 		c.Fail(err)
 		return
 	}
@@ -27,7 +27,7 @@ func AddUser(c *utils.ApiContext) {
 func UserList(c *utils.ApiContext) {
 	//校验请求参数, 校验规则定义在params.SearchUserList{}的tag里
 	search := params.SearchUserList{}
-	if err := c.GinCtx.ShouldBind(&search); err != nil {
+	if err := c.ShouldBind(&search); err != nil {
 		c.Fail(err)
 		return
 	}
@@ -46,16 +46,15 @@ func UserDetail(c *utils.ApiContext) {
 	return
 }
 
-
-
-func TimeOutOperation(c *utils.ApiContext)  {
-	fmt.Println("超时61秒,开始表演...")
-	time.Sleep(61 * time.Second)
+func TimeOutOperation(c *utils.ApiContext) {
+	fmt.Println("超时5秒，表演开始...")
+	time.Sleep(4 * time.Second)
 	select {
-	case <-c.Done():
-		fmt.Println("程序处理超时" )
-		return
-	default:
-		c.SuccessSimple()
+		case <-c.Request.Context().Done():
+			// 超时会在中间件自动输出，这里不用输出
+			return
+		default:
+			c.SuccessSimple()
 	}
+	fmt.Println("end'")
 }

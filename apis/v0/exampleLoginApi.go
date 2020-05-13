@@ -10,7 +10,7 @@ import (
 
 func Login(c *utils.ApiContext) {
 	p := params.Login{}
-	if err := c.GinCtx.ShouldBind(&p); err != nil {
+	if err := c.ShouldBind(&p); err != nil {
 		c.Fail(err)
 		return
 	}

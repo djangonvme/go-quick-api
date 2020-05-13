@@ -89,7 +89,7 @@ func (c *config) GetInt(section string, key string) (int, error) {
 //过期时长
 func (c *config) GetTokenExpireSeconds() int64 {
 	sec, _ := c.GetInt("encrypt", "token_expire_seconds")
-	if sec >= 86400 * 365 {
+	if sec >= 86400*365 {
 		sec = 86400 * 365
 	}
 	return int64(sec)

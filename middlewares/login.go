@@ -21,6 +21,7 @@ func CheckJwtLogin(c *gin.Context) {
 	} else {
 		//verify token success, then set the login user for context
 		c.Set(consts.CtxKeyLoginUser, jwt.UserId)
+		//c.Request = c.Request.WithContext()
 		//继续下一步
 		c.Next()
 	}

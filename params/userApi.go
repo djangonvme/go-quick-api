@@ -11,7 +11,7 @@ type SearchUserList struct {
 	//Mobile string `form:"mobile" binding:"required"`
 	Mobile string `form:"mobile"`
 	//Page   int64  `form:"page" binding:"required,gt=0"`
-	Page   int64  `form:"page"`
+	Page int64 `form:"page"`
 }
 
 //
