@@ -1,14 +1,34 @@
 package utils
 
 import (
+	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/jangozw/gin-api-common/consts"
 	"net/http"
 	"time"
 )
 
-// api result to client format here
+// 请求上下文, 基于 gin.Context
+type ApiContext struct {
+	context.Context
+	GinCtx *gin.Context
+	Timeout time.Duration
+}
 
+// 各个接口函数类型
+type APIHandlerFunc func (c *ApiContext)
+
+// 带有请求超时控制的自定义的api handler
+func WithAPIHandlerFunc(handler APIHandlerFunc) gin.HandlerFunc  {
+	return func (c *gin.Context) {
+		timeout := 60 * time.Second
+		timeoutCtx, cancelFunc := context.WithTimeout(c, timeout)
+		defer cancelFunc()
+		handler(&ApiContext{Context: timeoutCtx, GinCtx: c, Timeout: timeout})
+	}
+}
+
+// api result to client format here
 type ApiResponse struct {
 	Code      int         `json:"code"`
 	Msg       string      `json:"msg"`
@@ -16,40 +36,27 @@ type ApiResponse struct {
 	Data      interface{} `json:"data"`
 }
 
-type GinCtx struct {
-	*gin.Context
-}
-
-//output data need use *gin.Context
-// usage:
-// utils.Ctx(c).Success("Ok")
-
-func Ctx(c *gin.Context) *GinCtx {
-	return &GinCtx{c}
-}
-
-func (c *GinCtx) Success(data interface{}) {
+func (c *ApiContext) Success(data interface{}) {
 	result := ResponseSuccess(data)
-	//logs.Logger().Infof("%s", ToJson(result))
-	c.JSON(http.StatusOK, result)
+	c.GinCtx.JSON(http.StatusOK, result)
 
 }
 
-func (c *GinCtx) SuccessSimple() {
-	c.JSON(http.StatusOK, ResponseSuccessSimple())
+func (c *ApiContext) SuccessSimple() {
+	c.GinCtx.JSON(http.StatusOK, ResponseSuccessSimple())
 }
 
-func (c *GinCtx) Fail(errMsg interface{}) {
+func (c *ApiContext) Fail(errMsg interface{}) {
 	c.FailWithCode(consts.ApiCodeError, errMsg)
 }
 
-func (c *GinCtx) FailWithCode(code int, errMsg interface{}) {
-	c.JSON(http.StatusOK, ResponseFailWithCode(code, errMsg))
+func (c *ApiContext) FailWithCode(code int, errMsg interface{}) {
+	c.GinCtx.JSON(http.StatusOK, ResponseFailWithCode(code, errMsg))
 }
 
 //当前登陆的用户id
-func (c *GinCtx) GetLoginUid() int64 {
-	return c.GetInt64(consts.CtxKeyLoginUser)
+func (c *ApiContext) GetLoginUid() int64 {
+	return c.GinCtx.GetInt64(consts.CtxKeyLoginUser)
 }
 
 func ResponseSuccess(data interface{}) ApiResponse {
@@ -61,7 +68,6 @@ func ResponseSuccess(data interface{}) ApiResponse {
 		data,
 	}
 }
-
 func ResponseSuccessSimple() ApiResponse {
 	msg, _ := consts.GetApiMsgByCode(consts.ApiCodeSuccess)
 	return ApiResponse{

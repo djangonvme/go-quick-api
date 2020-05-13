@@ -17,22 +17,24 @@ func RegisterRouters(router *gin.Engine) *gin.Engine {
 // 需要登陆
 func registerV0(router *gin.Engine) {
 	router.Group("/v0", middlewares.CheckJwtLogin).
-		POST("/logout", v0.Logout).
-		GET("/user/list", v0.UserList).
-		GET("/user/detail", v0.UserDetail).
-		POST("/user/add", v0.AddUser)
+		POST("/logout", utils.WithAPIHandlerFunc(v0.Logout)).
+		GET("/user/list", utils.WithAPIHandlerFunc(v0.UserList)).
+		GET("/user/detail", utils.WithAPIHandlerFunc(v0.UserDetail)).
+		POST("/user/add", utils.WithAPIHandlerFunc(v0.AddUser))
 }
 
 // 无需登陆
 func registerUnLogin(router *gin.Engine) {
-	router.GET("/", func(c *gin.Context) {
-		utils.Ctx(c).Success(map[string]string{
+	router.GET("/", utils.WithAPIHandlerFunc(func(c *utils.ApiContext) {
+		c.Success(map[string]string{
 			"title":   "Welcome! ",
 			"time":    time.Now().Format(utils.YMDHIS),
 			"buildVersion": utils.Build.Version,
 			"buildAt": utils.Build.Time,
 		})
-	})
+	}))
 
-	router.Group("/v0").	POST("/login", v0.Login)
+	router.Group("/v0").	POST("/login", utils.WithAPIHandlerFunc(v0.Login)).
+		GET("/timeout", utils.WithAPIHandlerFunc(v0.TimeOutOperation))
 }
+

@@ -8,7 +8,7 @@ import (
 func CommonMiddleware(c *gin.Context) {
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Content-Type", "application/json; charset=utf-8")
-	c.Header("build-version", utils.Build.Version)
-	c.Header("build-at", utils.Build.Time)
+	c.Header("Build-Version", utils.Build.Version)
+	c.Header("Build-At", utils.Build.Time)
 	c.Next()
 }
