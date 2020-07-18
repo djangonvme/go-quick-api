@@ -1,0 +1,4 @@
+FROM mysql:5.7
+# 初始化数据库
+COPY deploy/mysql/scripts/*.sql /docker-entrypoint-initdb.d/
+EXPOSE 3306
