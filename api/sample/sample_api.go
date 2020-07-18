@@ -32,6 +32,7 @@ func Login(c *gin.Context) (interface{}, error) {
 	output := param.LoginResponse{Token: token}
 	return output, nil
 }
+
 // logout api
 func Logout(c *gin.Context) (interface{}, error) {
 	userId := app.MustGetLoginUser(c).ID
@@ -54,8 +55,6 @@ func UserList(c *gin.Context) (interface{}, error) {
 	}
 	return app.PagerResponse(pager, list), nil
 }
-
-
 
 // 添加用户
 func AddUser(c *gin.Context) (interface{}, error) {
@@ -109,4 +108,3 @@ func UserChangePwd(c *gin.Context) (interface{}, error) {
 	// 。。。
 	return nil, nil
 }
-

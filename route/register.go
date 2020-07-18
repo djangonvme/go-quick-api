@@ -4,6 +4,7 @@ import (
 	// "github.com/DeanThompson/ginpprof"
 	"github.com/gin-gonic/gin"
 	apisample "github.com/jangozw/go-quick-api/api/sample"
+	"github.com/jangozw/go-quick-api/config"
 	"github.com/jangozw/go-quick-api/middleware"
 	"github.com/jangozw/go-quick-api/pkg/app"
 )
@@ -26,6 +27,10 @@ func Register(router *app.Engine) {
 	sample.GET("", func(c *gin.Context) (data interface{}, err error) {
 		return "/sample welcome", nil
 	})
+	sample.GET("/status", func(c *gin.Context) (data interface{}, err error) {
+		return config.GetAllStates(), nil
+	})
+
 	sample.POST("/login", apisample.Login)
 	sampleLogin.POST("logout", apisample.Logout)
 	sampleLogin.POST("/user", apisample.AddUser)

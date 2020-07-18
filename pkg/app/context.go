@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"reflect"
 	"time"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/jangozw/go-quick-api/erron"
 
@@ -89,6 +90,7 @@ func GetPager(c *gin.Context) *Pager {
 func setResponse(c *gin.Context, resp *response) {
 	c.Set(CtxKeyResponse, resp)
 }
+
 // 正常输出
 func OutputJSON(c *gin.Context, resp *response) {
 	setResponse(c, resp)
@@ -102,7 +104,7 @@ func AbortJSON(c *gin.Context, resp *response) {
 }
 
 func checkInput(input interface{}) error {
-	var inputTypeErr = errors.New("input 必须是一个结构体变量的地址")
+	inputTypeErr := errors.New("input 必须是一个结构体变量的地址")
 	rv := reflect.ValueOf(input)
 	if rv.Kind() != reflect.Ptr || rv.IsNil() || !rv.IsValid() {
 		return inputTypeErr
@@ -120,13 +122,12 @@ func checkInput(input interface{}) error {
 	return nil
 }
 
-
 // api 请求发生了panic 记入日志
 func LogApiPanic(c *gin.Context, panicMsg interface{}) {
 	user, _ := GetLoginUser(c)
 	start := c.GetTime(CtxStartTime)
 	// 执行时间
-	latency := time.Now().Sub(start)
+	latency := time.Since(start)
 	resp, ok := c.Get(CtxKeyResponse)
 	if !ok {
 		resp = struct{}{}

@@ -21,7 +21,7 @@ func apiLog(c *gin.Context) {
 	user, _ := app.GetLoginUser(c)
 	start := c.GetTime(app.CtxStartTime)
 	// 执行时间
-	latency := time.Now().Sub(start)
+	latency := time.Since(start)
 	resp, ok := c.Get(app.CtxKeyResponse)
 	if !ok {
 		resp = struct{}{}

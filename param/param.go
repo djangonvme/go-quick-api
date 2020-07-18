@@ -10,7 +10,4 @@ const (
 	ArgConfigFilename = "config.ini"
 	// token
 	TokenHeaderKey = "Authorization"
-
 )
-
-

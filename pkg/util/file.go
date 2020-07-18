@@ -117,9 +117,8 @@ func AppendToFile(filename, content string) error {
 	return nil
 }
 
-
 // 获取指定目录下的所有文件,包含子目录下的文件
-func GetAllFiles(dirPth string) (files []string, err error) {
+/*func GetAllFiles(dirPth string) (files []string, err error) {
 	var dirs []string
 	dir, err := ioutil.ReadDir(dirPth)
 	if err != nil {
@@ -134,5 +133,5 @@ func GetAllFiles(dirPth string) (files []string, err error) {
 			files = append(files, dirPth+PthSep+fi.Name())
 		}
 	}
-	return files, nil
-}
+	return dirs, nil
+}*/

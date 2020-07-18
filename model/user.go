@@ -57,6 +57,7 @@ func FindUserByMobile(mobile string) (user User, err error) {
 	}
 	return user, nil
 }
+
 func FindUserByID(ID int64) (user User, err error) {
 	if err = app.Db.Where("id=?", ID).First(&user).Error; err != nil {
 		return

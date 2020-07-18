@@ -1,7 +1,6 @@
 package app
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/jangozw/go-quick-api/config"
@@ -90,7 +89,7 @@ func LoadCfg() {
 		// 配置文件相对于运行目录的路径
 		filename := param.ArgConfigFilename
 
-		err := errors.New(fmt.Sprintf("Try to find config file %s failed: %s", filename, "no such file"))
+		err := fmt.Errorf("try to find config file %s failed: %s", filename, "no such file")
 		f, _ := util.FindConfigFile(filename, configFlag)
 		if f == "" {
 			panic(err)

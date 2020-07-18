@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-
 )
 
 // S 字符串类型转换
@@ -149,7 +148,6 @@ func (s S) DefaultFloat32(defaultVal float32) float32 {
 
 // ToJSON 转换为JSON
 
-
 // Capitalize 字符首字母大写
 func Capitalize(str string) string {
 	var upperStr string
@@ -169,6 +167,7 @@ func Capitalize(str string) string {
 	}
 	return upperStr
 }
+
 type Location struct {
 	Country      string
 	Province     string

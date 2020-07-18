@@ -1,6 +1,12 @@
 # go-quick-api
 
-go api开发基础项目库，以gin框架为基础简要封装，广泛适用于快速web API开发
+go api开发基础项目库，以gin框架为基础简要封装，广泛适用于web API开发。
+
+
+设计初衷：
+做个api功能很容易，但要打造其在团队开发中得心应手，维护起来代码不混乱，扩展起来轻松施展，就得从设计项目结构之初进行规划好。
+
+
 
 适合人群：
 * web工程师，curd必备利器
@@ -10,11 +16,11 @@ go api开发基础项目库，以gin框架为基础简要封装，广泛适用�
 
 
 # 基础组件
-* gin框架，文档 https://github.com/gin-gonic/gin
-* gorm操作数据库， 文档 http://gorm.book.jasperxu.com 
-* redis操作 ，文档 https://github.com/gomodule/redigo
-* jwt生成和验证token，文档 http://jwt.io
-* logrus日志， 文档 https://github.com/sirupsen/logrus
+* gin框架 文档： https://github.com/gin-gonic/gin
+* gorm操作数据库 文档： http://gorm.book.jasperxu.com 
+* redis 操作 文档： https://github.com/gomodule/redigo
+* jwt生成和验证token 文档 http://jwt.io
+* logrus日志, 文档: https://github.com/sirupsen/logrus
 
 
 # 运行
@@ -22,7 +28,7 @@ go api开发基础项目库，以gin框架为基础简要封装，广泛适用�
 ## 方式一： 在本地环境运行
 1， clone 项目到本地
 ```bash
-git clone git@github.com:jangozw/go-quick-api.git yourpath
+git clone git@github.com:jangozw/gin-smart.git yourpath
 ```
 
 2，修改根目录配置文件 ```config.ini```，主要是修改数据库和redis账号密码，打开秒懂
@@ -50,20 +56,19 @@ docker-compose up
 ```
 
 启动成功控制台：
-22:9:39 app         | [GIN-debug] GET    /                         --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (3 handlers)
-[GIN-debug] POST   /sample/login             --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (3 handlers)
-22:9:39 app         | [GIN-debug] POST   /sample/logout            --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (4 handlers)
-[GIN-debug] POST   /sample/user              --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (4 handlers)
-[GIN-debug] GET    /sample/user/list         --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (4 handlers)
-[GIN-debug] GET    /sample/user/detail       --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (4 handlers)
-[GIN-debug] GET    /v1/test                  --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (3 handlers)
-[GIN-debug] GET    /v1/config                --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (4 handlers)
-[GIN-debug] Listening and serving HTTP on :8080
+
+
 
 
 打印的是定义的api接口，此时可以请求了
 ```text
-
+10:9:36 app         | [GIN-debug] GET    /sample                   --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (3 handlers)
+10:9:36 app         | [GIN-debug] POST   /sample/login             --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (3 handlers)
+[GIN-debug] POST   /sample/logout            --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (4 handlers)
+[GIN-debug] POST   /sample/user              --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (4 handlers)
+[GIN-debug] GET    /sample/user/list         --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (4 handlers)
+[GIN-debug] GET    /sample/user/detail       --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (4 handlers)
+[GIN-debug] Listening and serving HTTP on :8180
 ```
 
 ## 请求接口
@@ -95,14 +100,24 @@ curl -X POST -H "Content-Type: application/json"  -d '{"mobile": "13012345678", 
 
 
 
+# 项目结构
+```text
 
+├── api                 // 写api业务处理
+├── cmd                 // main入口
+├── config               // 配置文件解析和其他配置
+├── erron               // 错误码和错误处理
+├── middleware          // api 中间件
+├── model               // 数据库表
+├── param               // 常用参数定义,如请求响应参数
+├── pkg                 // 内部依赖包
+│   ├── app 
+│   ├── lib 
+│   └── util
+├── route               // api 路由注册
+├── service             // 业务服务相关
+├── config.ini           // 全局配置文件
 
-
-
-
-
-
-
-
+```
 
 

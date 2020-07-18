@@ -47,7 +47,7 @@ func UniqueSliceInt64(src []int64) []int64 {
 				break
 			}
 		}
-		if exists == false {
+		if !exists {
 			res = append(res, sv)
 		}
 	}
@@ -64,7 +64,7 @@ func UniqueSliceString(src []string) []string {
 				break
 			}
 		}
-		if exists == false {
+		if !exists {
 			res = append(res, sv)
 		}
 	}

@@ -18,6 +18,7 @@ func TestGenerateJwtToken(t *testing.T) {
 		Name:   "hello",
 	}
 	token, err := GenerateJwtToken("123456", 600, user)
+	fmt.Println(err)
 	// assert.Nil(t, err)
 	fmt.Println(token)
 	jwtPayload, err := ParseJwtToken(token, "123456")

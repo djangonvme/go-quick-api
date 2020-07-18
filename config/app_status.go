@@ -1,10 +1,12 @@
 package config
+
 // 状态组
 type stateGroup struct {
 	Key  string  `json:"key"`
 	Desc string  `json:"desc"`
 	List []state `json:"list"`
 }
+
 type state struct {
 	Key   string `json:"key"`
 	Value int    `json:"value"`
@@ -15,6 +17,7 @@ type state struct {
 func GetAllStates() []stateGroup {
 	return allStates
 }
+
 // allStates
 // 所有用到的状态值，用于返回给前端, 前端只需要记key，不需要记value, 这样后端状态的变化不会导致前端调整很多，一旦有状态变化再这里重新配置
 var allStates = []stateGroup{

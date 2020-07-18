@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
@@ -25,8 +24,7 @@ func (d *CfgDatabase) NewDb() (*gorm.DB, error) {
 	connArgs := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=%s", d.User, d.Password, d.Host, d.Database, "Local")
 	db, err := gorm.Open(d.Schema, connArgs)
 	if err != nil {
-		// fmt.Println(connArgs)
-		return nil, errors.New(fmt.Sprintf("couldn't connect to database, check your connect args in config.ini, errMsg: %s", err.Error()))
+		return nil, fmt.Errorf("couldn't connect to database, check your connect args in config.ini, errMsg: %s", err.Error())
 	}
 	// config gorm db
 	db.SingularTable(true) // 全局设置表名不可以为复数形式。

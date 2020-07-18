@@ -26,6 +26,7 @@ func (e *errInfo) Code() Code {
 func (e *errInfo) Msg() string {
 	return e.msg
 }
+
 func textToMsg(text ...string) string {
 	var msg string
 	if len(text) > 0 {
@@ -55,7 +56,7 @@ func Inner(text ...string) E {
 }
 
 // 仅在合适情况使用，直接将错误抛出为异常。
-func Try(err error)  {
+func Try(err error) {
 	if err != nil {
 		panic(err)
 	}

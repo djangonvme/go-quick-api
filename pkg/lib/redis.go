@@ -1,9 +1,6 @@
 package lib
 
 import (
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
 	redigo "github.com/gomodule/redigo/redis"
@@ -53,7 +50,7 @@ func NewRedis(cfg CfgRedis) (*Redis, error) {
 	return &Redis{pool}, nil
 }
 
-func (r *Redis) closePool() {
+/*func (r *Redis) closePool() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	signal.Notify(c, syscall.SIGTERM)
@@ -62,7 +59,7 @@ func (r *Redis) closePool() {
 		<-c
 		r.pool.Close()
 	}()
-}
+}*/
 
 // get
 func (r *Redis) Get(key string) (string, error) {

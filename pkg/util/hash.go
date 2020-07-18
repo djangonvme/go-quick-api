@@ -18,7 +18,6 @@ func MD5Hash(b []byte) string {
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
-
 // SHA1Hash SHA1哈希值
 func SHA1Hash(b []byte) string {
 	h := sha1.New()
@@ -59,4 +58,3 @@ func RandNum(length int) []byte {
 func RandToken() string {
 	return Sha256(string(RandNum(100)))
 }
-

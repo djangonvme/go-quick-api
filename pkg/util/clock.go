@@ -20,10 +20,7 @@ func DateNow() string {
 func IsExpired(t time.Time) bool {
 	t1 := t.Unix()
 	t2 := time.Now().Unix()
-	if t1 < t2 {
-		return true
-	}
-	return false
+	return t1 < t2
 }
 
 // 获取传入的时间所在月份的第一天，即某月第一天的0点。如传入time.Now(), 返回当前月份的第一天0点时间。

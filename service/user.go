@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+
 	"github.com/jangozw/go-quick-api/model"
 	"github.com/jangozw/go-quick-api/param"
 	"github.com/jangozw/go-quick-api/pkg/app"
@@ -9,10 +10,10 @@ import (
 
 const RedisKeyLoginUser = "login_user_token_"
 
-
 func AppLogout(userId int64) error {
 	return app.Redis.Del(loginUserRedisKey(userId))
 }
+
 func loginUserRedisKey(userId int64) string {
 	return fmt.Sprintf("%s_%d", RedisKeyLoginUser, userId)
 }
@@ -40,4 +41,3 @@ func GetUserList(search param.UserListRequest, pager *app.Pager) (data []param.U
 	// data.SetPager(search.Page, search.PageSize, total)
 	return
 }
-

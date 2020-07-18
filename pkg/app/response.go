@@ -1,8 +1,9 @@
 package app
 
 import (
-	"github.com/jangozw/go-quick-api/pkg/util"
 	"time"
+
+	"github.com/jangozw/go-quick-api/pkg/util"
 
 	"github.com/jangozw/go-quick-api/erron"
 )
@@ -18,6 +19,7 @@ type response struct {
 type Pager struct {
 	util.Pager
 }
+
 // 分页结构数据
 type responseWithPager struct {
 	Pager *Pager      `json:"pager"`
