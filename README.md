@@ -79,12 +79,12 @@ docker-compose up
 
 浏览器或postman输入:
 ```bash
-http://127.0.0.1:8080
+http://127.0.0.1:8180
 ```
 或直接命令行:
 
 ```bash
-curl http://127.0.0.1:8080
+curl http://127.0.0.1:8180
 ```
 
 请求登陆接口:
