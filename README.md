@@ -3,7 +3,7 @@
 go api开发基础项目库，以gin框架为基础简要封装，广泛适用于web API开发。
 
 
-设计初衷：
+背景：
 做个api功能很容易，但要打造其在团队开发中得心应手，维护起来代码不混乱，扩展起来轻松施展，就得从设计项目结构之初进行规划好。
 
 
@@ -62,8 +62,8 @@ docker-compose up
 
 打印的是定义的api接口，此时可以请求了
 ```text
-10:9:36 app         | [GIN-debug] GET    /sample                   --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (3 handlers)
-10:9:36 app         | [GIN-debug] POST   /sample/login             --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (3 handlers)
+[GIN-debug] GET    /sample                   --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (3 handlers)
+[GIN-debug] POST   /sample/login             --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (3 handlers)
 [GIN-debug] POST   /sample/logout            --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (4 handlers)
 [GIN-debug] POST   /sample/user              --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (4 handlers)
 [GIN-debug] GET    /sample/user/list         --> github.com/jangozw/go-quick-api/pkg/app.WarpApi.func1 (4 handlers)
