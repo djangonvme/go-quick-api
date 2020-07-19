@@ -2,6 +2,12 @@ package erron
 
 import "fmt"
 
+type LogIF interface {
+	write(err error)
+}
+
+var logger LogIF
+
 // 错误接口
 type E interface {
 	Error() string
@@ -60,4 +66,19 @@ func Try(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func SetLogger(obj LogIF) {
+	logger = obj
+}
+
+func Log(err error) {
+	if logger == nil {
+		return
+	}
+	logger.write(err)
+}
+
+func Print(err error) {
+	fmt.Println(err)
 }

@@ -54,3 +54,8 @@ func NewLogger(logDir string, module string) (*Logger, error) {
 	logClient.AddHook(lfHook)
 	return &Logger{logClient}, nil
 }
+
+// log for gorm db
+func (l *Logger) NewDbLogger() *DBLogger {
+	return &DBLogger{baseLog: l.Logger}
+}

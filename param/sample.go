@@ -24,9 +24,7 @@ type LoginResponse struct {
 // form, binding 是gin的验证规则
 // more validate rules refer: https://godoc.org/gopkg.in/go-playground/validator.v8
 type UserListRequest struct {
-	// Mobile string `form:"mobile" binding:"required"`
 	Mobile string `form:"mobile" json:"mobile"`
-	// Page   int64  `form:"page" binding:"required,gt=0"`
 }
 
 func (u *UserListRequest) Check() error {

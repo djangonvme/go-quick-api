@@ -22,7 +22,7 @@ type Pager struct {
 
 // 分页结构数据
 type responseWithPager struct {
-	Pager *Pager      `json:"pager"`
+	Pager Pager       `json:"pager"`
 	List  interface{} `json:"list"`
 }
 
@@ -53,7 +53,7 @@ func Response(err erron.E, data interface{}) *response {
 }
 
 // 带分页的输出结果 response.data 的结构
-func PagerResponse(pager *Pager, list interface{}) *responseWithPager {
+func PagerResponse(pager Pager, list interface{}) *responseWithPager {
 	return &responseWithPager{
 		Pager: pager,
 		List:  list,

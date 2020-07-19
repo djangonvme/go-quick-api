@@ -69,5 +69,12 @@ func makeUserPwd(input string) string {
 	return util.Sha256(input)
 }
 
-func UserList(search param.UserListRequest, pager util.Pager) {
+func UserList(search param.UserListRequest, pager app.Pager) ([]User, error) {
+	var users []User
+	query := app.Db
+	if search.Mobile != "" {
+		query = query.Where("mobile=?", search.Mobile)
+	}
+	err := query.Offset(pager.Offset()).Limit(pager.Limit()).Find(&users).Error
+	return users, err
 }

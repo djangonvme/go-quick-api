@@ -19,25 +19,18 @@ func loginUserRedisKey(userId int64) string {
 }
 
 // 用户列表
-func GetUserList(search param.UserListRequest, pager *app.Pager) (data []param.UserItem, err error) {
-	var users []model.User
-	query := app.Db.Model(&model.User{})
-	if search.Mobile != "" {
-		query = query.Where("mobile = ?", search.Mobile)
+func GetUserList(search param.UserListRequest, pager app.Pager) ([]param.UserItem, error) {
+	users, err := model.UserList(search, pager)
+	if err != nil {
+		return nil, err
 	}
-	if err = query.Count(&pager.Total).Error; err != nil {
-		return
-	}
-	if err = query.Limit(pager.Limit()).Offset(pager.Offset()).Find(&users).Error; err != nil {
-		return
-	}
-	for _, u := range users {
-		data = append(data, param.UserItem{
+	data := make([]param.UserItem, len(users))
+	for i, u := range users {
+		data[i] = param.UserItem{
 			Id:     u.ID,
 			Mobile: u.Mobile,
 			Name:   u.Name,
-		})
+		}
 	}
-	// data.SetPager(search.Page, search.PageSize, total)
-	return
+	return data, nil
 }

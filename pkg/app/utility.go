@@ -9,7 +9,6 @@ const (
 	EnvDev        = "dev"
 	EnvTest       = "test"
 	EnvProduction = "production"
-	CtxStartTime  = "ctx-start-time"
 )
 
 type CheckIF interface {

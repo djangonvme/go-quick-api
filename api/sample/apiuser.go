@@ -105,6 +105,16 @@ func UserChangePwd(c *gin.Context) (interface{}, error) {
 		return nil, erron.FailBy(err)
 	}
 	// 修改密码
-	// 。。。
+	// ...
 	return nil, nil
+}
+
+// test users
+func Users(c *gin.Context) (interface{}, error) {
+	search := param.UserListRequest{}
+	erron.Try(c.ShouldBind(&search))
+	pager := app.GetPager(c)
+	data, err := model.UserList(search, pager)
+	erron.Try(err)
+	return app.PagerResponse(pager, data), nil
 }

@@ -4,7 +4,8 @@
 # ...
 
 # This how we want to name the binary output
-BINARY=bin/goquickapi
+BIN_PATH=bin
+BINARY=goquickapi
 MAIN_FILE=cmd/app/main.go
 # These are the values we want to pass for VERSION  and BUILD
 VERSION=`git rev-parse --short HEAD`
@@ -15,14 +16,16 @@ LDFLAGS=-ldflags "-X main.BuildVersion=${VERSION} -X main.BuildAt=${BUILD}"
 .PHONY:  clean install build clean lint help mt_proto fmt_shell checkgofmt docker vet staticcheck
 
 build: ## Builds the project
-	@go build -tags=jsoniter ${LDFLAGS} -o ${BINARY} ${MAIN_FILE}
+	@go build -tags=jsoniter ${LDFLAGS} -o ${BIN_PATH}/${BINARY} ${MAIN_FILE}
+	@cp config.ini ${BIN_PATH}/config.ini
 
 build-linux: ## Builds the project
-	@GOOS=linux GOARCH=amd64 go build -tags=jsoniter ${LDFLAGS} -o  ${BINARY} ${MAIN_FILE}
+	GOOS=linux GOARCH=amd64 go build -tags=jsoniter ${LDFLAGS} -o ${BIN_PATH}/${BINARY} ${MAIN_FILE}
+	cp config.ini ${BIN_PAtH}/config.ini
 
 build-docker:
-	chmod +x ./deploy/build_image.sh
-	./deploy/build_image.sh
+	chmod +x ./deploy/build.sh
+	./deploy/build.sh
 
 dep: ## Get the dependencies
 	@go get -v -u github.com/golangci/golangci-lint/cmd/golangci-lint

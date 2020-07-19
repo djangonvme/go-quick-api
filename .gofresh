@@ -6,16 +6,16 @@ watch_dir:          .
 build_file :        cmd/app/main.go
 
 # 存放编译文件的临时目录
-tmp_path:          ./tmp
+tmp_path:          ./bin
 
 # 启动参数 模版: -p=conf/test.ini
-run_arg:    -config=config.ini
+run_arg:        -config=config.ini
 
 # 编译的二进制名称
-build_name:        app-main-build
+build_name:        goquickapi
 
 # 编译日志
-build_log:         app-main-build-errors.log
+build_log:         goquickapi-build-errors.log
 
 # 监控的文件扩展名
 valid_ext:         .go, .ini

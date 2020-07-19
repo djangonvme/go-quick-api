@@ -133,7 +133,13 @@ func LoadDb() (err error) {
 		Password: Cfg.Database.Password,
 		Database: Cfg.Database.Database,
 	}
-	Db, err = lib.NewDb(cfgDb)
+	var dbLogger *lib.DBLogger
+
+	if Logger != nil {
+		dbLogger = Logger.NewDbLogger()
+	}
+
+	Db, err = lib.NewDb(cfgDb, dbLogger)
 	if err == nil {
 		fmt.Println("app loaded service Db successfully! ")
 	}

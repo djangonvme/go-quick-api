@@ -2,9 +2,6 @@
 
 # go env -w GOPRIVATE=gitlab.gosccap.cn
 
-
-projectRoot=`pwd`
-
 # 二进制名称
 binaryName=goquickapi
 
@@ -12,7 +9,7 @@ binaryName=goquickapi
 log="${binaryName}.run.log"
 
 # 启动的参数，配置文件
-startArg="-config=${projectRoot}/config.ini"
+startArg="-config=config.ini"
 
 case $1 in
     start)

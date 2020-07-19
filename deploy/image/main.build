@@ -4,20 +4,29 @@ FROM golang:latest AS build-env
 ENV GOPROXY=https://goproxy.io,direct
 ENV GOOS=linux
 ENV GOARCH=386
-WORKDIR /www
-COPY . /www
+WORKDIR /app
+COPY . /app
 RUN make build
 
 # 2, deploy 
 FROM alpine:latest
+
 # install dockerize to make sure services start in order. https://github.com/jwilder/dockerize
-COPY --from=build-env /www/deploy/docker-compose/dockerize-alpine-linux-amd64-v0.6.1.tar.gz /
+COPY --from=build-env /app/deploy/image/dockerize-alpine-linux-amd64-v0.6.1.tar.gz /
 RUN tar -C /usr/local/bin -xzvf /dockerize-alpine-linux-amd64-v0.6.1.tar.gz && rm /dockerize-alpine-linux-amd64-v0.6.1.tar.gz
+
+# appName from make build above step
+ARG appName=goquickapi
+
+# bin path
+WORKDIR /opt/${appName}
 # copy application
-COPY --from=build-env /www/bin/goquickapi /usr/local/bin/
-COPY --from=build-env /www/deploy/deploy_config.ini /etc/goquickapi_config.ini
+COPY --from=build-env /app/bin/${appNmae} /opt/${appName}/
+COPY --from=build-env /app/deploy/deploy_config.ini /opt/${appName}/config.ini
 
 #app file log path
 RUN mkdir /logs
 EXPOSE 8080
 # dont start here
+
+

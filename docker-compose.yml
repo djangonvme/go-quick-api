@@ -4,8 +4,8 @@
 version: '3'
 services:
   main:
-    container_name: ${PROJECT_NAME}_main
-    image: ${PROJECT_NAME}_main
+    container_name: ${APP_NAME}_main
+    image: ${APP_NAME}_main
     ports:
       - 8180:8080
     depends_on:
@@ -14,15 +14,15 @@ services:
     volumes:
       - main:/logs
     # 使用dockerize 检测到redis， mysql 成功启动后再启动web服务,超时时间180秒
-    command: ["dockerize", "-wait", "tcp://${PROJECT_NAME}_mysql:3306", "-wait", "tcp://${PROJECT_NAME}_redis:6379", "-timeout", "180s", "/usr/local/bin/${PROJECT_NAME}", "-config=/etc/${PROJECT_NAME}_config.ini"]
+    command: ["dockerize", "-wait", "tcp://${APP_NAME}_mysql:3306", "-wait", "tcp://${APP_NAME}_redis:6379", "-timeout", "180s", "/opt/${APP_NAME}/${APP_NAME}", "-config=/opt/${APP_NAME}/config.ini"]
   redis:
     image: "redis:5.0"
-    container_name: ${PROJECT_NAME}_redis
+    container_name: ${APP_NAME}_redis
     ports:
       - 6380:6379
   mysql:
-    container_name: ${PROJECT_NAME}_mysql        # 指定容器的名称
-    image: ${PROJECT_NAME}_mysql:latest
+    container_name: ${APP_NAME}_mysql        # 指定容器的名称
+    image: ${APP_NAME}_mysql:latest
     ports:
       - "3309:3306"
     environment:

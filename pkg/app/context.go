@@ -19,6 +19,7 @@ import (
 
 const (
 	CtxKeyResponse = "ctx-response"
+	CtxStartTime   = "ctx-start-time"
 )
 
 // 登陆用户信息, 可根据业务需要扩充字段
@@ -80,9 +81,9 @@ func BindInput(c *gin.Context, input interface{}) erron.E {
 }
 
 // 展示的分页
-func GetPager(c *gin.Context) *Pager {
-	pager := &Pager{}
-	c.ShouldBind(pager)
+func GetPager(c *gin.Context) Pager {
+	pager := Pager{}
+	c.ShouldBind(&pager)
 	pager.Secure()
 	return pager
 }
@@ -141,14 +142,46 @@ func LogApiPanic(c *gin.Context, panicMsg interface{}) {
 		json.Unmarshal(postData, &query)
 	}
 
-	// log 里有json.Marshal() 导致url转义字符
-	Logger.WithFields(logrus.Fields{
-		"uid":      user.ID,
-		"query":    query,
-		"response": resp,
-		"method":   c.Request.Method,
-		"uri":      c.Request.URL.RequestURI(),
-		"latency":  fmt.Sprintf("%3v", latency),
-		"ip":       c.ClientIP(),
-	}).Infof("--panic: %s | %s %s", panicMsg, c.Request.Method, c.Request.URL.RequestURI())
+	if Logger != nil {
+		// log 里有json.Marshal() 导致url转义字符
+		Logger.WithFields(logrus.Fields{
+			"uid":      user.ID,
+			"query":    query,
+			"response": resp,
+			"method":   c.Request.Method,
+			"uri":      c.Request.URL.RequestURI(),
+			"latency":  fmt.Sprintf("%3v", latency),
+			"ip":       c.ClientIP(),
+			"type":     "panic",
+		}).Infof("--panic: %s | %s %s", panicMsg, c.Request.Method, c.Request.URL.RequestURI())
+	}
+}
+
+// api 接口日志记录请求和返回
+func ApiLog(c *gin.Context) {
+	user, _ := GetLoginUser(c)
+	start := c.GetTime(CtxStartTime)
+	// 执行时间
+	latency := time.Since(start)
+	resp, ok := c.Get(CtxKeyResponse)
+	if !ok {
+		resp = struct{}{}
+	}
+	var query interface{}
+	if c.Request.Method == "GET" {
+		query = c.Request.URL.Query()
+	} else {
+		postData, _ := c.GetRawData()
+		query := make(map[string]interface{})
+		json.Unmarshal(postData, &query)
+	}
+	if Logger != nil {
+		// log 里有json.Marshal() 导致url转义字符
+		Logger.WithFields(logrus.Fields{
+			"uid":      user.ID,
+			"query":    query,
+			"response": resp,
+			"type":     "api",
+		}).Infof("api log: %s | %s |t=%3v | %s", c.Request.Method, c.Request.URL.RequestURI(), latency, c.ClientIP())
+	}
 }

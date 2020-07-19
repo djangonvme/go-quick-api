@@ -27,6 +27,10 @@ func Register(router *app.Engine) {
 	sample.GET("", func(c *gin.Context) (data interface{}, err error) {
 		return "/sample welcome", nil
 	})
+
+	// list users
+	sample.GET("/users", apisample.Users)
+
 	sample.GET("/status", func(c *gin.Context) (data interface{}, err error) {
 		return config.GetAllStates(), nil
 	})
@@ -34,7 +38,6 @@ func Register(router *app.Engine) {
 	sample.POST("/login", apisample.Login)
 	sampleLogin.POST("logout", apisample.Logout)
 	sampleLogin.POST("/user", apisample.AddUser)
-	sampleLogin.GET("/user/list", apisample.UserList)
 	sampleLogin.GET("/user/detail", apisample.UserDetail)
 
 	// open chrome http://127.0.0.1:8180/debug/pprof/
