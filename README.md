@@ -32,7 +32,7 @@ go api开发基础项目库，以gin框架为基础简要封装，广泛适用�
 ## 方式一： 在本地环境运行
 1， clone 项目到本地
 ```bash
-git clone git@github.com:jangozw/gin-smart.git yourpath
+git clone git@github.com:jangozw/go-quick-api.git
 ```
 
 2，修改根目录配置文件 ```config.ini```，主要是修改数据库和redis账号密码，打开秒懂
