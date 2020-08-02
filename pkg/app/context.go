@@ -1,9 +1,11 @@
 package app
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"reflect"
 	"time"
@@ -20,6 +22,7 @@ import (
 const (
 	CtxKeyResponse = "ctx-response"
 	CtxStartTime   = "ctx-start-time"
+	CtxRequestBody = "ctx-request-body"
 )
 
 // 登陆用户信息, 可根据业务需要扩充字段
@@ -46,6 +49,37 @@ func ParseUserByToken(token string) (TokenPayload, error) {
 		return user, errors.New("invalid login user")
 	}
 	return user, nil
+}
+
+func InitCtxSetting(c *gin.Context) {
+	if _, ok := c.Get(CtxRequestBody); !ok {
+		body, _ := c.GetRawData()
+		c.Set(CtxRequestBody, body)
+		// 这个body只能取一次，后面就取不到了，所以此处存起来
+		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+		// 验证时候用 app.ShouldBind()就可以一次请求多次验证了
+	}
+}
+
+// 解决gin 的一个坑吧, 需要用到xxxBind()地方之前确保c.request.body 存在
+func CheckRequestBody(c *gin.Context) {
+	if c.Request.Body == nil {
+		if val, exists := c.Get(CtxRequestBody); exists {
+			if val != nil {
+				by, _ := json.Marshal(val)
+				c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(by))
+			}
+		}
+	}
+}
+
+//
+func ShouldBind(c *gin.Context, input interface{}) error {
+	CheckRequestBody(c)
+	if err := c.ShouldBind(input); err != nil {
+		return err
+	}
+	return nil
 }
 
 func GetLoginUser(c *gin.Context) (user LoginUser, err error) {
