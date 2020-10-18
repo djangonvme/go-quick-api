@@ -51,25 +51,23 @@ func ParseUserByToken(token string) (TokenPayload, error) {
 	return user, nil
 }
 
-func InitCtxSetting(c *gin.Context) {
-	if _, ok := c.Get(CtxRequestBody); !ok {
+// gin自带的bind系列方法只能用一次，所以此处将c.Request.Body存起来,就可以实现一次请求多次验证了
+func SetCtxRequestBody(c *gin.Context) {
+	bodyStr := c.GetString(CtxRequestBody)
+	if bodyStr == "" {
 		body, _ := c.GetRawData()
-		c.Set(CtxRequestBody, body)
-		// 这个body只能取一次，后面就取不到了，所以此处存起来
-		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(body))
-		// 验证时候用 app.ShouldBind()就可以一次请求多次验证了
+		bodyStr = string(body)
+		c.Set(CtxRequestBody, bodyStr)
+	}
+	if bodyStr != "" {
+		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer([]byte(bodyStr)))
 	}
 }
 
 // 解决gin 的一个坑吧, 需要用到xxxBind()地方之前确保c.request.body 存在
 func CheckRequestBody(c *gin.Context) {
-	if c.Request.Body == nil {
-		if val, exists := c.Get(CtxRequestBody); exists {
-			if val != nil {
-				by, _ := json.Marshal(val)
-				c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(by))
-			}
-		}
+	if str := c.GetString(CtxRequestBody); str != "" {
+		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer([]byte(str)))
 	}
 }
 

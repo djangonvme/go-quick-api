@@ -15,6 +15,6 @@ func Header(c *gin.Context) {
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Content-Type", "application/json; charset=utf-8")
 	c.Header("Build-Info", app.BuildInfo)
-	app.InitCtxSetting(c)
+	app.SetCtxRequestBody(c)
 	c.Next()
 }

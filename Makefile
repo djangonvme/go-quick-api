@@ -84,7 +84,7 @@ bench: ## Run benchmark of all
 msan: ## Run memory sanitizer
 	@go test -msan -short ./...
 
-checkgofmt: fmt fmt_proto fmt_shell  ## get all go files and run go fmt on them
+checkfmt: fmt fmt_proto fmt_shell  ## get all go files and run go fmt on them
 	@files=$$(git status -suno);if [ -n "$$files" ]; then \
 		  echo "Error: 'make fmt' needs to be run on:"; \
 		  echo "${files}"; \
