@@ -3,9 +3,9 @@ package model
 import (
 	"errors"
 
-	"github.com/jangozw/go-quick-api/param"
-	"github.com/jangozw/go-quick-api/pkg/app"
-	"github.com/jangozw/go-quick-api/pkg/util"
+	"gitlab.com/task-dispatcher/pkg/app"
+	"gitlab.com/task-dispatcher/pkg/util"
+	"gitlab.com/task-dispatcher/types"
 )
 
 const (
@@ -37,7 +37,7 @@ type UserToken struct {
 //
 func AddUser(name, mobile, pwd string) (User, error) {
 	var total int
-	if err := app.Db.Model(&User{}).Where("mobile=?", mobile).Count(&total).Error; err != nil {
+	if err := app.Db().Model(&User{}).Where("mobile=?", mobile).Count(&total).Error; err != nil {
 		return User{}, err
 	}
 	if total > 0 {
@@ -48,18 +48,18 @@ func AddUser(name, mobile, pwd string) (User, error) {
 		Mobile:   mobile,
 		Password: makeUserPwd(pwd),
 	}
-	return user, app.Db.Create(&user).Error
+	return user, app.Db().Create(&user).Error
 }
 
 func FindUserByMobile(mobile string) (user User, err error) {
-	if err = app.Db.Where("mobile=?", mobile).First(&user).Error; err != nil {
+	if err = app.Db().Where("mobile=?", mobile).First(&user).Error; err != nil {
 		return
 	}
 	return user, nil
 }
 
 func FindUserByID(ID int64) (user User, err error) {
-	if err = app.Db.Where("id=?", ID).First(&user).Error; err != nil {
+	if err = app.Db().Where("id=?", ID).First(&user).Error; err != nil {
 		return
 	}
 	return user, nil
@@ -69,9 +69,9 @@ func makeUserPwd(input string) string {
 	return util.Sha256(input)
 }
 
-func UserList(search param.UserListRequest, pager app.Pager) ([]User, error) {
+func UserList(search types.UserListRequest, pager app.Pager) ([]User, error) {
 	var users []User
-	query := app.Db
+	query := app.Db().Model(&User{})
 	if search.Mobile != "" {
 		query = query.Where("mobile=?", search.Mobile)
 	}

@@ -1,16 +1,16 @@
 package middleware
 
 import (
-	"github.com/jangozw/go-quick-api/erron"
-	"github.com/jangozw/go-quick-api/param"
+	"gitlab.com/task-dispatcher/erron"
+	"gitlab.com/task-dispatcher/types"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/jangozw/go-quick-api/pkg/app"
+	"gitlab.com/task-dispatcher/pkg/app"
 )
 
 func NeedLogin(c *gin.Context) {
-	token := c.GetHeader(param.TokenHeaderKey)
+	token := c.GetHeader(types.TokenHeaderKey)
 	if token == "" {
 		app.AbortJSON(c, app.ResponseFailByCode(erron.UnLogin))
 		return

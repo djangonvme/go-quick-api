@@ -1,7 +1,8 @@
-package lib
+package singleton
 
 import (
 	"fmt"
+	"gitlab.com/task-dispatcher/config"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -10,46 +11,40 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type CfgDatabase struct {
-	Schema   string
-	Host     string
-	User     string
-	Password string
-	Database string
+type DB struct {
+	*gorm.DB
 }
 
-func NewDb(cfg CfgDatabase, dbLogger *DBLogger) (*gorm.DB, error) {
-	connArgs := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=%s", cfg.User, cfg.Password, cfg.Host, cfg.Database, "Local")
-	db, err := gorm.Open(cfg.Schema, connArgs)
+func NewDB(cfg *config.Config, logger *Logger) (*DB, error) {
+	args := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=%s", cfg.MySQL.User, cfg.MySQL.Password, cfg.MySQL.Host, cfg.MySQL.DbName, "Local")
+	db, err := gorm.Open("mysql", args)
 	if err != nil {
-		return nil, fmt.Errorf("couldn't connect to database, check your connect args in config.ini, errM: %s", err.Error())
+		return nil, fmt.Errorf("couldn't connect to mysql, check your connect args in config.toml, errM: %s", err.Error())
 	}
+	dbs := &DB{db}
 	// config gorm db
 	// 全局设置表名不可以为复数形式。
-	db.SingularTable(true)
+	dbs.SingularTable(true)
 	// prevent no where cause update/delete
-	db.BlockGlobalUpdate(true)
+	dbs.BlockGlobalUpdate(true)
 	// enable log
-	db.LogMode(true)
-	db.DB().SetMaxIdleConns(20)
-	db.DB().SetMaxOpenConns(100)
-	db.DB().SetConnMaxLifetime(3600 * time.Second)
+	dbs.LogMode(true)
+	dbs.DB.DB().SetMaxIdleConns(20)
+	dbs.DB.DB().SetMaxOpenConns(100)
+	dbs.DB.DB().SetConnMaxLifetime(3600 * time.Second)
 
-	db.Callback().Create().Replace("gorm:update_time_stamp", func(scope *gorm.Scope) {
+	dbs.Callback().Create().Replace("gorm:update_time_stamp", func(scope *gorm.Scope) {
 		scope.SetColumn("CreatedAt", time.Now())
 		scope.SetColumn("UpdatedAt", time.Now())
 	})
-	db.Callback().Update().Replace("gorm:update_time_stamp", func(scope *gorm.Scope) {
+	dbs.Callback().Update().Replace("gorm:update_time_stamp", func(scope *gorm.Scope) {
 		scope.SetColumn("UpdatedAt", time.Now())
 	})
 	// sql 写入日志 或控制台， 二选一
-	if dbLogger != nil {
-		db.SetLogger(dbLogger)
-	}
-	return db, nil
+	dbs.SetLogger(logger.NewDbLogger())
+	return dbs, nil
 }
 
-//
 type DBLogger struct {
 	baseLog *logrus.Logger
 }

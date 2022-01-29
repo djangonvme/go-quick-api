@@ -7,7 +7,7 @@ type Code int
 const (
 	Success         Code = 200
 	Failed          Code = 10000
-	UnLogin         Code = 10001
+	UnLogin         Code = 401
 	ErrInternal     Code = 10003
 	ErrRequestParam Code = 10004
 	ErrAccountInfo  Code = 10005

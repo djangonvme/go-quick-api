@@ -82,9 +82,8 @@ func FindArgValue(name string) string {
 	return ""
 }
 
-// 判断文件夹是否存在
-func IsPathExists(dirPath string) (bool, error) {
-	_, err := os.Stat(dirPath)
+func IsPathExists(p string) (bool, error) {
+	_, err := os.Stat(p)
 	if err == nil {
 		return true, nil
 	}

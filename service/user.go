@@ -1,17 +1,23 @@
 package service
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/jangozw/go-quick-api/model"
-	"github.com/jangozw/go-quick-api/param"
-	"github.com/jangozw/go-quick-api/pkg/app"
+	"gitlab.com/task-dispatcher/model"
+	"gitlab.com/task-dispatcher/pkg/app"
+	"gitlab.com/task-dispatcher/types"
 )
 
 const RedisKeyLoginUser = "login_user_token_"
 
 func AppLogout(userId int64) error {
-	return app.Redis.Del(loginUserRedisKey(userId))
+	ctx := context.Background()
+	_, err := app.Redis().Del(ctx, loginUserRedisKey(userId)).Result()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func loginUserRedisKey(userId int64) string {
@@ -19,14 +25,14 @@ func loginUserRedisKey(userId int64) string {
 }
 
 // 用户列表
-func GetUserList(search param.UserListRequest, pager app.Pager) ([]param.UserItem, error) {
+func GetUserList(search types.UserListRequest, pager app.Pager) ([]types.UserItem, error) {
 	users, err := model.UserList(search, pager)
 	if err != nil {
 		return nil, err
 	}
-	data := make([]param.UserItem, len(users))
+	data := make([]types.UserItem, len(users))
 	for i, u := range users {
-		data[i] = param.UserItem{
+		data[i] = types.UserItem{
 			Id:     u.ID,
 			Mobile: u.Mobile,
 			Name:   u.Name,

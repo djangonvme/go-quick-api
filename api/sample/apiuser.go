@@ -2,17 +2,17 @@ package apisample
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jangozw/go-quick-api/erron"
-	"github.com/jangozw/go-quick-api/model"
-	"github.com/jangozw/go-quick-api/param"
-	"github.com/jangozw/go-quick-api/pkg/app"
-	"github.com/jangozw/go-quick-api/pkg/auth"
-	"github.com/jangozw/go-quick-api/service"
+	"gitlab.com/task-dispatcher/erron"
+	"gitlab.com/task-dispatcher/model"
+	"gitlab.com/task-dispatcher/pkg/app"
+	"gitlab.com/task-dispatcher/pkg/auth"
+	"gitlab.com/task-dispatcher/service"
+	"gitlab.com/task-dispatcher/types"
 )
 
 // login api
 func Login(c *gin.Context) (interface{}, error) {
-	var input param.LoginRequest
+	var input types.LoginRequest
 	if err := c.ShouldBind(&input); err != nil {
 		return nil, erron.New(erron.ErrRequestParam, err.Error())
 	}
@@ -25,11 +25,11 @@ func Login(c *gin.Context) (interface{}, error) {
 	}
 	// token 携带的user 信息根据业务情况设置
 	tokenPayload := app.TokenPayload{UserID: user.ID}
-	token, err := auth.GenerateJwtToken(app.Cfg.General.JwtSecret, app.Cfg.General.TokenExpire, tokenPayload)
+	token, err := auth.GenerateJwtToken(app.Cfg().General.JwtSecret, app.Cfg().General.TokenExpire, tokenPayload)
 	if err != nil {
 		return nil, erron.FailBy(err)
 	}
-	output := param.LoginResponse{Token: token}
+	output := types.LoginResponse{Token: token}
 	return output, nil
 }
 
@@ -44,7 +44,7 @@ func Logout(c *gin.Context) (interface{}, error) {
 
 // 带有分页的列表
 func UserList(c *gin.Context) (interface{}, error) {
-	input := param.UserListRequest{}
+	input := types.UserListRequest{}
 	if err := c.ShouldBind(&input); err != nil {
 		return nil, erron.FailBy(err)
 	}
@@ -58,14 +58,14 @@ func UserList(c *gin.Context) (interface{}, error) {
 
 // 添加用户
 func AddUser(c *gin.Context) (interface{}, error) {
-	var input param.UserAddRequest
+	var input types.UserAddRequest
 	if err := c.ShouldBind(&input); err != nil {
 		return nil, erron.FailBy(err)
 	}
 	if user, err := model.AddUser(input.Name, input.Mobile, input.Pwd); err != nil {
 		return nil, erron.FailBy(err)
 	} else {
-		data := param.SampleUserResponse{
+		data := types.SampleUserResponse{
 			ID:     user.ID,
 			Name:   user.Name,
 			Mobile: user.Mobile,
@@ -76,7 +76,7 @@ func AddUser(c *gin.Context) (interface{}, error) {
 
 // 用户详情
 func UserDetail(c *gin.Context) (interface{}, error) {
-	var input param.UserDetailRequest
+	var input types.UserDetailRequest
 	if err := c.ShouldBind(&input); err != nil {
 		return nil, erron.FailBy(err)
 	}
@@ -84,7 +84,7 @@ func UserDetail(c *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, erron.FailBy(err)
 	}
-	output := &param.UserDetailResponse{
+	output := &types.UserDetailResponse{
 		Id:     user.ID,
 		Mobile: user.Mobile,
 		Name:   user.Name,
@@ -94,7 +94,7 @@ func UserDetail(c *gin.Context) (interface{}, error) {
 
 // 修改的自己的密码
 func UserChangePwd(c *gin.Context) (interface{}, error) {
-	var input param.UserModifyPwdRequest
+	var input types.UserModifyPwdRequest
 	if err := app.BindInput(c, &input); err != nil {
 		return nil, erron.FailBy(err)
 	}
@@ -111,7 +111,7 @@ func UserChangePwd(c *gin.Context) (interface{}, error) {
 
 // test users
 func Users(c *gin.Context) (interface{}, error) {
-	search := param.UserListRequest{}
+	search := types.UserListRequest{}
 	erron.Try(c.ShouldBind(&search))
 	pager := app.GetPager(c)
 	data, err := model.UserList(search, pager)

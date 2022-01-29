@@ -12,11 +12,11 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/jangozw/go-quick-api/erron"
+	"gitlab.com/task-dispatcher/erron"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jangozw/go-quick-api/param"
-	"github.com/jangozw/go-quick-api/pkg/auth"
+	"gitlab.com/task-dispatcher/pkg/auth"
+	"gitlab.com/task-dispatcher/types"
 )
 
 const (
@@ -25,7 +25,7 @@ const (
 	CtxRequestBody = "ctx-request-body"
 )
 
-// 登陆用户信息, 可根据业务需要扩充字段
+// LoginUser 登陆用户信息, 可根据业务需要扩充字段
 type LoginUser struct {
 	ID int64
 }
@@ -34,13 +34,13 @@ type TokenPayload struct {
 	UserID int64 `json:"uid"`
 }
 
-// 根据token解析登陆用户
+// ParseUserByToken 根据token解析登陆用户
 func ParseUserByToken(token string) (TokenPayload, error) {
 	user := TokenPayload{}
 	if token == "" {
 		return user, errors.New("empty token")
 	}
-	if jwtPayload, err := auth.ParseJwtToken(token, Cfg.General.JwtSecret); err != nil {
+	if jwtPayload, err := auth.ParseJwtToken(token, Cfg().General.JwtSecret); err != nil {
 		return user, err
 	} else if err := jwtPayload.ParseUser(&user); err != nil {
 		return user, err
@@ -51,7 +51,7 @@ func ParseUserByToken(token string) (TokenPayload, error) {
 	return user, nil
 }
 
-// gin自带的bind系列方法只能用一次，所以此处将c.Request.Body存起来,就可以实现一次请求多次验证了
+// SetCtxRequestBody gin自带的bind系列方法只能用一次，所以此处将c.Request.Body存起来,就可以实现一次请求多次验证了
 func SetCtxRequestBody(c *gin.Context) {
 	bodyStr := c.GetString(CtxRequestBody)
 	if bodyStr == "" {
@@ -64,14 +64,13 @@ func SetCtxRequestBody(c *gin.Context) {
 	}
 }
 
-// 解决gin 的一个坑吧, 需要用到xxxBind()地方之前确保c.request.body 存在
+// CheckRequestBody 解决gin 的一个坑吧, 需要用到xxxBind()地方之前确保c.request.body 存在
 func CheckRequestBody(c *gin.Context) {
 	if str := c.GetString(CtxRequestBody); str != "" {
 		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer([]byte(str)))
 	}
 }
 
-//
 func ShouldBind(c *gin.Context, input interface{}) error {
 	CheckRequestBody(c)
 	if err := c.ShouldBind(input); err != nil {
@@ -81,7 +80,7 @@ func ShouldBind(c *gin.Context, input interface{}) error {
 }
 
 func GetLoginUser(c *gin.Context) (user LoginUser, err error) {
-	info, err := ParseUserByToken(c.GetHeader(param.TokenHeaderKey))
+	info, err := ParseUserByToken(c.GetHeader(types.TokenHeaderKey))
 	if err != nil {
 		return user, err
 	}
@@ -96,7 +95,7 @@ func MustGetLoginUser(c *gin.Context) LoginUser {
 	return user
 }
 
-// 绑定输入参数
+// BindInput 绑定输入参数
 func BindInput(c *gin.Context, input interface{}) erron.E {
 	if err := checkInput(input); err == nil {
 		if err := c.ShouldBind(input); err != nil {
@@ -112,7 +111,7 @@ func BindInput(c *gin.Context, input interface{}) erron.E {
 	return nil
 }
 
-// 展示的分页
+// GetPager 展示的分页
 func GetPager(c *gin.Context) Pager {
 	pager := Pager{}
 	c.ShouldBind(&pager)
@@ -173,10 +172,9 @@ func LogApiPanic(c *gin.Context, panicMsg interface{}) {
 		query := make(map[string]interface{})
 		json.Unmarshal(postData, &query)
 	}
-
-	if Logger != nil {
+	if LoggerInstance != nil {
 		// log 里有json.Marshal() 导致url转义字符
-		Logger.WithFields(logrus.Fields{
+		LoggerInstance.WithFields(logrus.Fields{
 			"uid":      user.ID,
 			"query":    query,
 			"response": resp,
@@ -199,21 +197,25 @@ func ApiLog(c *gin.Context) {
 	if !ok {
 		resp = struct{}{}
 	}
+	var header map[string][]string
 	var query interface{}
 	if c.Request.Method == "GET" {
 		query = c.Request.URL.Query()
 	} else {
 		postData, _ := c.GetRawData()
-		query := make(map[string]interface{})
+		query = make(map[string]interface{})
 		json.Unmarshal(postData, &query)
+		header = c.Request.Header
 	}
-	if Logger != nil {
+
+	if LoggerInstance != nil {
 		// log 里有json.Marshal() 导致url转义字符
-		Logger.WithFields(logrus.Fields{
+		LoggerInstance.WithFields(logrus.Fields{
 			"uid":      user.ID,
 			"query":    query,
 			"response": resp,
 			"type":     "api",
+			"header":   header,
 		}).Infof("api log: %s | %s |t=%3v | %s", c.Request.Method, c.Request.URL.RequestURI(), latency, c.ClientIP())
 	}
 }

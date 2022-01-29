@@ -1,6 +1,8 @@
-package lib
+package singleton
 
 import (
+	"fmt"
+	"gitlab.com/task-dispatcher/config"
 	"os"
 	"time"
 
@@ -13,12 +15,20 @@ type Logger struct {
 	*logrus.Logger
 }
 
-func NewLogger(logDir string, module string) (*Logger, error) {
+func NewLogger(module string) func(cfg *config.Config) (*Logger, error) {
+	return func(cfg *config.Config) (*Logger, error) {
+		return newLogger(cfg, module)
+	}
+}
+func newLogger(cfg *config.Config, module string) (*Logger, error) {
 	src, err := os.OpenFile(os.DevNull, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	if err != nil {
 		return nil, err
 	}
-
+	logDir := cfg.General.LogDir
+	if logDir == "" {
+		logDir = "/tmp"
+	}
 	filePrefix := logDir + "/" + module
 	// view latest log info via api.log, history info in api.xxx.log
 	latestLogFile := filePrefix + ".log"
@@ -52,10 +62,13 @@ func NewLogger(logDir string, module string) (*Logger, error) {
 	//}
 	lfHook := lfshook.NewHook(writeMap, formatter)
 	logClient.AddHook(lfHook)
+
+	fmt.Printf("new logger success, log dir: %v\n", logDir)
+	logClient.Infof("new logger success, log dir: %v", logDir)
+
 	return &Logger{logClient}, nil
 }
 
-// log for gorm db
 func (l *Logger) NewDbLogger() *DBLogger {
 	return &DBLogger{baseLog: l.Logger}
 }

@@ -2,13 +2,14 @@ package util
 
 import (
 	"crypto/md5"
+	"crypto/rand" //真随机
 	"crypto/sha1"
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"log"
-	"math/rand"
-	"time"
+	"math/big"
+	"strconv"
 )
 
 // MD5Hash MD5哈希值
@@ -45,16 +46,11 @@ func ToJson(v interface{}) string {
 	return string(j)
 }
 
-func RandNum(length int) []byte {
-	letters := []byte("0123456789")
-	rd := rand.New(rand.NewSource(time.Now().UnixNano()))
-	b := make([]byte, length)
-	for i := range b {
-		b[i] = letters[rd.Intn(len(letters))]
-	}
-	return b
+func RandToken() string {
+	return Sha256(strconv.FormatInt(RandNum(100000000000000000), 10))
 }
 
-func RandToken() string {
-	return Sha256(string(RandNum(100)))
+func RandNum(max int64) int64 {
+	result, _ := rand.Int(rand.Reader, big.NewInt(max))
+	return result.Int64()
 }

@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jangozw/go-quick-api/pkg/app"
+	"gitlab.com/task-dispatcher/pkg/app"
 )
 
 func LogRequest(c *gin.Context) {

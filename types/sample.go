@@ -1,4 +1,4 @@
-package param
+package types
 
 //  接口 /sample 请求响应的相关参数定义
 

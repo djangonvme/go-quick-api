@@ -1,6 +1,10 @@
 package util
 
-import "strconv"
+import (
+	"crypto/md5"
+	"encoding/hex"
+	"strconv"
+)
 
 type StringNumber string
 
@@ -86,4 +90,15 @@ func MapStringKeys(m map[string]interface{}) []string {
 		keys = append(keys, k)
 	}
 	return keys
+}
+
+func MD5(d []byte) string {
+	m := md5.New()
+	m.Write(d)
+	return hex.EncodeToString(m.Sum(nil))
+}
+func MD5String(d string) string {
+	m := md5.New()
+	m.Write([]byte(d))
+	return hex.EncodeToString(m.Sum(nil))
 }

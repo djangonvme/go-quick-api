@@ -1,0 +1,21 @@
+[general]
+logDir="/tmp/logs"
+
+[server]
+host=""
+port=8180
+
+[mysql]
+host="127.0.0.1:3306"
+user="root"
+password="123456"
+dbname="task_dispatcher"
+
+
+[redis]
+host="127.0.0.1:6379"
+password=""
+dbnum= 0
+
+
+

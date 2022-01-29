@@ -6,24 +6,23 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jangozw/go-quick-api/erron"
+	"gitlab.com/task-dispatcher/erron"
 )
 
-// api 处理函数类型
 type ApiHandlerFunc func(c *gin.Context) (data interface{}, err error)
 
-// 注册路由函数类型
 type RegisterRouteFunc func(engine *Engine)
 
-// 定义路由 gin.Engine 统一加warp
 func NewGin(registerRoutes RegisterRouteFunc) *Engine {
 	// 注册路由
 	if IsEnvLocal() || IsEnvDev() {
 		gin.SetMode(gin.DebugMode)
 	}
-	eng := &Engine{gin.New()}
-	registerRoutes(eng)
-	return eng
+	eng := gin.Default()
+	// eng.SetTrustedProxies([]string{"192.168.1.2"})
+	eng2 := &Engine{eng}
+	registerRoutes(eng2)
+	return eng2
 }
 
 type routeGroup struct {
@@ -41,12 +40,10 @@ func (r *routeGroup) Use(middleware ...gin.HandlerFunc) *routeGroup {
 	return r
 }*/
 
-// 返回gin原生的routerGroup
 func (r *routeGroup) GinRouterGroup() *gin.RouterGroup {
 	return r.rg
 }
 
-// 需要什么方法自由搬运 gin.routeGroup
 func (r *routeGroup) GET(relativePath string, handler ApiHandlerFunc) {
 	r.rg.GET(relativePath, WarpApi(handler))
 }
@@ -95,12 +92,12 @@ func (e *Engine) Group(relativePath string, handlers ...gin.HandlerFunc) *routeG
 }
 
 func (e *Engine) Run() error {
-	return e.engine.Run(HttpServeAddr())
+	addr := fmt.Sprintf("%s:%d", Cfg().Server.Host, Cfg().Server.Port)
+	return e.engine.Run(addr)
 }
 
 // 需要用其他的再加
 
-// api 捕获异常
 func WarpApi(handler ApiHandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
@@ -130,7 +127,6 @@ func WarpApi(handler ApiHandlerFunc) gin.HandlerFunc {
 	}
 }
 
-// 中间件 捕获异常
 func WarpMiddleware(handler gin.HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
