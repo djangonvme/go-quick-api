@@ -8,4 +8,5 @@ gormt
 *.log
 bin
 logs
+task-dispatcher
 

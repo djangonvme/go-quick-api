@@ -1,6 +1,9 @@
 package erron
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type LogIF interface {
 	write(err error)
@@ -34,11 +37,7 @@ func (e *errInfo) Msg() string {
 }
 
 func textToMsg(text ...string) string {
-	var msg string
-	if len(text) > 0 {
-		msg = fmt.Sprintf(text[0], text[1:])
-	}
-	return msg
+	return strings.Join(text, ";")
 }
 
 // 新建一个错误 code 必填，text可选

@@ -29,17 +29,6 @@ type routeGroup struct {
 	rg *gin.RouterGroup
 }
 
-// 路由组中间件
-/*
-// use 没必要
-func (r *routeGroup) Use(middleware ...gin.HandlerFunc) *routeGroup {
-	for i, h := range middleware {
-		middleware[i] = WarpMiddleware(h)
-	}
-	r.rg.Use(middleware...)
-	return r
-}*/
-
 func (r *routeGroup) GinRouterGroup() *gin.RouterGroup {
 	return r.rg
 }
@@ -113,6 +102,9 @@ func WarpApi(handler ApiHandlerFunc) gin.HandlerFunc {
 			}
 		}()
 		data, err := handler(c)
+
+		// fmt.Printf("done! data: %v, err: %v", data, err)
+
 		var errInfo erron.E
 		if err != nil {
 			if v, ok := err.(erron.E); ok {

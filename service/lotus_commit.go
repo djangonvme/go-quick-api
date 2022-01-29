@@ -156,7 +156,7 @@ func (t *LotusCommitTaskHandler) Apply(workerName string) (workerLogId int64, co
 		}
 	}
 	if workerLogId == 0 {
-		return 0, "", fmt.Errorf("no task availiable, please retry later! (%v)", err)
+		return 0, "", fmt.Errorf("no task availiable, please retry later! (%v)", err.Error())
 	}
 	if commit1Input == "" {
 		return 0, "", fmt.Errorf("unexpect err: apply gen wokerLogId(%d) success, but find commit1Input is empty", workerLogId)

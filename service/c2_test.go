@@ -5,15 +5,16 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/filecoin-project/go-address"
 	"github.com/filecoin-project/go-state-types/abi"
 	"github.com/ipfs/go-cid"
 	mh "github.com/multiformats/go-multihash"
-	"gitlab.com/task-dispatcher/pkg/app"
+	"gitlab.com/task-dispatcher/pkg/util"
 	"gitlab.com/task-dispatcher/types"
 	"testing"
 	"time"
 )
+
+var apiUrl = "http://localhost:8180/api/v1"
 
 type SectorCids struct {
 	Unsealed cid.Cid
@@ -29,88 +30,12 @@ func getCid(va string) cid.Cid {
 	return cidRes
 }
 
-func TestAddTask(t *testing.T) {
-	sCids := SectorCids{
-		Sealed:   getCid("xxx"),
-		Unsealed: getCid("123"),
-	}
-
-	fmt.Println(sCids)
-
-	b, err := json.Marshal(sCids)
-
-	if err != nil {
-		fmt.Println("Mar err", err.Error())
-		return
-	}
-
-	s2 := base64.URLEncoding.EncodeToString(b)
-	b2, err := base64.URLEncoding.DecodeString(s2)
-	if err != nil {
-		fmt.Println("dec err", err)
-		return
-	}
-	var s3 SectorCids
-
-	err = json.Unmarshal(b2, &s3)
-	if err != nil {
-		fmt.Println("um err", err)
-		return
-	}
-
-	fmt.Println(s3)
-
-	maddr, err := address.NewFromString("f01231")
-	if err != nil {
-		fmt.Println("new err", err.Error())
-		return
-	}
-	aid, _ := address.IDFromAddress(maddr)
-
-	sss := abi.ActorID(aid).String()
-	fmt.Println(sss)
-
-}
-
-func TestRedsiLogc(t *testing.T) {
-	//app.Init(app.LogService, app.DbService, app.RedisService)
-	res, err := app.Redis().Lock("test.redis.lock", "abc", 5*time.Second)
-	fmt.Println("lock res:", res, "err:", err)
-
-	res, err = app.Redis().Unlock("test.redis.lock", "abc")
-	fmt.Println("Unlock res:", res, "err:", err)
-
-	res, err = app.Redis().Lock("test.redis.lock", "abc", 5*time.Second)
-	fmt.Println("lock res:", res, "err:", err)
-
-	/*	var wg sync.WaitGroup
-		num := 10000
-		wg.Add(num)
-		for i:=0;i<num;i++{
-			cur := i
-			go func() {
-				defer wg.Done()
-				res, err := app.Redis.Lock(fmt.Sprintf("test.redis.lock%d", cur), "abc", 5*time.Second)
-				if err != nil || ! res {
-					fmt.Println("failed lock res", cur, " res: ", res, "err:", err)
-				} else {
-					fmt.Println("ok", cur)
-				}
-			}()
-		}
-
-		wg.Wait()*/
-
-}
-
 func TestLotusCommitTaskHandler_Create(t *testing.T) {
-	// app.Init(app.LogService, app.DbService, app.RedisService)
-	handler := NewLotusCommitTaskHandler()
 	c1param := types.CommitInputParam{
 		Sector: types.SectorRef{
 			ID: abi.SectorID{
-				Miner:  abi.ActorID(0),
-				Number: abi.SectorNumber(2),
+				Miner:  abi.ActorID(100),
+				Number: abi.SectorNumber(101),
 			},
 			ProofType: abi.RegisteredSealProof_StackedDrg2KiBV1_1,
 		},
@@ -134,13 +59,92 @@ func TestLotusCommitTaskHandler_Create(t *testing.T) {
 		return
 	}
 	comm1Input := base64.URLEncoding.EncodeToString(c1b)
-	taskId, err := handler.Create(comm1Input)
-	fmt.Println("taskId: ", taskId, "err: ", err)
+
+	url := fmt.Sprintf("%s/%v", apiUrl, "task/create")
+
+	var header = map[string]string{"Task-type": "lotus-commit"}
+
+	res, err := util.HttpPost(url, comm1Input, header)
+
+	if err != nil {
+		fmt.Println("err: ", err.Error())
+		return
+	}
+	fmt.Println(string(res.Body))
+}
+
+type ApplyResp struct {
+	ApplyId int64  `json:"apply_id"`
+	Input   string `json:"input"`
+}
+type StatusResp struct {
+	Status int64  `json:"apply_id"`
+	Input  string `json:"input"`
+}
+
+type SubmitParams struct {
+	ApplyId    int64                 `json:"apply_id"`
+	WorkerName string                `json:"worker_name"`
+	State      types.TaskWorkerState `json:"state"`
+	Output     string                `json:"output"`
+	ErrMsg     string                `json:"err_msg"`
+}
+
+type ApiResp struct {
+	Code int `json:"code"`
+	Data interface{} `json:"data"`
+	Msg string `json:"msg"`
 }
 
 func TestLotusCommitTaskHandler_Apply_Submit(t *testing.T) {
-	//app.Init(app.LogService, app.DbService, app.RedisService)
-	handler := NewLotusCommitTaskHandler()
+	var header = map[string]string{"Task-type": "lotus-commit"}
+	apply := func(wName string) (wid int64, input string, err error) {
+		url := apiUrl + "/task/apply"
+		data := map[string]interface{}{"worker_name": wName}
+		res, err := util.HttpPost(url, data, header)
+		if err != nil {
+			fmt.Println("apply err: ", err.Error())
+			return
+		}
+		fmt.Println("apply res: ", string(res.Body))
+
+		apiResp := ApiResp{}
+		if err = res.Decode(&apiResp); err != nil {
+			return
+		}
+
+		b, _ :=json.Marshal(apiResp.Data)
+		applyResp := ApplyResp{}
+		json.Unmarshal(b, &applyResp)
+		return applyResp.ApplyId, applyResp.Input, nil
+	}
+
+	submit := func(workerLogId int64, state types.TaskWorkerState, commit2Proof string, workerName string, errMsg string) (bool, error) {
+		url := apiUrl + "/task/submit"
+		data := SubmitParams{
+			ApplyId:    workerLogId,
+			State:      state,
+			Output:     commit2Proof,
+			WorkerName: workerName,
+			ErrMsg:     errMsg,
+		}
+		res, err := util.HttpPost(url, data, header)
+		if err != nil {
+			fmt.Println("submit err: ", err.Error())
+			return false, err
+		}
+
+		fmt.Println("submit res: ", string(res.Body))
+		if string(res.Body) == "ok" {
+			return true, nil
+		} else {
+
+			fmt.Println("submit faield unexpect reason")
+			return false, nil
+		}
+
+	}
+
 	workerName := "HK-172.1.1.1"
 	doAndSubmit := func(workerLogId int64, input string, workerName string) error {
 		param := types.CommitInputParam{}
@@ -155,7 +159,7 @@ func TestLotusCommitTaskHandler_Apply_Submit(t *testing.T) {
 		time.Sleep(2 * time.Second)
 		fmt.Println("do commit end")
 		commit2Proof := hex.EncodeToString([]byte("helloworldzwuv"))
-		ok, err := handler.Submit(workerLogId, "finished", commit2Proof, workerName, "")
+		ok, err := submit(workerLogId, "finished", commit2Proof, workerName, "")
 		if err != nil {
 			return fmt.Errorf("submit failed: %v", err.Error())
 		}
@@ -168,18 +172,23 @@ func TestLotusCommitTaskHandler_Apply_Submit(t *testing.T) {
 	for {
 		count++
 		select {
-		case <-time.Tick(2 * time.Second):
-			app.Log().Infof("try get task apply.... %v", count)
+		case <-time.Tick(3 * time.Second):
+			fmt.Printf("try get task apply.... %v \n", count)
 			wName := workerName + fmt.Sprintf("_%v", count)
-			workerId, input, err := handler.Apply(wName)
+			workerId, input, err := apply(wName)
 			if err != nil {
 				fmt.Println("apply failed:", err.Error())
 				continue
 			}
+			if workerId == 0 {
+				fmt.Println("apply failed: worker id is 0")
+				continue
+			}
+
 			fmt.Println("apply get task success!", "worker_log_id", workerId, "input: ", input)
-			if err := doAndSubmit(workerId, input, wName); err != nil {
+			if err = doAndSubmit(workerId, input, wName); err != nil {
 				fmt.Println("doAndSubmit failed:", err.Error())
-				return
+				continue
 			}
 			fmt.Println("doAndSubmit success! workerLogId: ", workerId)
 			return
@@ -198,31 +207,6 @@ func TestLotusCommitTaskHandler_Status(t *testing.T) {
 func TestLotusCommitTaskHandler_TryRevert(t *testing.T) {
 	handler := NewLotusCommitTaskHandler()
 	handler.Revert()
-	//
-	/*	getDoingList := func() (list []model.LotusCommitTask, err error) {
-			err = app.Db.Model(&model.LotusCommitTask{}).
-				Preload("Workers", fmt.Sprintf("(end_time=0 AND %d - start_time > 1)", time.Now().Unix())).
-				Where("state =?", types.TaskStateDoing).
-				Order("id asc").
-				Offset(0).
-				Limit(200).
-				Find(&list).Error
-			if err != nil && gorm.IsRecordNotFoundError(err) {
-				err = nil
-			}
-			return
-		}
-
-		list, err := getDoingList()
-
-		fmt.Println("err", err)
-
-		for _, v := range list {
-			for _, v2 := range v.Workers {
-				fmt.Println("log id: ", v2.ID, "task_id: ", v2.TaskId, "task_id2: ", v2.Task.ID)
-			}
-		}*/
-
 }
 
 func TestPrelOad(t *testing.T) {

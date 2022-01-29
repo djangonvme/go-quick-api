@@ -22,7 +22,7 @@ func Register(ctx context.Context) func(router *app.Engine) {
 		v1.POST("/task/create", apiv1.TaskCreate)
 		v1.GET("/task/status", apiv1.TaskStatus)
 		v1.POST("/task/apply", apiv1.TaskApply)
-		v1.GET("/task/submit", apiv1.TaskSubmit)
+		v1.POST("/task/submit", apiv1.TaskSubmit)
 	}
 
 }

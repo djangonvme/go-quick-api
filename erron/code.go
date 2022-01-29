@@ -1,6 +1,5 @@
 package erron
 
-// 错误码类型
 type Code int
 
 // 错误码列表
@@ -23,7 +22,6 @@ var errCodeMap = map[Code]string{
 	ErrAccountInfo:  "账号信息有误",
 }
 
-// 错误码对应的说明
 func (c Code) Msg() string {
 	if v, ok := errCodeMap[c]; ok {
 		return v

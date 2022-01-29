@@ -19,7 +19,7 @@ func LoadConfig(cf string) func() (*Config, error) {
 		if err != nil {
 			return nil, err
 		}
-		fmt.Printf("load config success! config: %v", util.ToJson(cg))
+		fmt.Printf("load config success! config: %v \n", util.ToJson(cg))
 		return cg, nil
 	}
 }

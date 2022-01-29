@@ -5,12 +5,8 @@ import (
 	"github.com/ipfs/go-cid"
 )
 
-// header 中 token key
 const (
-	AppName           = "task-dispatcher"
-	ArgConfig         = "config"
-	ArgConfigFilename = "config.ini"
-	TokenHeaderKey    = "Authorization"
+	TokenHeaderKey = "Authorization"
 )
 
 type TaskState string
@@ -27,7 +23,7 @@ const (
 	TaskWorkerStateFinished TaskWorkerState = "finished"
 	TaskWorkerStateReverted TaskWorkerState = "reverted"
 
-	TaskTypeKey         = "task_type"
+	TaskTypeKey         = "Task-type"
 	TaskTypeLotusCommit = "lotus-commit"
 	TaskTypeLotusWPost  = "lotus-WPost"
 
@@ -38,14 +34,6 @@ var TaskTypesMap = map[string]struct{}{
 	TaskTypeLotusCommit: {},
 	TaskTypeLotusWPost:  {},
 }
-
-/*var TaskStateMap = map[TaskState]struct{}{
-	TaskStateWaiting: {},
-	TaskStateDoing: {},
-	TaskStateFinished: {},
-	TaskStateDropped: {},
-}
-*/
 
 type SectorCids struct {
 	Unsealed cid.Cid

@@ -2,7 +2,6 @@ package app
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -136,7 +135,7 @@ func AbortJSON(c *gin.Context, resp *response) {
 }
 
 func checkInput(input interface{}) error {
-	inputTypeErr := errors.New("input 必须是一个结构体变量的地址")
+	inputTypeErr := errors.New("input must a struct")
 	rv := reflect.ValueOf(input)
 	if rv.Kind() != reflect.Ptr || rv.IsNil() || !rv.IsValid() {
 		return inputTypeErr
@@ -154,7 +153,7 @@ func checkInput(input interface{}) error {
 	return nil
 }
 
-// api 请求发生了panic 记入日志
+// LogApiPanic api 请求发生了panic 记入日志
 func LogApiPanic(c *gin.Context, panicMsg interface{}) {
 	user, _ := GetLoginUser(c)
 	start := c.GetTime(CtxStartTime)
@@ -168,9 +167,11 @@ func LogApiPanic(c *gin.Context, panicMsg interface{}) {
 	if c.Request.Method == "GET" {
 		query = c.Request.URL.Query()
 	} else {
-		postData, _ := c.GetRawData()
-		query := make(map[string]interface{})
-		json.Unmarshal(postData, &query)
+		data, _ := c.GetRawData()
+		query = string(data)
+
+		/*	query = make(map[string]interface{})
+			json.Unmarshal(postData, &query)*/
 	}
 	if LoggerInstance != nil {
 		// log 里有json.Marshal() 导致url转义字符
@@ -187,7 +188,7 @@ func LogApiPanic(c *gin.Context, panicMsg interface{}) {
 	}
 }
 
-// api 接口日志记录请求和返回
+// ApiLog api 接口日志记录请求和返回
 func ApiLog(c *gin.Context) {
 	user, _ := GetLoginUser(c)
 	start := c.GetTime(CtxStartTime)
@@ -202,9 +203,10 @@ func ApiLog(c *gin.Context) {
 	if c.Request.Method == "GET" {
 		query = c.Request.URL.Query()
 	} else {
-		postData, _ := c.GetRawData()
-		query = make(map[string]interface{})
-		json.Unmarshal(postData, &query)
+		data, _ := c.GetRawData()
+		query = string(data)
+		/*	query = make(map[string]interface{})
+			json.Unmarshal(postData, &query)*/
 		header = c.Request.Header
 	}
 
