@@ -1,16 +1,19 @@
 package apiv1
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"gitlab.com/task-dispatcher/erron"
+	"gitlab.com/task-dispatcher/pkg/app"
 	"gitlab.com/task-dispatcher/service"
 	"gitlab.com/task-dispatcher/types"
+	"strconv"
 )
 
 func TaskCreate(c *gin.Context) (data interface{}, err error) {
-	raw, err := c.GetRawData()
+	raw, err := app.GetSaveRawData(c)
 	if err != nil {
-		err = fmt.Errorf("couldn't get RawData")
 		return
 	}
 	if len(raw) == 0 {
@@ -25,16 +28,25 @@ func TaskCreate(c *gin.Context) (data interface{}, err error) {
 	}, nil
 }
 
-func TaskStatus(c *gin.Context) (data interface{}, err error) {
-	taskId := c.GetInt64("task_id")
+func TaskResult(c *gin.Context) (data interface{}, err error) {
+	value := c.Query("task_id")
+	value2, _ := strconv.Atoi(value)
+	taskId := int64(value2)
 	if taskId <= 0 {
 		return nil, fmt.Errorf("invalid task_id")
 	}
-	return getHandler(c).Status(taskId)
+	return getHandler(c).Result(taskId)
 }
 
 type ApplyParams struct {
 	WorkerName string `json:"worker_name"`
+}
+
+type ApplyRes struct {
+	ApplyId     int64  `json:"apply_id"`
+	TaskInput   string `json:"task_input"`
+	Checksum    string `json:"checksum"`
+	Description string `json:"description"`
 }
 
 func TaskApply(c *gin.Context) (data interface{}, err error) {
@@ -46,22 +58,30 @@ func TaskApply(c *gin.Context) (data interface{}, err error) {
 	if workerName == "" {
 		return nil, fmt.Errorf("invalid worker_name")
 	}
-	workerLogId, input, err := getHandler(c).Apply(workerName)
+
+	var output = ApplyRes{}
+	workerLogId, checksum, input, err := getHandler(c).Apply(workerName)
 	if err != nil {
+		if errors.Is(err, erron.ErrNoTaskAvailable) {
+			output.Description = err.Error()
+			err = nil
+			return output, nil
+		}
 		return nil, err
 	}
-	return map[string]interface{}{
-		"apply_id": workerLogId,
-		"input":    input,
-	}, nil
+	output.TaskInput = input
+	output.ApplyId = workerLogId
+	output.Checksum = checksum
+
+	return output, nil
 }
 
 type SubmitParams struct {
-	ApplyId    int64                 `json:"apply_id"`
-	WorkerName string                `json:"worker_name"`
-	State      types.TaskWorkerState `json:"state"`
-	Output     string                `json:"output"`
-	ErrMsg     string                `json:"err_msg"`
+	ApplyId  int64                 `json:"apply_id"`
+	Checksum string                `json:"checksum"`
+	State    types.TaskWorkerState `json:"state"`
+	Output   string                `json:"output"`
+	ErrMsg   string                `json:"err_msg"`
 }
 
 func TaskSubmit(c *gin.Context) (data interface{}, err error) {
@@ -69,14 +89,14 @@ func TaskSubmit(c *gin.Context) (data interface{}, err error) {
 	if err = c.ShouldBindJSON(&param); err != nil {
 		return
 	}
-	ok, err := getHandler(c).Submit(param.ApplyId, param.State, param.Output, param.WorkerName, param.ErrMsg)
+	ok, err := getHandler(c).Submit(param.ApplyId, param.State, param.Output, param.Checksum, param.ErrMsg)
 	if err != nil {
 		return
 	}
 	if !ok {
 		return nil, fmt.Errorf("submit faield by expected err")
 	}
-	return "ok", nil
+	return map[string]string{"submitted": "success"}, nil
 }
 
 func getHandler(c *gin.Context) types.TaskManager {

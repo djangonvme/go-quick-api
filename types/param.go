@@ -19,12 +19,13 @@ const (
 	TaskStateFinished TaskState = "finished"
 	TaskStateDropped  TaskState = "dropped"
 
+	TaskWorkerStateDoing    TaskWorkerState = "doing"
 	TaskWorkerStateFailed   TaskWorkerState = "failed"
 	TaskWorkerStateFinished TaskWorkerState = "finished"
 	TaskWorkerStateReverted TaskWorkerState = "reverted"
 
 	TaskTypeKey         = "Task-type"
-	TaskTypeLotusCommit = "lotus-commit"
+	TaskTypeLotusCommit = "lotus-commit2"
 	TaskTypeLotusWPost  = "lotus-WPost"
 
 	KeyAllowTasks string = "allow_tasks"
@@ -43,10 +44,8 @@ type SectorRef struct {
 	ID        abi.SectorID
 	ProofType abi.RegisteredSealProof
 }
-type CommitInputParam struct {
-	Sector SectorRef
-	Ticket abi.SealRandomness
-	Seed   abi.InteractiveSealRandomness
-	Pieces []abi.PieceInfo
-	Cids   SectorCids
+type Commit2InputParam struct {
+	SectorId   abi.SectorNumber `json:"sector_id"`
+	MinerId    string           `json:"miner_id"`
+	Commit1Out string           `json:"commit1_out"` // hex encoded
 }

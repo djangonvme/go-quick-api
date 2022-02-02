@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"gitlab.com/task-dispatcher/erron"
 	"gitlab.com/task-dispatcher/pkg/app"
@@ -13,8 +12,6 @@ import (
 func CheckTaskRequest(ctx context.Context) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		taskType := c.GetHeader(types.TaskTypeKey)
-		fmt.Printf("-------------taskType: %+v\n", taskType)
-
 		allowTasks := ctx.Value(types.KeyAllowTasks)
 		var allow bool
 		if allowTasks != nil {

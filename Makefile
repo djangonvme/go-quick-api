@@ -14,7 +14,7 @@ LDFLAGS=-ldflags "-X main.BuildVersion=${VERSION} -X main.BuildAt=${BUILD}"
 
 .PHONY:  clean install build clean lint help mt_proto fmt_shell checkgofmt docker vet staticcheck
 
-all: ## Builds the project
+build: ## Builds the project
 	@go build -tags=jsoniter ${LDFLAGS} -o ${BINARY} ${MAIN_FILE}
 
 linux: ## Builds the project

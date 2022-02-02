@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"reflect"
 	"time"
@@ -24,7 +25,7 @@ const (
 	CtxRequestBody = "ctx-request-body"
 )
 
-// LoginUser 登陆用户信息, 可根据业务需要扩充字段
+// LoginUser 登陆用户信息, 可根据需要扩充字段
 type LoginUser struct {
 	ID int64
 }
@@ -50,7 +51,7 @@ func ParseUserByToken(token string) (TokenPayload, error) {
 	return user, nil
 }
 
-// SetCtxRequestBody gin自带的bind系列方法只能用一次，所以此处将c.Request.Body存起来,就可以实现一次请求多次验证了
+/*// SetCtxRequestBody gin自带的bind系列方法只能用一次，所以此处将c.Request.Body存起来,就可以实现一次请求多次验证了
 func SetCtxRequestBody(c *gin.Context) {
 	bodyStr := c.GetString(CtxRequestBody)
 	if bodyStr == "" {
@@ -76,6 +77,27 @@ func ShouldBind(c *gin.Context, input interface{}) error {
 		return err
 	}
 	return nil
+}*/
+
+// GetSaveRawData save the request body
+func GetSaveRawData(c *gin.Context) ([]byte, error) {
+	bodyStr := c.GetString(CtxRequestBody)
+	if bodyStr != "" {
+		// c.Request.Body = ioutil.NopCloser(bytes.NewBuffer([]byte(bodyStr)))
+		return []byte(bodyStr), nil
+	}
+	body, err := c.GetRawData()
+	if err != nil {
+		if LoggerInstance != nil {
+			LoggerInstance.Errorf("GetRawData failed: %v\n", err.Error())
+		} else {
+			log.Printf("GetRawData failed: %v\n", err.Error())
+		}
+		return nil, err
+	}
+	c.Set(CtxRequestBody, string(body))
+	c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+	return []byte(c.GetString(CtxRequestBody)), nil
 }
 
 func GetLoginUser(c *gin.Context) (user LoginUser, err error) {
@@ -110,7 +132,6 @@ func BindInput(c *gin.Context, input interface{}) erron.E {
 	return nil
 }
 
-// GetPager 展示的分页
 func GetPager(c *gin.Context) Pager {
 	pager := Pager{}
 	c.ShouldBind(&pager)
@@ -122,13 +143,11 @@ func setResponse(c *gin.Context, resp *response) {
 	c.Set(CtxKeyResponse, resp)
 }
 
-// 正常输出
 func OutputJSON(c *gin.Context, resp *response) {
 	setResponse(c, resp)
 	c.JSON(http.StatusOK, resp)
 }
 
-// 中断并输出
 func AbortJSON(c *gin.Context, resp *response) {
 	setResponse(c, resp)
 	c.AbortWithStatusJSON(http.StatusOK, resp)
@@ -158,33 +177,25 @@ func LogApiPanic(c *gin.Context, panicMsg interface{}) {
 	user, _ := GetLoginUser(c)
 	start := c.GetTime(CtxStartTime)
 	// 执行时间
-	latency := time.Since(start)
 	resp, ok := c.Get(CtxKeyResponse)
 	if !ok {
 		resp = struct{}{}
 	}
-	var query interface{}
-	if c.Request.Method == "GET" {
-		query = c.Request.URL.Query()
-	} else {
-		data, _ := c.GetRawData()
-		query = string(data)
-
-		/*	query = make(map[string]interface{})
-			json.Unmarshal(postData, &query)*/
-	}
+	body, _ := GetSaveRawData(c)
 	if LoggerInstance != nil {
 		// log 里有json.Marshal() 导致url转义字符
 		LoggerInstance.WithFields(logrus.Fields{
 			"uid":      user.ID,
-			"query":    query,
+			"body":     body,
+			"query":    c.Request.URL.Query(),
 			"response": resp,
-			"method":   c.Request.Method,
 			"uri":      c.Request.URL.RequestURI(),
-			"latency":  fmt.Sprintf("%3v", latency),
+			"cost":     fmt.Sprintf("%s", time.Since(start)),
 			"ip":       c.ClientIP(),
-			"type":     "panic",
-		}).Infof("--panic: %s | %s %s", panicMsg, c.Request.Method, c.Request.URL.RequestURI())
+			"header":   c.Request.Header,
+			"method":   c.Request.Method,
+			"type":     "api_panic",
+		}).Infof("%s | %s %s", panicMsg, c.Request.Method, c.Request.URL.RequestURI())
 	}
 }
 
@@ -193,31 +204,24 @@ func ApiLog(c *gin.Context) {
 	user, _ := GetLoginUser(c)
 	start := c.GetTime(CtxStartTime)
 	// 执行时间
-	latency := time.Since(start)
 	resp, ok := c.Get(CtxKeyResponse)
 	if !ok {
 		resp = struct{}{}
 	}
-	var header map[string][]string
-	var query interface{}
-	if c.Request.Method == "GET" {
-		query = c.Request.URL.Query()
-	} else {
-		data, _ := c.GetRawData()
-		query = string(data)
-		/*	query = make(map[string]interface{})
-			json.Unmarshal(postData, &query)*/
-		header = c.Request.Header
-	}
-
+	body, _ := GetSaveRawData(c)
 	if LoggerInstance != nil {
 		// log 里有json.Marshal() 导致url转义字符
 		LoggerInstance.WithFields(logrus.Fields{
 			"uid":      user.ID,
-			"query":    query,
+			"body":     string(body),
+			"query":    c.Request.URL.Query(),
 			"response": resp,
-			"type":     "api",
-			"header":   header,
-		}).Infof("api log: %s | %s |t=%3v | %s", c.Request.Method, c.Request.URL.RequestURI(), latency, c.ClientIP())
+			"type":     "api_request",
+			"header":   c.Request.Header,
+			"method":   c.Request.Method,
+			"uri":      c.Request.URL.RequestURI(),
+			"cost":     fmt.Sprintf("%s", time.Since(start)),
+			"ip":       c.ClientIP(),
+		}).Infof(" %s  %s | %3v", c.Request.Method, c.Request.URL.RequestURI(), time.Since(start))
 	}
 }

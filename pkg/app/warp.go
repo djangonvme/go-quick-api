@@ -92,8 +92,8 @@ func WarpApi(handler ApiHandlerFunc) gin.HandlerFunc {
 		defer func() {
 			if msg := recover(); msg != nil {
 				defer func() {
-					if msg := recover(); msg != nil {
-						c.AbortWithStatusJSON(http.StatusOK, response{Code: erron.ErrInternal, Msg: "bad request", Timestamp: time.Now().Unix(), Data: nil})
+					if msg = recover(); msg != nil {
+						c.AbortWithStatusJSON(http.StatusOK, response{Code: erron.ErrInternal, Msg: fmt.Sprintf("api request panic: %v", msg), Timestamp: time.Now().Unix(), Data: nil})
 					}
 				}()
 				err := erron.Inner(fmt.Sprintf("%v", msg))
@@ -102,9 +102,6 @@ func WarpApi(handler ApiHandlerFunc) gin.HandlerFunc {
 			}
 		}()
 		data, err := handler(c)
-
-		// fmt.Printf("done! data: %v, err: %v", data, err)
-
 		var errInfo erron.E
 		if err != nil {
 			if v, ok := err.(erron.E); ok {
@@ -124,8 +121,8 @@ func WarpMiddleware(handler gin.HandlerFunc) gin.HandlerFunc {
 		defer func() {
 			if msg := recover(); msg != nil {
 				defer func() {
-					if msg := recover(); msg != nil {
-						c.AbortWithStatusJSON(http.StatusOK, response{Code: erron.ErrInternal, Msg: "bad request", Timestamp: time.Now().Unix(), Data: nil})
+					if msg = recover(); msg != nil {
+						c.AbortWithStatusJSON(http.StatusOK, response{Code: erron.ErrInternal, Msg: fmt.Sprintf("middleware panic: %v", msg), Timestamp: time.Now().Unix(), Data: nil})
 					}
 				}()
 				err := erron.Inner(fmt.Sprintf("%v", msg))

@@ -11,10 +11,8 @@ func Header(c *gin.Context) {
 		app.AbortJSON(c, app.ResponseFail(erron.New(erron.ErrRequestParam, "invalid Content-Type")))
 		return
 	}
-	// 根据情况修改跨域
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Content-Type", "application/json; charset=utf-8")
-	c.Header("Build-Info", app.BuildInfo)
-	app.SetCtxRequestBody(c)
+	c.Header("Build-Version", app.BuildInfo)
 	c.Next()
 }

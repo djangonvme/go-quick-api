@@ -28,7 +28,7 @@ var RunCmd = &cli.Command{
 			Name:     types.TaskTypeLotusCommit,
 			Value:    false,
 			Required: false,
-			Usage:    "--lotus-commit=true",
+			Usage:    "--lotus-commit2=true",
 		},
 	},
 	Action: func(c *cli.Context) error {

@@ -11,7 +11,6 @@ type LogIF interface {
 
 var logger LogIF
 
-// 错误接口
 type E interface {
 	Error() string
 	Code() Code
@@ -40,27 +39,22 @@ func textToMsg(text ...string) string {
 	return strings.Join(text, ";")
 }
 
-// 新建一个错误 code 必填，text可选
 func New(code Code, text ...string) E {
 	return &errInfo{code: code, msg: textToMsg(text...)}
 }
 
-// 通用型失败 code=10000
 func Fail(text ...string) E {
 	return &errInfo{code: Failed, msg: textToMsg(text...)}
 }
 
-// 从另一个错误接口返回
 func FailBy(err error) E {
 	return &errInfo{code: Failed, msg: err.Error()}
 }
 
-// 内部错误，无关业务逻辑
 func Inner(text ...string) E {
 	return &errInfo{code: ErrInternal, msg: textToMsg(text...)}
 }
 
-// 仅在合适情况使用，直接将错误抛出为异常。
 func Try(err error) {
 	if err != nil {
 		panic(err)

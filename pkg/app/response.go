@@ -26,7 +26,6 @@ type responseWithPager struct {
 	List  interface{} `json:"list"`
 }
 
-// 返回错误， 带错误信息
 func ResponseFail(err erron.E) *response {
 	return Response(err, struct{}{})
 }
@@ -35,7 +34,6 @@ func ResponseFailByCode(code erron.Code) *response {
 	return Response(erron.New(code), struct{}{})
 }
 
-// err 为nil 即为成功
 func Response(err erron.E, data interface{}) *response {
 	if err == nil {
 		err = erron.New(erron.Success)
