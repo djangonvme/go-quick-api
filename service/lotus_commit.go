@@ -72,6 +72,16 @@ func (t *LotusCommitTaskHandler) Result(taskId int64) (result map[string]interfa
 }
 
 func (t *LotusCommitTaskHandler) Apply(workerName string) (workerLogId int64, checksum string, c2param string, err error) {
+	var doingNum int
+	err = app.Db().Model(&model.LotusCommit2TaskWorker{}).Where("worker=?", workerName).Where("state=?", types.TaskWorkerStateDoing).Count(&doingNum).Error
+	if err != nil {
+		return
+	}
+	if doingNum > 0 {
+		err = fmt.Errorf("worker %v has doing tasks, please apply after that comeplete", workerName)
+		return
+	}
+
 	getWaitingTask := func() ([]int64, error) {
 		max := 500
 		var taskIds []int64
@@ -209,7 +219,7 @@ func (t *LotusCommitTaskHandler) Submit(workerLogId int64, state types.TaskWorke
 	if taskDetail.ID == 0 {
 		return false, fmt.Errorf("submit tast failed: task not exists by wokerLogId: %d", workerLogId)
 	}
-	if taskDetail.State == types.TaskStateFinished && taskDetail.Commit2Proof != "" {
+	if (taskDetail.State == types.TaskStateFinished && taskDetail.Commit2Proof != "") || taskDetail.State == types.TaskStateDropped {
 		if err = updateWorker(app.Db().DB); err != nil {
 			app.Log().Errorf("LotusCommitTaskHandler Submit updateWorker failed: %v", err.Error())
 		}
@@ -253,67 +263,53 @@ func (t *LotusCommitTaskHandler) Submit(workerLogId int64, state types.TaskWorke
 
 func (t *LotusCommitTaskHandler) Revert() {
 	taskTimeoutSeconds := 3600 + 1200
-	// taskTimeoutSeconds := 3
-	timeTicker := time.Tick(5 * time.Minute)
-	//timeTicker := time.Tick(3 * time.Second)
+	// timeTicker := time.Tick(5 * time.Minute)
+	timeTicker := time.Tick(60 * time.Second)
+	doRevert := func() error {
+		var timeoutWorkers []model.LotusCommit2TaskWorker
+		err := app.Db().Model(&model.LotusCommit2TaskWorker{}).Preload("Task").
+			Where("state =?", types.TaskWorkerStateDoing).
+			Where("end_time=0 and ? - start_time > ?", time.Now().Unix(), taskTimeoutSeconds).
+			Find(&timeoutWorkers).Error
 
-	getDoingTimeoutList := func() (list []model.LotusCommit2Task, err error) {
-		err = app.Db().Model(&model.LotusCommit2Task{}).
-			Preload("Workers", fmt.Sprintf("(end_time=0 AND %d - start_time > %d)", time.Now().Unix(), taskTimeoutSeconds)).
-			Where("state =?", types.TaskStateDoing).
-			Order("id asc").
-			Offset(0).
-			Limit(500).
-			Find(&list).Error
-		if err != nil && gorm.IsRecordNotFoundError(err) {
-			err = nil
+		if err != nil {
+			return err
 		}
-		return
-	}
-	revertTask := func(taskId int64) error {
-		return app.Db().Transaction(func(tx *gorm.DB) error {
-			err := tx.Model(&model.LotusCommit2Task{}).
-				Where("id=?", taskId).
-				Updates(map[string]interface{}{
-					"state": types.TaskStateWaiting,
-				}).Error
-			if err != nil {
-				return err
+		for _, item := range timeoutWorkers {
+			if item.Task.State == types.TaskStateDoing {
+				err = app.Db().Transaction(func(tx *gorm.DB) error {
+					err = tx.Model(&model.LotusCommit2Task{}).Where("id=?", item.Task.ID).Updates(map[string]interface{}{
+						"state": types.TaskStateWaiting,
+						"memo":  "reverted state to " + types.TaskStateWaiting,
+					}).Error
+					if err != nil {
+						return err
+					}
+					err = tx.Model(&model.LotusCommit2TaskWorker{}).Where("task_id=?", item.Task.ID).Updates(map[string]interface{}{
+						"state":      types.TaskWorkerStateReverted,
+						"memo":       "reverted state to " + types.TaskWorkerStateReverted,
+						"end_time":   time.Now().Unix(),
+						"deleted_at": time.Now(),
+					}).Error
+					if err != nil {
+						return err
+					}
+					return nil
+				})
+				if err != nil {
+					app.Log().Errorf("revert task state failed: %v task_id: %v", err, item.Task.ID)
+				}
 			}
-			err = tx.Model(&model.LotusCommit2TaskWorker{}).
-				Where("task_id=?", taskId).
-				Updates(map[string]interface{}{
-					"state":      types.TaskWorkerStateReverted,
-					"memo":       "system reverted",
-					"deleted_at": time.Now(),
-				}).Error
-			if err != nil {
-				return err
-			}
-			return nil
-		})
-
+		}
+		return nil
 	}
 
 	for {
 		select {
 		case <-timeTicker:
-			app.Log().Infof("try revert start")
-			list, err := getDoingTimeoutList()
+			err := doRevert()
 			if err != nil {
-				app.Log().Errorf("getDoingList failed: %v", err.Error())
-				continue
-			}
-			if len(list) == 0 {
-				app.Log().Infof("checked no revert list")
-				continue
-			}
-			for _, task := range list {
-				if err = revertTask(task.ID); err != nil {
-					app.Log().Errorf("revetTask failed: %v", err.Error())
-				} else {
-					app.Log().Infof("revert task done! task_id: %d", task.ID)
-				}
+				app.Log().Errorf("revert failed: %v", err.Error())
 			}
 		}
 	}
