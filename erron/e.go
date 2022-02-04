@@ -1,15 +1,12 @@
 package erron
 
 import (
-	"fmt"
 	"strings"
 )
 
 type LogIF interface {
 	write(err error)
 }
-
-var logger LogIF
 
 type E interface {
 	Error() string
@@ -43,35 +40,6 @@ func New(code Code, text ...string) E {
 	return &errInfo{code: code, msg: textToMsg(text...)}
 }
 
-func Fail(text ...string) E {
-	return &errInfo{code: Failed, msg: textToMsg(text...)}
-}
-
-func FailBy(err error) E {
-	return &errInfo{code: Failed, msg: err.Error()}
-}
-
 func Inner(text ...string) E {
 	return &errInfo{code: ErrInternal, msg: textToMsg(text...)}
-}
-
-func Try(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
-func SetLogger(obj LogIF) {
-	logger = obj
-}
-
-func Log(err error) {
-	if logger == nil {
-		return
-	}
-	logger.write(err)
-}
-
-func Print(err error) {
-	fmt.Println(err)
 }

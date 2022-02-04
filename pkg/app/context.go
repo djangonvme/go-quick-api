@@ -174,6 +174,10 @@ func checkInput(input interface{}) error {
 
 // LogApiPanic api 请求发生了panic 记入日志
 func LogApiPanic(c *gin.Context, panicMsg interface{}) {
+
+	if LoggerInstance == nil {
+		return
+	}
 	user, _ := GetLoginUser(c)
 	start := c.GetTime(CtxStartTime)
 	// 执行时间
@@ -182,25 +186,35 @@ func LogApiPanic(c *gin.Context, panicMsg interface{}) {
 		resp = struct{}{}
 	}
 	body, _ := GetSaveRawData(c)
-	if LoggerInstance != nil {
-		// log 里有json.Marshal() 导致url转义字符
-		LoggerInstance.WithFields(logrus.Fields{
-			"uid":      user.ID,
-			"body":     body,
-			"query":    c.Request.URL.Query(),
-			"response": resp,
-			"uri":      c.Request.URL.RequestURI(),
-			"cost":     fmt.Sprintf("%s", time.Since(start)),
-			"ip":       c.ClientIP(),
-			"header":   c.Request.Header,
-			"method":   c.Request.Method,
-			"type":     "api_panic",
-		}).Infof("%s | %s %s", panicMsg, c.Request.Method, c.Request.URL.RequestURI())
+	var errMsg string
+	if len(c.Errors) > 0 {
+		for i, es := range c.Errors {
+			errMsg += fmt.Sprintf(" #%d: %+v", i, es)
+		}
 	}
+
+	// log 里有json.Marshal() 导致url转义字符
+	LoggerInstance.WithFields(logrus.Fields{
+		"uid":      user.ID,
+		"body":     body,
+		"query":    c.Request.URL.Query(),
+		"response": resp,
+		"uri":      c.Request.URL.RequestURI(),
+		"cost":     fmt.Sprintf("%s", time.Since(start)),
+		"ip":       c.ClientIP(),
+		"header":   c.Request.Header,
+		"method":   c.Request.Method,
+		"errors":   errMsg,
+		"type":     "api_panic",
+	}).Infof("%s | %s %s", panicMsg, c.Request.Method, c.Request.URL.RequestURI())
 }
 
 // ApiLog api 接口日志记录请求和返回
 func ApiLog(c *gin.Context) {
+
+	if LoggerInstance == nil {
+		return
+	}
 	user, _ := GetLoginUser(c)
 	start := c.GetTime(CtxStartTime)
 	// 执行时间
@@ -209,19 +223,26 @@ func ApiLog(c *gin.Context) {
 		resp = struct{}{}
 	}
 	body, _ := GetSaveRawData(c)
-	if LoggerInstance != nil {
-		// log 里有json.Marshal() 导致url转义字符
-		LoggerInstance.WithFields(logrus.Fields{
-			"uid":      user.ID,
-			"body":     string(body),
-			"query":    c.Request.URL.Query(),
-			"response": resp,
-			"type":     "api_request",
-			"header":   c.Request.Header,
-			"method":   c.Request.Method,
-			"uri":      c.Request.URL.RequestURI(),
-			"cost":     fmt.Sprintf("%s", time.Since(start)),
-			"ip":       c.ClientIP(),
-		}).Infof(" %s  %s | %3v", c.Request.Method, c.Request.URL.RequestURI(), time.Since(start))
+
+	var errMsg string
+	if len(c.Errors) > 0 {
+		for i, es := range c.Errors {
+			errMsg += fmt.Sprintf(" #%d: %+v", i, es)
+		}
 	}
+
+	// log 里有json.Marshal() 导致url转义字符
+	LoggerInstance.WithFields(logrus.Fields{
+		"uid":      user.ID,
+		"body":     string(body),
+		"query":    c.Request.URL.Query(),
+		"response": resp,
+		"type":     "api_request",
+		"header":   c.Request.Header,
+		"method":   c.Request.Method,
+		"uri":      c.Request.URL.RequestURI(),
+		"cost":     fmt.Sprintf("%s", time.Since(start)),
+		"errors":   errMsg,
+		"ip":       c.ClientIP(),
+	}).Infof(" %s  %s | %3v", c.Request.Method, c.Request.URL.RequestURI(), time.Since(start))
 }

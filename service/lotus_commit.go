@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/filecoin-project/go-state-types/abi"
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
 	"gitlab.com/task-dispatcher/erron"
 	"gitlab.com/task-dispatcher/model"
 	"gitlab.com/task-dispatcher/pkg/app"
@@ -21,10 +22,10 @@ func NewLotusCommitTaskHandler() *LotusCommitTaskHandler {
 	return &LotusCommitTaskHandler{}
 }
 
-func (t *LotusCommitTaskHandler) Create(input string) (taskId int64, err error) {
+func (t *LotusCommitTaskHandler) Create(input string) (taskId uint64, err error) {
 	param := types.Commit2InputParam{}
 	if err = json.Unmarshal([]byte(input), &param); err != nil {
-		err = fmt.Errorf("json.Unmarshal inputBytes failed: %v", err.Error())
+		err = errors.Errorf("json.Unmarshal inputBytes failed: %v", err.Error())
 		return
 	}
 	if err = t.checkCommitInputParam(param); err != nil {
@@ -32,7 +33,7 @@ func (t *LotusCommitTaskHandler) Create(input string) (taskId int64, err error) 
 	}
 	commit1OutBytes, err := base64.URLEncoding.DecodeString(param.Commit1Out)
 	if err != nil {
-		return 0, fmt.Errorf("DecodeString Commit1Out: %v", err.Error())
+		return 0, errors.Errorf("DecodeString Commit1Out: %v", err.Error())
 	}
 	commitOutMd5 := util.MD5(commit1OutBytes)
 	existTask, err := t.getTask(param.MinerId, param.SectorId, commitOutMd5)
@@ -43,8 +44,8 @@ func (t *LotusCommitTaskHandler) Create(input string) (taskId int64, err error) 
 		return existTask.ID, nil
 	}
 	insert := model.LotusCommit2Task{
-		MinerId:       param.MinerId,
-		SectorId:      param.SectorId,
+		MinerID:       param.MinerId,
+		SectorID:      param.SectorId,
 		State:         types.TaskStateWaiting,
 		Commit1Out:    param.Commit1Out,
 		Commit1OutMd5: commitOutMd5,
@@ -57,34 +58,34 @@ func (t *LotusCommitTaskHandler) Create(input string) (taskId int64, err error) 
 	return insert.ID, nil
 }
 
-func (t *LotusCommitTaskHandler) Result(taskId int64) (result map[string]interface{}, err error) {
+func (t *LotusCommitTaskHandler) Result(taskId uint64) (result map[string]interface{}, err error) {
 	task := &model.LotusCommit2Task{}
 	err = app.Db().Model(&model.LotusCommit2Task{}).Where("id=?", taskId).First(task).Error
 	if err != nil {
 		return
 	}
 	return map[string]interface{}{
-		"sector_id":     task.SectorId,
-		"miner_id":      task.MinerId,
+		"sector_id":     task.SectorID,
+		"miner_id":      task.MinerID,
 		"commit2_proof": task.Commit2Proof,
 		"state":         task.State,
 	}, nil
 }
 
-func (t *LotusCommitTaskHandler) Apply(workerName string) (workerLogId int64, checksum string, c2param string, err error) {
+func (t *LotusCommitTaskHandler) Apply(workerName string) (workerLogId uint64, checksum string, c2param string, err error) {
 	var doingNum int
 	err = app.Db().Model(&model.LotusCommit2TaskWorker{}).Where("worker=?", workerName).Where("state=?", types.TaskWorkerStateDoing).Count(&doingNum).Error
 	if err != nil {
 		return
 	}
 	if doingNum > 0 {
-		err = fmt.Errorf("worker %v has doing tasks, please apply after that comeplete", workerName)
+		err = errors.Errorf("worker %v has doing tasks, please apply after that comeplete", workerName)
 		return
 	}
 
-	getWaitingTask := func() ([]int64, error) {
+	getWaitingTask := func() ([]uint64, error) {
 		max := 500
-		var taskIds []int64
+		var taskIds []uint64
 		err = app.Db().Model(&model.LotusCommit2Task{}).Where("state =?", types.TaskStateWaiting).
 			Order("id desc").
 			Offset(0).Limit(max).Pluck("id", &taskIds).Error
@@ -96,18 +97,18 @@ func (t *LotusCommitTaskHandler) Apply(workerName string) (workerLogId int64, ch
 		}
 		return taskIds, nil
 	}
-	apply := func(workerName string, taskId int64) (wid int64, c2param *types.Commit2InputParam, err error) {
+	apply := func(workerName string, taskId uint64) (wid uint64, c2param *types.Commit2InputParam, err error) {
 		task, err := t.taskDetail(taskId)
 		if err != nil {
 			return
 		}
 		if task.Commit1Out == "" {
-			err = fmt.Errorf("apply Commit1Input is empty")
+			err = errors.Errorf("apply Commit1Input is empty")
 			return
 		}
 		err = app.Db().Transaction(func(tx *gorm.DB) error {
 			insertWorker := &model.LotusCommit2TaskWorker{
-				TaskId:    taskId,
+				TaskID:    taskId,
 				StartTime: time.Now().Unix(),
 				Worker:    workerName,
 				State:     types.TaskWorkerStateDoing,
@@ -118,7 +119,7 @@ func (t *LotusCommitTaskHandler) Apply(workerName string) (workerLogId int64, ch
 			}
 			wid = insertWorker.ID
 			if wid == 0 {
-				return fmt.Errorf("apply failed: unexpect worker insert id is 0, task: %d worker: %v", taskId, workerName)
+				return errors.Errorf("apply failed: unexpect worker insert id is 0, task: %d worker: %v", taskId, workerName)
 			}
 			update := tx.Model(&model.LotusCommit2Task{}).Where("id=? and state =? ", taskId, types.TaskStateWaiting).Updates(map[string]interface{}{
 				"state": types.TaskStateDoing,
@@ -127,14 +128,14 @@ func (t *LotusCommitTaskHandler) Apply(workerName string) (workerLogId int64, ch
 				return update.Error
 			}
 			if update.RowsAffected == 0 {
-				return fmt.Errorf("apply failed: no rows changed, task: %d worker: %v", taskId, workerName)
+				return errors.Errorf("apply failed: no rows changed, task: %d worker: %v", taskId, workerName)
 			}
 			return nil
 		})
 
 		c2param = &types.Commit2InputParam{
-			SectorId:   task.SectorId,
-			MinerId:    task.MinerId,
+			SectorId:   task.SectorID,
+			MinerId:    task.MinerID,
 			Commit1Out: task.Commit1Out,
 		}
 		return wid, c2param, err
@@ -144,7 +145,7 @@ func (t *LotusCommitTaskHandler) Apply(workerName string) (workerLogId int64, ch
 	if err != nil {
 		return
 	}
-	var applyTaskId int64
+	var applyTaskId uint64
 	var c2paramInfo *types.Commit2InputParam
 	num := len(taskIds)
 	retry := 0
@@ -176,7 +177,7 @@ func (t *LotusCommitTaskHandler) Apply(workerName string) (workerLogId int64, ch
 		return
 	}
 	if c2paramInfo == nil {
-		err = fmt.Errorf("unexpect err: apply gen wokerLogId(%d) success, but find commit1Input is empty", workerLogId)
+		err = errors.Errorf("unexpect err: apply gen wokerLogId(%d) success, but find commit1Input is empty", workerLogId)
 		return
 	}
 	app.Log().Infof("LotusCommitTaskHandler apply success! workerName: %v workerLogId: %v taskId: %v c2param: %v", workerName, workerLogId, applyTaskId, c2param)
@@ -186,9 +187,9 @@ func (t *LotusCommitTaskHandler) Apply(workerName string) (workerLogId int64, ch
 
 }
 
-func (t *LotusCommitTaskHandler) Submit(workerLogId int64, state types.TaskWorkerState, commit2Proof string, checksum string, errMsg string) (bool, error) {
+func (t *LotusCommitTaskHandler) Submit(workerLogId uint64, state types.TaskWorkerState, commit2Proof string, checksum string, errMsg string) (bool, error) {
 	if state != types.TaskWorkerStateFailed && state != types.TaskWorkerStateFinished {
-		return false, fmt.Errorf("submitted invalid worker state")
+		return false, errors.Errorf("submitted invalid worker state")
 	}
 	updateWorker := func(db *gorm.DB) error {
 		update := map[string]interface{}{
@@ -206,33 +207,33 @@ func (t *LotusCommitTaskHandler) Submit(workerLogId int64, state types.TaskWorke
 
 	workerLog, err := t.taskWorkerDetail(workerLogId)
 	if err != nil {
-		return false, fmt.Errorf("fetch woker log by wokerLogId(%d) failed: %v", workerLogId, err)
+		return false, errors.Errorf("fetch woker log by wokerLogId(%d) failed: %v", workerLogId, err.Error())
 	}
 	if workerLog.ID == 0 {
-		return false, fmt.Errorf("fetch woker log by wokerLogId(%d) failed: %v", workerLogId, "record not found!")
+		return false, errors.Errorf("fetch woker log by wokerLogId(%d) failed: %v", workerLogId, "record not found!")
 	}
 	if workerLog.State == types.TaskWorkerStateReverted {
-		return false, fmt.Errorf("task has been reverted, submit reject! wid: %v", workerLogId)
+		return false, errors.Errorf("task has been reverted, submit reject! wid: %v", workerLogId)
 	}
 
 	taskDetail := workerLog.Task
 	if taskDetail.ID == 0 {
-		return false, fmt.Errorf("submit tast failed: task not exists by wokerLogId: %d", workerLogId)
+		return false, errors.Errorf("submit tast failed: task not exists by wokerLogId: %d", workerLogId)
 	}
 	if (taskDetail.State == types.TaskStateFinished && taskDetail.Commit2Proof != "") || taskDetail.State == types.TaskStateDropped {
 		if err = updateWorker(app.Db().DB); err != nil {
 			app.Log().Errorf("LotusCommitTaskHandler Submit updateWorker failed: %v", err.Error())
 		}
-		return true, fmt.Errorf("submit task failed: task areadly finished! taskId: %d workerLogId: %d", taskDetail.ID, workerLogId)
+		return true, errors.Errorf("submit task failed: task areadly finished! taskId: %d workerLogId: %d", taskDetail.ID, workerLogId)
 	}
 
-	genSum := genChecksum(taskDetail.MinerId, taskDetail.SectorId, taskDetail.Commit1Out)
+	genSum := genChecksum(taskDetail.MinerID, taskDetail.SectorID, taskDetail.Commit1Out)
 
 	if genSum != checksum {
-		return false, fmt.Errorf("submit task failed: worker/task info not matched by checksum! workerLogId: %d gensum: %v checksum: %v", workerLogId, genSum, checksum)
+		return false, errors.Errorf("submit task failed: worker/task info not matched by checksum! workerLogId: %d gensum: %v checksum: %v", workerLogId, genSum, checksum)
 	}
 	if state == types.TaskWorkerStateFinished && commit2Proof == "" {
-		return false, fmt.Errorf("submit task with finished state must pass finished ouput result(c2outProof)! wokerLogId: %d", workerLogId)
+		return false, errors.Errorf("submit task with finished state must pass finished ouput result(c2outProof)! wokerLogId: %d", workerLogId)
 	}
 	updateTask := func(tx *gorm.DB) error {
 		update := map[string]interface{}{}
@@ -328,16 +329,16 @@ func (t *LotusCommitTaskHandler) getTask(minerId string, sectorId abi.SectorNumb
 	}
 	return
 }
-func (t *LotusCommitTaskHandler) lockKey(taskId int64) string {
+func (t *LotusCommitTaskHandler) lockKey(taskId uint64) string {
 	return fmt.Sprintf("taskDispatcher.LotusCommitTaskApply.lockTask_%d", taskId)
 }
 
-func (t *LotusCommitTaskHandler) taskDetail(id int64) (data *model.LotusCommit2Task, err error) {
+func (t *LotusCommitTaskHandler) taskDetail(id uint64) (data *model.LotusCommit2Task, err error) {
 	data = &model.LotusCommit2Task{}
 	err = app.Db().Model(&model.LotusCommit2Task{}).Preload("Workers").Where("id=?", id).First(data).Error
 	return
 }
-func (t *LotusCommitTaskHandler) taskWorkerDetail(id int64) (data *model.LotusCommit2TaskWorker, err error) {
+func (t *LotusCommitTaskHandler) taskWorkerDetail(id uint64) (data *model.LotusCommit2TaskWorker, err error) {
 	data = &model.LotusCommit2TaskWorker{}
 	err = app.Db().Model(&model.LotusCommit2TaskWorker{}).Preload("Task").Where("id=?", id).First(data).Error
 	return
@@ -355,7 +356,7 @@ func (t *LotusCommitTaskHandler) checkCommitInputParam(param types.Commit2InputP
 		errMsgs = append(errMsgs, "Commit1Out is null")
 	}
 	if len(errMsgs) > 0 {
-		return fmt.Errorf("check CommitInputParam failed: %v", strings.Join(errMsgs, ";"))
+		return errors.Errorf("check CommitInputParam failed: %v", strings.Join(errMsgs, ";"))
 	}
 	return nil
 }

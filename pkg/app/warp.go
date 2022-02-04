@@ -104,6 +104,7 @@ func WarpApi(handler ApiHandlerFunc) gin.HandlerFunc {
 		data, err := handler(c)
 		var errInfo erron.E
 		if err != nil {
+			c.Error(err)
 			if v, ok := err.(erron.E); ok {
 				errInfo = v
 			} else {

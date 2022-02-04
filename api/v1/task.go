@@ -1,9 +1,8 @@
 package apiv1
 
 import (
-	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
 	"gitlab.com/task-dispatcher/erron"
 	"gitlab.com/task-dispatcher/pkg/app"
 	"gitlab.com/task-dispatcher/service"
@@ -17,7 +16,7 @@ func TaskCreate(c *gin.Context) (data interface{}, err error) {
 		return
 	}
 	if len(raw) == 0 {
-		return nil, fmt.Errorf("raw Bytes length is 0")
+		return nil, errors.Errorf("raw Bytes length is 0")
 	}
 	taskId, err := getHandler(c).Create(string(raw))
 	if err != nil {
@@ -31,9 +30,9 @@ func TaskCreate(c *gin.Context) (data interface{}, err error) {
 func TaskResult(c *gin.Context) (data interface{}, err error) {
 	value := c.Query("task_id")
 	value2, _ := strconv.Atoi(value)
-	taskId := int64(value2)
+	taskId := uint64(value2)
 	if taskId <= 0 {
-		return nil, fmt.Errorf("invalid task_id")
+		return nil, errors.Errorf("invalid task_id")
 	}
 	return getHandler(c).Result(taskId)
 }
@@ -43,20 +42,21 @@ type ApplyParams struct {
 }
 
 type ApplyRes struct {
-	ApplyId     int64  `json:"apply_id"`
+	ApplyId     uint64 `json:"apply_id"`
 	TaskInput   string `json:"task_input"`
 	Checksum    string `json:"checksum"`
 	Description string `json:"description"`
 }
 
 func TaskApply(c *gin.Context) (data interface{}, err error) {
+
 	var param = ApplyParams{}
 	if err = c.ShouldBindJSON(&param); err != nil {
 		return
 	}
 	workerName := param.WorkerName
 	if workerName == "" {
-		return nil, fmt.Errorf("invalid worker_name")
+		return nil, errors.Errorf("invalid worker_name")
 	}
 
 	var output = ApplyRes{}
@@ -77,7 +77,7 @@ func TaskApply(c *gin.Context) (data interface{}, err error) {
 }
 
 type SubmitParams struct {
-	ApplyId  int64                 `json:"apply_id"`
+	ApplyId  uint64                `json:"apply_id"`
 	Checksum string                `json:"checksum"`
 	State    types.TaskWorkerState `json:"state"`
 	Output   string                `json:"output"`
@@ -94,7 +94,7 @@ func TaskSubmit(c *gin.Context) (data interface{}, err error) {
 		return
 	}
 	if !ok {
-		return nil, fmt.Errorf("submit faield by expected err")
+		return nil, errors.Errorf("submit faield by expected err")
 	}
 	return map[string]string{"submitted": "success"}, nil
 }

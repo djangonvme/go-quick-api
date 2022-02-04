@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/ipfs/go-cid"
 	mh "github.com/multiformats/go-multihash"
+	"github.com/pkg/errors"
 	"gitlab.com/task-dispatcher/pkg/util"
 	"gitlab.com/task-dispatcher/types"
 	"io/ioutil"
@@ -164,7 +165,7 @@ func TestLotusCommitTaskHandler_Apply_Submit(t *testing.T) {
 		if res.StatusOk() {
 			return true, nil
 		} else {
-			return false, fmt.Errorf("stauts err ok")
+			return false, errors.Errorf("stauts err ok")
 		}
 	}
 
@@ -176,12 +177,12 @@ func TestLotusCommitTaskHandler_Apply_Submit(t *testing.T) {
 		commit2Proof := hex.EncodeToString([]byte("helloworldzwuv"))
 		ok, err := submit(workerLogId, "finished", commit2Proof, workerName, "")
 		if err != nil {
-			return fmt.Errorf("submit failed: %v", err.Error())
+			return errors.Errorf("submit failed: %v", err.Error())
 		}
 		if ok {
 			return nil
 		}
-		return fmt.Errorf("submit failed by some reasons unknow")
+		return errors.Errorf("submit failed by some reasons unknow")
 	}
 	count := 0
 	for {
@@ -285,6 +286,8 @@ func TestDd(t *testing.T) {
 }
 
 func TestBY(t *testing.T) {
-	var a = []byte{65}
-	fmt.Println(string(a))
+
+	msg := fmt.Sprintf("#11 %+v", util.ErrTest)
+	fmt.Println(msg)
+
 }

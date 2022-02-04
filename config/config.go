@@ -3,16 +3,17 @@ package config
 import (
 	"fmt"
 	"github.com/BurntSushi/toml"
+	"github.com/pkg/errors"
 	"gitlab.com/task-dispatcher/pkg/util"
 )
 
 func LoadConfig(cf string) func() (*Config, error) {
 	return func() (*Config, error) {
 		if cf == "" {
-			return nil, fmt.Errorf("config file is emtpy")
+			return nil, errors.Errorf("config file is emtpy")
 		}
 		if ok, _ := util.IsPathExists(cf); !ok {
-			return nil, fmt.Errorf("%s is not exists", cf)
+			return nil, errors.Errorf("%s is not exists", cf)
 		}
 		cg := &Config{}
 		_, err := toml.DecodeFile(cf, cg)

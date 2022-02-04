@@ -2,13 +2,13 @@ package singleton
 
 import (
 	"fmt"
-	"gitlab.com/task-dispatcher/config"
-	"time"
-
-	"github.com/sirupsen/logrus"
-
 	_ "github.com/go-sql-driver/mysql" // 这个不能删
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
+	"gitlab.com/task-dispatcher/config"
+	"gitlab.com/task-dispatcher/model"
+	"time"
 )
 
 type DB struct {
@@ -19,8 +19,9 @@ func NewDB(cfg *config.Config, logger *Logger) (*DB, error) {
 	args := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=%s", cfg.MySQL.User, cfg.MySQL.Password, cfg.MySQL.Host, cfg.MySQL.DbName, "Local")
 	db, err := gorm.Open("mysql", args)
 	if err != nil {
-		return nil, fmt.Errorf("couldn't connect to mysql, check your connect args in config.toml, errM: %s", err.Error())
+		return nil, errors.Errorf("couldn't connect to mysql, check your connect args in config.toml, errM: %s", err.Error())
 	}
+
 	dbs := &DB{db}
 	// config gorm db
 	// 全局设置表名不可以为复数形式。
@@ -32,6 +33,9 @@ func NewDB(cfg *config.Config, logger *Logger) (*DB, error) {
 	dbs.DB.DB().SetMaxIdleConns(20)
 	dbs.DB.DB().SetMaxOpenConns(100)
 	dbs.DB.DB().SetConnMaxLifetime(3600 * time.Second)
+
+	db.Set("gorm:table_options", "ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci").AutoMigrate(&model.LotusCommit2Task{})
+	db.Set("gorm:table_options", "ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci").AutoMigrate(&model.LotusCommit2TaskWorker{})
 
 	dbs.Callback().Create().Replace("gorm:update_time_stamp", func(scope *gorm.Scope) {
 		scope.SetColumn("CreatedAt", time.Now())

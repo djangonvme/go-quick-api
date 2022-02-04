@@ -1,5 +1,7 @@
 package erron
 
-import "fmt"
+import (
+	"github.com/pkg/errors"
+)
 
-var ErrNoTaskAvailable = fmt.Errorf("not task avaliable now, please try later")
+var ErrNoTaskAvailable = errors.Errorf("not task avaliable now, please try later")

@@ -2,7 +2,7 @@ package clis
 
 import (
 	"context"
-	"fmt"
+	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
 	"gitlab.com/task-dispatcher/config"
 	"gitlab.com/task-dispatcher/pkg/app"
@@ -43,7 +43,7 @@ var RunCmd = &cli.Command{
 			}
 		}
 		if !has {
-			return fmt.Errorf("no tasks configed for running! exit")
+			return errors.Errorf("no tasks configed for running! exit")
 		}
 		ctx := context.WithValue(c.Context, types.KeyAllowTasks, tasks)
 		container := fx.New(
@@ -72,6 +72,7 @@ func register(lc fx.Lifecycle) {
 	lc.Append(
 		fx.Hook{
 			OnStart: func(ctx context.Context) error {
+
 				for _, h := range getTaskHandlers(ctx) {
 					go h.Revert()
 				}

@@ -1,7 +1,7 @@
 package service
 
 import (
-	"fmt"
+	"github.com/pkg/errors"
 	"gitlab.com/task-dispatcher/types"
 )
 
@@ -10,8 +10,8 @@ func GetTaskHandler(taskType string) (types.TaskManager, error) {
 	case types.TaskTypeLotusCommit:
 		return NewLotusCommitTaskHandler(), nil
 	case types.TaskTypeLotusWPost:
-		return nil, fmt.Errorf("not impl")
+		return nil, errors.Errorf("not impl")
 	default:
-		return nil, fmt.Errorf("invalid taskType, couldn't match handler")
+		return nil, errors.Errorf("invalid taskType, couldn't match handler")
 	}
 }

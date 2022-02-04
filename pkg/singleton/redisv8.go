@@ -3,6 +3,7 @@ package singleton
 import (
 	"context"
 	"fmt"
+	"github.com/pkg/errors"
 	"gitlab.com/task-dispatcher/config"
 	"time"
 
@@ -49,7 +50,7 @@ func (rs *RedisClient) Unlock(key string, randValue string) (bool, error) {
 		return false, err
 	}
 	if randValue != "" && randValue != value {
-		return false, fmt.Errorf("couldn't unlock %s, the key maybe locked by others", key)
+		return false, errors.Errorf("couldn't unlock %s, the key maybe locked by others", key)
 	}
 	res := rs.Del(ctx, key)
 	ok, err := res.Result()
