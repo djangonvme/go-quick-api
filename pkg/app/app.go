@@ -1,8 +1,10 @@
 package app
 
 import (
+	"context"
 	"gitlab.com/task-dispatcher/config"
 	"gitlab.com/task-dispatcher/pkg/singleton"
+	"time"
 )
 
 var BuildInfo string
@@ -48,4 +50,17 @@ func Locker() LockerIf {
 		dLocker = NewProcessLocker()
 		return dLocker
 	}
+}
+
+func TestInstance() {
+	ctx := context.Background()
+	Redis().Set(ctx, "testx", "123456", time.Second*10)
+	v, err := Redis().Get(ctx, "testx").Result()
+	if v != "123456" {
+		panic("test redis not pass")
+	}
+	if err != nil {
+		panic("test redis error: " + err.Error())
+	}
+	LoggerInstance.Infof("test instances ok!")
 }

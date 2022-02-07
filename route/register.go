@@ -12,6 +12,7 @@ func Register(ctx context.Context) func(router *app.Engine) {
 
 	var (
 		pubMiddleware = []gin.HandlerFunc{
+			middleware.CheckBaseRequest(ctx),
 			middleware.FixRequestBody(ctx),
 			middleware.Header,
 			middleware.LogRequest,

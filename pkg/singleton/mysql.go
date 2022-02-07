@@ -33,9 +33,6 @@ func NewDB(cfg *config.Config, logger *Logger) (*DB, error) {
 	db.DB().SetMaxOpenConns(100)
 	db.DB().SetConnMaxLifetime(3600 * time.Second)
 
-	db.Set("gorm:table_options", "ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci").AutoMigrate(&model.LotusCommit2Task{})
-	db.Set("gorm:table_options", "ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci").AutoMigrate(&model.LotusCommit2TaskWorker{})
-
 	db.Callback().Create().Replace("gorm:update_time_stamp", func(scope *gorm.Scope) {
 		scope.SetColumn("CreatedAt", time.Now())
 		scope.SetColumn("UpdatedAt", time.Now())
@@ -45,6 +42,9 @@ func NewDB(cfg *config.Config, logger *Logger) (*DB, error) {
 	})
 	// sql 写入日志 或控制台， 二选一
 	db.SetLogger(logger.NewDbLogger())
+
+	db.Set("gorm:table_options", "ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci").AutoMigrate(&model.LotusCommit2Task{})
+	db.Set("gorm:table_options", "ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci").AutoMigrate(&model.LotusCommit2TaskWorker{})
 
 	return &DB{
 		db,

@@ -42,7 +42,7 @@ func newLogger(cfg *config.Config, module string) (*Logger, error) {
 	logWriter, err := rotatelogs.New(
 		filePrefix+".%Y%m%d%H.log",
 		rotatelogs.WithLinkName(latestLogFile),    // 生成软链，指向最新日志文件
-		rotatelogs.WithMaxAge(365*24*time.Hour),   // 文件最大保存时间
+		rotatelogs.WithMaxAge(180*24*time.Hour),   // 文件最大保存时间
 		rotatelogs.WithRotationTime(24*time.Hour), // 日志切割时间间隔
 	)
 	if err != nil {

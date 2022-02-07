@@ -72,7 +72,6 @@ func register(lc fx.Lifecycle) {
 	lc.Append(
 		fx.Hook{
 			OnStart: func(ctx context.Context) error {
-
 				for _, h := range getTaskHandlers(ctx) {
 					go h.Revert()
 				}

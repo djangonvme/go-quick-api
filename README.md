@@ -13,19 +13,16 @@ make build
 ```shell
 vim ./config.toml
 ```
-编辑数据库/redis的用户名密码等连接信息
 
-3. 数据库建表
- 
-执行  ```./database.sql```
+编辑mysql, redis的连接信息, redis版本需要大于6.0，其他信息可按默认
 
 
-4. 运行
+3. 运行
 
 ```shell
-
+# 运行lotus-commit2 任务
 nohup ./task-dispatcher run --config=config.toml --lotus-commit2=true > task-dispatcher.log 2>&1 &
-
+# 
 ```
 
 ## 客户端接入

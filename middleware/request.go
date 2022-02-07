@@ -9,6 +9,13 @@ import (
 	"gitlab.com/task-dispatcher/types"
 )
 
+func CheckBaseRequest(ctx context.Context) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		app.TestInstance()
+		c.Next()
+	}
+}
+
 func CheckTaskRequest(ctx context.Context) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		taskType := c.GetHeader(types.TaskTypeKey)
