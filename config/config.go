@@ -34,14 +34,13 @@ type Config struct {
 	} `json:"general"`
 
 	Server struct {
-		Host string `json:"host"`
-		Port int    `json:"port"`
+		Addr string `json:"addr"`
 	} `json:"server"`
 
 	Redis struct {
 		Host     string `json:"host"`
 		Password string `json:"password"`
-		DbNum    int    `json:"dbnum"`
+		Db       int    `json:"db"`
 	} `json:"redis"`
 
 	MySQL struct {

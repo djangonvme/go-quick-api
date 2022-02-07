@@ -22,31 +22,33 @@ func NewDB(cfg *config.Config, logger *Logger) (*DB, error) {
 		return nil, errors.Errorf("couldn't connect to mysql, check your connect args in config.toml, errM: %s", err.Error())
 	}
 
-	dbs := &DB{db}
 	// config gorm db
 	// 全局设置表名不可以为复数形式。
-	dbs.SingularTable(true)
+	db.SingularTable(true)
 	// prevent no where cause update/delete
-	dbs.BlockGlobalUpdate(true)
+	db.BlockGlobalUpdate(true)
 	// enable log
-	dbs.LogMode(true)
-	dbs.DB.DB().SetMaxIdleConns(20)
-	dbs.DB.DB().SetMaxOpenConns(100)
-	dbs.DB.DB().SetConnMaxLifetime(3600 * time.Second)
+	db.LogMode(true)
+	db.DB().SetMaxIdleConns(20)
+	db.DB().SetMaxOpenConns(100)
+	db.DB().SetConnMaxLifetime(3600 * time.Second)
 
 	db.Set("gorm:table_options", "ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci").AutoMigrate(&model.LotusCommit2Task{})
 	db.Set("gorm:table_options", "ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci").AutoMigrate(&model.LotusCommit2TaskWorker{})
 
-	dbs.Callback().Create().Replace("gorm:update_time_stamp", func(scope *gorm.Scope) {
+	db.Callback().Create().Replace("gorm:update_time_stamp", func(scope *gorm.Scope) {
 		scope.SetColumn("CreatedAt", time.Now())
 		scope.SetColumn("UpdatedAt", time.Now())
 	})
-	dbs.Callback().Update().Replace("gorm:update_time_stamp", func(scope *gorm.Scope) {
+	db.Callback().Update().Replace("gorm:update_time_stamp", func(scope *gorm.Scope) {
 		scope.SetColumn("UpdatedAt", time.Now())
 	})
 	// sql 写入日志 或控制台， 二选一
-	dbs.SetLogger(logger.NewDbLogger())
-	return dbs, nil
+	db.SetLogger(logger.NewDbLogger())
+
+	return &DB{
+		db,
+	}, nil
 }
 
 type DBLogger struct {

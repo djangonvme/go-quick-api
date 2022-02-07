@@ -6,7 +6,7 @@ import (
 )
 
 type LotusCommit2Task struct {
-	ID            uint64                   `gorm:"primaryKey;column:id;type:bigint(20) unsigned;not null"`
+	ID            uint64                   `gorm:"column:id;AUTO_INCREMENT;not null"`
 	MinerID       string                   `gorm:"unique_index:idx_sidmidc1;column:miner_id;type:varchar(128);not null;default:''"` // 矿工号id, f01234
 	SectorID      abi.SectorNumber         `gorm:"unique_index:idx_sidmidc1;column:sector_id;type:int(11);not null;default:0"`      // 扇区id
 	State         types.TaskState          `gorm:"column:state;type:varchar(32);not null;default:''"`                               // 状态: waiting=等待 doing=执行中 finished=已完成 dropped=丢弃
@@ -19,8 +19,7 @@ type LotusCommit2Task struct {
 }
 
 type LotusCommit2TaskWorker struct {
-	ID uint64 `gorm:"primaryKey;column:id;type:bigint(20) unsigned;not null"`
-
+	ID           uint64                `gorm:"column:id;AUTO_INCREMENT;not null"`
 	TaskID       uint64                `gorm:"index:idx_taskid;column:task_id;type:bigint(20) unsigned;not null"`
 	Worker       string                `gorm:"column:worker;type:varchar(128);not null;default:''"`               // 机器标识hostname,ip
 	State        types.TaskWorkerState `gorm:"column:state;type:varchar(32);not null;default:''"`                 // finished,failed,reverted

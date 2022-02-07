@@ -18,11 +18,9 @@ func NewGin(registerRoutes RegisterRouteFunc) *Engine {
 	if IsEnvLocal() || IsEnvDev() {
 		gin.SetMode(gin.DebugMode)
 	}
-	eng := gin.Default()
-	// eng.SetTrustedProxies([]string{"192.168.1.2"})
-	eng2 := &Engine{eng}
-	registerRoutes(eng2)
-	return eng2
+	eng := &Engine{gin.Default()}
+	registerRoutes(eng)
+	return eng
 }
 
 type routeGroup struct {
@@ -81,8 +79,7 @@ func (e *Engine) Group(relativePath string, handlers ...gin.HandlerFunc) *routeG
 }
 
 func (e *Engine) Run() error {
-	addr := fmt.Sprintf("%s:%d", Cfg().Server.Host, Cfg().Server.Port)
-	return e.engine.Run(addr)
+	return e.engine.Run(Cfg().Server.Addr)
 }
 
 // 需要用其他的再加

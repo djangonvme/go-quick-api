@@ -21,10 +21,10 @@ func NewLogger(module string) func(cfg *config.Config) (*Logger, error) {
 	}
 }
 func newLogger(cfg *config.Config, module string) (*Logger, error) {
-	src, err := os.OpenFile(os.DevNull, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
-	if err != nil {
-		return nil, err
-	}
+	/*	src, err := os.OpenFile(os.DevNull, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+		if err != nil {
+			return nil, err
+		}*/
 	logDir := cfg.General.LogDir
 	if logDir == "" {
 		logDir = "/tmp"
@@ -34,14 +34,15 @@ func newLogger(cfg *config.Config, module string) (*Logger, error) {
 	latestLogFile := filePrefix + ".log"
 
 	logClient := logrus.New()
-	logClient.Out = src
+	// logClient.Out = src
+	logClient.Out = os.Stdout
 	// logClient.Out = os.Stdout //stdout will output in console
 	logClient.SetLevel(logrus.DebugLevel)
 
 	logWriter, err := rotatelogs.New(
 		filePrefix+".%Y%m%d%H.log",
 		rotatelogs.WithLinkName(latestLogFile),    // 生成软链，指向最新日志文件
-		rotatelogs.WithMaxAge(30*24*time.Hour),    // 文件最大保存时间
+		rotatelogs.WithMaxAge(365*24*time.Hour),   // 文件最大保存时间
 		rotatelogs.WithRotationTime(24*time.Hour), // 日志切割时间间隔
 	)
 	if err != nil {

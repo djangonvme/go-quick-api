@@ -15,16 +15,16 @@ type RedisClient struct {
 }
 
 func NewRedis(cfg *config.Config) (cli *RedisClient, err error) {
-	return newRedis(cfg.Redis.Host, cfg.Redis.Password, cfg.Redis.DbNum, 1000)
+	return newRedis(cfg.Redis.Host, cfg.Redis.Password, cfg.Redis.Db, 1000)
 }
-func newRedis(host string, pwd string, dbNum int, poolSize int) (cli *RedisClient, err error) {
+func newRedis(host string, pwd string, db int, poolSize int) (cli *RedisClient, err error) {
 	if poolSize == 0 {
 		poolSize = 100
 	}
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s", host),
 		Password: pwd,      // no password set
-		DB:       dbNum,    // use default DB
+		DB:       db,       // use default DB
 		PoolSize: poolSize, // 连接池大小
 	})
 
