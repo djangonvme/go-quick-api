@@ -1,0 +1,21 @@
+[general]
+# 可选，默认输出到控制台
+logDir="/tmp/logs"
+
+[server]
+# 服务监听地址
+addr=":8180"
+
+[mysql]
+host="127.0.0.1:3306"
+user="root"
+password="123456"
+# 运行前确保这个库已经创建了
+dbname="task_dispatcher"
+
+[redis]
+host="127.0.0.1:6379"
+password=""
+
+
+
