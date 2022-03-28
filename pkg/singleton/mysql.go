@@ -2,12 +2,12 @@ package singleton
 
 import (
 	"fmt"
+	"github.com/go-quick-api/config"
+	"github.com/go-quick-api/model"
 	_ "github.com/go-sql-driver/mysql" // 这个不能删
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"gitlab.com/task-dispatcher/config"
-	"gitlab.com/task-dispatcher/model"
 	"time"
 )
 

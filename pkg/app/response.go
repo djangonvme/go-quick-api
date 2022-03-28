@@ -3,9 +3,9 @@ package app
 import (
 	"time"
 
-	"gitlab.com/task-dispatcher/pkg/util"
+	"github.com/go-quick-api/pkg/util"
 
-	"gitlab.com/task-dispatcher/erron"
+	"github.com/go-quick-api/erron"
 )
 
 // api 接口响应结果

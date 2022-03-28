@@ -1,4 +1,4 @@
-module gitlab.com/task-dispatcher
+module github.com/go-quick-api
 
 go 1.17
 

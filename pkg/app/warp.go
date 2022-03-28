@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"gitlab.com/task-dispatcher/erron"
+	"github.com/go-quick-api/erron"
 )
 
 type ApiHandlerFunc func(c *gin.Context) (data interface{}, err error)

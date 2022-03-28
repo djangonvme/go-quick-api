@@ -2,7 +2,7 @@ package model
 
 import (
 	"github.com/filecoin-project/go-state-types/abi"
-	"gitlab.com/task-dispatcher/types"
+	"github.com/go-quick-api/types"
 )
 
 type LotusCommit2Task struct {

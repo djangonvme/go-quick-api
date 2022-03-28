@@ -2,11 +2,11 @@ package apiv1
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-quick-api/erron"
+	"github.com/go-quick-api/pkg/app"
+	"github.com/go-quick-api/service"
+	"github.com/go-quick-api/types"
 	"github.com/pkg/errors"
-	"gitlab.com/task-dispatcher/erron"
-	"gitlab.com/task-dispatcher/pkg/app"
-	"gitlab.com/task-dispatcher/service"
-	"gitlab.com/task-dispatcher/types"
 	"strconv"
 )
 

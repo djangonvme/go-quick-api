@@ -2,8 +2,8 @@ package app
 
 import (
 	"context"
-	"gitlab.com/task-dispatcher/config"
-	"gitlab.com/task-dispatcher/pkg/singleton"
+	"github.com/go-quick-api/config"
+	"github.com/go-quick-api/pkg/singleton"
 	"time"
 )
 

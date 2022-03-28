@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"gitlab.com/task-dispatcher/erron"
-	"gitlab.com/task-dispatcher/pkg/app"
+	"github.com/go-quick-api/erron"
+	"github.com/go-quick-api/pkg/app"
 )
 
 func Header(c *gin.Context) {

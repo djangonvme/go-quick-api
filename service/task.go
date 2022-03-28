@@ -2,7 +2,7 @@ package service
 
 import (
 	"github.com/pkg/errors"
-	"gitlab.com/task-dispatcher/types"
+	"github.com/go-quick-api/types"
 )
 
 func GetTaskHandler(taskType string) (types.TaskManager, error) {

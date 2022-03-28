@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/pkg/errors"
-	"gitlab.com/task-dispatcher/config"
+	"github.com/go-quick-api/config"
 	"time"
 
 	"github.com/go-redis/redis/v8" // 注意导入的是新版本

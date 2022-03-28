@@ -2,7 +2,7 @@ package singleton
 
 import (
 	"fmt"
-	"gitlab.com/task-dispatcher/config"
+	"github.com/go-quick-api/config"
 	"os"
 	"time"
 

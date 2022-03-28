@@ -12,11 +12,11 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"gitlab.com/task-dispatcher/erron"
+	"github.com/go-quick-api/erron"
 
 	"github.com/gin-gonic/gin"
-	"gitlab.com/task-dispatcher/pkg/auth"
-	"gitlab.com/task-dispatcher/types"
+	"github.com/go-quick-api/pkg/auth"
+	"github.com/go-quick-api/types"
 )
 
 const (

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/pkg/errors"
-	"gitlab.com/task-dispatcher/pkg/util"
+	"github.com/go-quick-api/pkg/util"
 )
 
 func LoadConfig(cf string) func() (*Config, error) {

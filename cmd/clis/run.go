@@ -2,14 +2,14 @@ package clis
 
 import (
 	"context"
+	"github.com/go-quick-api/config"
+	"github.com/go-quick-api/pkg/app"
+	"github.com/go-quick-api/pkg/singleton"
+	"github.com/go-quick-api/route"
+	"github.com/go-quick-api/service"
+	"github.com/go-quick-api/types"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
-	"gitlab.com/task-dispatcher/config"
-	"gitlab.com/task-dispatcher/pkg/app"
-	"gitlab.com/task-dispatcher/pkg/singleton"
-	"gitlab.com/task-dispatcher/route"
-	"gitlab.com/task-dispatcher/service"
-	"gitlab.com/task-dispatcher/types"
 	"go.uber.org/fx"
 	"log"
 )
@@ -48,6 +48,7 @@ var RunCmd = &cli.Command{
 		ctx := context.WithValue(c.Context, types.KeyAllowTasks, tasks)
 		container := fx.New(
 			// load or new global resource
+			// 提供初始化全局资源的方法, 在fx.Populate 处罚执行
 			fx.Provide(config.LoadConfig(c.String("config"))),
 			fx.Provide(singleton.NewLogger("task-dispatcher")),
 			fx.Provide(singleton.NewDB),

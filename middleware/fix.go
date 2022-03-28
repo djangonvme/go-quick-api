@@ -3,7 +3,7 @@ package middleware
 import (
 	"context"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/task-dispatcher/pkg/app"
+	"github.com/go-quick-api/pkg/app"
 	"log"
 )
 

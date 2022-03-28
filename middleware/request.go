@@ -3,10 +3,10 @@ package middleware
 import (
 	"context"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/task-dispatcher/erron"
-	"gitlab.com/task-dispatcher/pkg/app"
-	"gitlab.com/task-dispatcher/service"
-	"gitlab.com/task-dispatcher/types"
+	"github.com/go-quick-api/erron"
+	"github.com/go-quick-api/pkg/app"
+	"github.com/go-quick-api/service"
+	"github.com/go-quick-api/types"
 )
 
 func CheckBaseRequest(ctx context.Context) func(c *gin.Context) {

@@ -3,9 +3,9 @@ package route
 import (
 	"context"
 	"github.com/gin-gonic/gin"
-	apiv1 "gitlab.com/task-dispatcher/api/v1"
-	"gitlab.com/task-dispatcher/middleware"
-	"gitlab.com/task-dispatcher/pkg/app"
+	apiv1 "github.com/go-quick-api/api/v1"
+	"github.com/go-quick-api/middleware"
+	"github.com/go-quick-api/pkg/app"
 )
 
 func Register(ctx context.Context) func(router *app.Engine) {

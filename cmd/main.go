@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-quick-api/cmd/clis"
+	"github.com/go-quick-api/pkg/app"
 	"github.com/urfave/cli/v2"
-	"gitlab.com/task-dispatcher/cmd/clis"
-	"gitlab.com/task-dispatcher/pkg/app"
 	"log"
 	"os"
 )
@@ -17,7 +17,7 @@ var (
 func main() {
 	app.BuildInfo = fmt.Sprintf("%v,%v", BuildVersion, BuildAt)
 	c := cli.NewApp()
-	c.Name = "task-dispatcher"
+	c.Name = "go-quick-api"
 	c.Version = BuildVersion + "," + BuildAt
 	c.Usage = ""
 	c.Commands = []*cli.Command{

@@ -4,7 +4,7 @@
 # ...
 
 # This how we want to name the binary output
-BINARY=task-dispatcher
+BINARY=go-quick-api
 MAIN_FILE=cmd/main.go
 # These are the values we want to pass for VERSION  and BUILD
 VERSION=`git rev-parse --short HEAD`
