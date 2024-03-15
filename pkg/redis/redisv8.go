@@ -1,48 +1,43 @@
-package singleton
+package redis
 
 import (
 	"context"
-	"fmt"
-	"github.com/pkg/errors"
-	"github.com/go-quick-api/config"
 	"time"
 
 	"github.com/go-redis/redis/v8" // 注意导入的是新版本
 )
 
-type RedisClient struct {
-	*redis.Client
-}
+var Instance *redis.Client
 
-func NewRedis(cfg *config.Config) (cli *RedisClient, err error) {
-	return newRedis(cfg.Redis.Host, cfg.Redis.Password, cfg.Redis.Db, 1000)
-}
-func newRedis(host string, pwd string, db int, poolSize int) (cli *RedisClient, err error) {
+func InitRedis(addr, pwd string, db, poolSize int) error {
+	if Instance != nil {
+		return nil
+	}
 	if poolSize == 0 {
 		poolSize = 100
 	}
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s", host),
+		Addr:     addr,
 		Password: pwd,      // no password set
 		DB:       db,       // use default DB
 		PoolSize: poolSize, // 连接池大小
 	})
-
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-
-	_, err = rdb.Ping(ctx).Result()
-	return &RedisClient{
-		rdb,
-	}, err
+	_, err := rdb.Ping(ctx).Result()
+	if err != nil {
+		return err
+	}
+	Instance = rdb
+	return nil
 }
 
-func (rs *RedisClient) Lock(key string, randValue string, exp time.Duration) (bool, error) {
+/*func (rs *Client) Lock(key string, randValue string, exp time.Duration) (bool, error) {
 	ctx := context.Background()
 	return rs.SetNX(ctx, key, randValue, exp).Result()
 }
 
-func (rs *RedisClient) Unlock(key string, randValue string) (bool, error) {
+func (rs *Client) Unlock(key string, randValue string) (bool, error) {
 	ctx := context.Background()
 	cmd := rs.Get(ctx, key)
 	value, err := cmd.Result()
@@ -63,3 +58,4 @@ func (rs *RedisClient) Unlock(key string, randValue string) (bool, error) {
 	return false, nil
 
 }
+*/

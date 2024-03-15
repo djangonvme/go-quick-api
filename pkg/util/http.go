@@ -26,7 +26,7 @@ func (h *HttpResp) Decode(dst interface{}) error {
 	return json.Unmarshal(h.Body, &dst)
 }
 
-func HttpPost(url string, param interface{}, headers map[string]string) (*HttpResp, error) {
+func HttpPost(url string, headers map[string]string, param interface{}) (*HttpResp, error) {
 	url = strings.ReplaceAll(url, " ", "")
 	var postBytes []byte
 	rawText, ok := param.(string)

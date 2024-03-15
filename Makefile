@@ -4,8 +4,8 @@
 # ...
 
 # This how we want to name the binary output
-BINARY=go-quick-api
-MAIN_FILE=cmd/main.go
+BINARY=main
+MAIN_FILE=main.go
 # These are the values we want to pass for VERSION  and BUILD
 VERSION=`git rev-parse --short HEAD`
 BUILD=`date +%Y-%m-%d^%H:%M:%S`

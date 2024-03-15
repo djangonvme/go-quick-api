@@ -16,7 +16,9 @@ const (
 func DateNow() string {
 	return time.Now().Format(YMDHIS)
 }
-
+func DateInt() string {
+	return time.Now().Format("20060102")
+}
 func IsExpired(t time.Time) bool {
 	t1 := t.Unix()
 	t2 := time.Now().Unix()

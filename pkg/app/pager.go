@@ -1,4 +1,4 @@
-package util
+package app
 
 type Pager struct {
 	Page     uint64 `json:"page" form:"page"`

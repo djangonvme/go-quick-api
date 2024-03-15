@@ -1,48 +1,46 @@
 package app
 
 import (
+	"encoding/json"
 	"time"
 
-	"github.com/go-quick-api/pkg/util"
-
-	"github.com/go-quick-api/erron"
+	"gitlab.com/qubic-pool/erron"
 )
 
-// api 接口响应结果
-type response struct {
-	Code      erron.Code  `json:"code"`
-	Msg       string      `json:"msg"`
-	Timestamp int64       `json:"timestamp"`
-	Data      interface{} `json:"data"`
+type Response struct {
+	Code      erron.ErrCode `json:"code"`
+	Msg       string        `json:"msg"`
+	Timestamp int64         `json:"timestamp"`
+	Data      interface{}   `json:"data"`
 }
 
-type Pager struct {
-	util.Pager
+func (r *Response) ToJson() string {
+	b, _ := json.Marshal(r)
+	return string(b)
 }
 
-// 分页结构数据
-type responseWithPager struct {
+type ResponseWithPager struct {
 	Pager Pager       `json:"pager"`
 	List  interface{} `json:"list"`
 }
 
-func ResponseFail(err erron.E) *response {
-	return Response(err, struct{}{})
+func ResponseFail(err erron.ErrorIF) *Response {
+	return ResponseApi(err, struct{}{})
 }
 
-func ResponseFailByCode(code erron.Code) *response {
-	return Response(erron.New(code), struct{}{})
+func ResponseFailByCode(code erron.ErrCode) *Response {
+	return ResponseApi(erron.New(code, ""), struct{}{})
 }
 
-func Response(err erron.E, data interface{}) *response {
+func ResponseApi(err erron.ErrorIF, data interface{}) *Response {
 	if err == nil {
-		err = erron.New(erron.Success)
+		err = erron.New(erron.Success, "")
 	}
-	errMsg := err.Msg()
+	errMsg := err.Error()
 	if errMsg == "" {
-		errMsg = err.Code().Msg()
+		errMsg = err.Code().Text()
 	}
-	return &response{
+	return &Response{
 		err.Code(),
 		errMsg,
 		time.Now().Unix(),
@@ -50,8 +48,8 @@ func Response(err erron.E, data interface{}) *response {
 	}
 }
 
-func PagerResponse(pager Pager, list interface{}) *responseWithPager {
-	return &responseWithPager{
+func PagerResponse(pager Pager, list interface{}) *ResponseWithPager {
+	return &ResponseWithPager{
 		Pager: pager,
 		List:  list,
 	}
