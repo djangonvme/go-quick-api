@@ -51,9 +51,7 @@ vim ./config.toml
 3. 运行
 
 ```shell
-# 运行lotus-commit2 任务
-nohup ./task-dispatcher run --config=config.toml --lotus-commit2=true > task-dispatcher.log 2>&1 &
-# 
+./main -c=config.toml
 ```
 
 ## 客户端接入
